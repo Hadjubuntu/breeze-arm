@@ -112,6 +112,7 @@ CC       = $(GCC_BIN)arm-none-eabi-gcc
 CPP      = $(GCC_BIN)arm-none-eabi-g++
 LD       = $(GCC_BIN)arm-none-eabi-gcc
 OBJCOPY  = $(GCC_BIN)arm-none-eabi-objcopy
+DISAS 	 = $(GCC_BIN)arm-none-eabi-objdump
 
 
 ######################################################################################
@@ -206,18 +207,30 @@ CC_FLAGS = $(MCU_CC_FLAGS) -c $(CC_OPTIM_FLAGS) $(CC_DEBUG_FLAGS) -fno-common -f
 LD_FLAGS = $(MCU_CC_FLAGS) -Wl,--gc-sections $(SYS_LD_FLAGS) -Wl,-Map=$(PROJECT).map 
 LD_SYS_LIBS = $(SYS_LIBRARIES)
 
-BULD_TARGET = $(PROJECT)
+BUILD_PATH = build
+BUILD_TARGET = $(BUILD_PATH)/$(PROJECT)
 
+
+UPLOADER := dfu-util
+USBID := 1EAF:0003
+PRODUCT_ID := 0003
+LD_MEM_DIR := sram_64k_flash_512k
 
 ############################################################################### 
 # Makefile execution
 ###############################################################################
 
-all: $(BULD_TARGET).bin
+all: $(BUILD_TARGET).bin
+
+flymaple-upload: upload
+
+.PHONY: upload
+
 
 clean:
-	rm -f $(BULD_TARGET).bin $(BULD_TARGET).elf $(PROJECT_OBJECTS)
-
+	rm -f $(BUILD_TARGET).bin $(BUILD_TARGET).elf $(PROJECT_OBJECTS) $(BUILD_PATH)/*
+	
+	
 .s.o:
 	$(AS) $(MCU_CC_FLAGS) -o $@ $<
 
@@ -225,15 +238,24 @@ clean:
 	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS) -o $@ $<
 
 .cpp.o:
-	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu++98 $(INCLUDE_PATHS) -o $@ $<
+	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) -o $@ $<
 	
 $(PROJECT_OBJECTS): src/main.cpp
-	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu++98 $(INCLUDE_PATHS) -o $@ $<
+	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) -o $@ $<
+	
+#$(BUILD_PATH)/main.o: src/main.cpp
+#	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) $(LIBMAPLE_INCLUDES) $(WIRISH_INCLUDES) -o $@ -c $< 
 
-
-$(BULD_TARGET).elf: $(PROJECT_OBJECTS) $(SYS_OBJECTS)
+$(BUILD_TARGET).elf: $(PROJECT_OBJECTS) $(SYS_OBJECTS)
 	$(LD) $(LD_FLAGS)  $(LIBRARY_PATHS) -o $@ $^ $(PROJECT_LIBRARIES) $(SYS_LIBRARIES) $(PROJECT_LIBRARIES) $(SYS_LIBRARIES)
-#removed : -T$(LINKER_SCRIPT)
-$(BULD_TARGET).bin: $(BULD_TARGET).elf
-	$(OBJCOPY) -O binary $< $@
 
+#removed : -T$(LINKER_SCRIPT)
+# OLD bin elf $(BUILD_TARGET).bin: $(BUILD_TARGET).elf
+	# $(OBJCOPY) -O binary $< $@
+
+$(BUILD_TARGET).bin: $(BUILD_TARGET).elf
+	$(OBJCOPY) -v -Obinary $(BUILD_TARGET).elf $@ 1>/dev/null
+	$(DISAS) -d $(BUILD_TARGET).elf > $(BUILD_TARGET).disas
+	
+upload: $(SKETCHBIN)
+	scripts/reset.py && sleep 1 &&  $(UPLOADER) -a1 -d $(USBID) -D $(BUILD_TARGET).bin -R
