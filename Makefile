@@ -1,104 +1,3 @@
-#MAKEDIR := make
-#
-## Useful tools
-#include $(MAKEDIR)/make-tools.mk
-#include lib/wirish/rules.mk
-#
-#
-#
-## Variables
-#BUILD_PATH := build
-#BOARD = breeze
-#
-#BUILDDIRS :=
-#TGT_BIN   :=
-#
-#MCU_CC_FLAGS = $(CORTEX_M4_HWFP_CC_FLAGS)
-#MCU_LIB_PATH = $(CORTEX_M4_HWFP_LIB_PATH) 
-#
-#LIBMAPLE_PATH := lib/libmaple
-#WIRISH_PATH := lib/wirish
-#LIBMAPLE_INCLUDES := -I$(LIBMAPLE_PATH) -I$(LIBMAPLE_PATH)/usb -I$(LIBMAPLE_PATH)/usb/usb_lib
-#
-#
-#
-#CFLAGS   = $(GLOBAL_CFLAGS) $(TGT_CFLAGS)
-#CXXFLAGS = $(GLOBAL_CXXFLAGS) $(TGT_CXXFLAGS)
-#ASFLAGS  = $(GLOBAL_ASFLAGS) $(TGT_ASFLAGS)
-#
-#
-#
-## target 
-#.PHONY: install
-#
-#all: $(BUILD_PATH)/$(BOARD).bin
-#
-## General directory independent build rules, generate dependency information
-#$(BUILD_PATH)/%.o: %.c
-#	$(SILENT_CC) $(CC) $(CFLAGS) -MMD -MP -MF $(@:%.o=%.d) -MT $@ -o $@ -c $<
-#
-#$(BUILD_PATH)/%.o: %.cpp
-#	$(SILENT_CXX) $(CXX) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(@:%.o=%.d) -MT $@ -o $@ -c $<
-#
-#$(BUILD_PATH)/%.o: %.S
-#	$(SILENT_AS) $(AS) $(ASFLAGS) -MMD -MP -MF $(@:%.o=%.d) -MT $@ -o $@ -c $<
-#
-#
-#$(BUILD_PATH)/main.o: src/main.cpp
-#	$(SILENT_CXX) $(CXX) $(CFLAGS) $(CXXFLAGS) $(LIBMAPLE_INCLUDES) $(WIRISH_INCLUDES) -o $@ -c $< 
-#
-#$(BUILD_PATH)/libmaple.a: $(BUILDDIRS) $(TGT_BIN)
-#	- rm -f $@
-#	$(AR) crv $(BUILD_PATH)/libmaple.a $(TGT_BIN)
-#	
-#	
-#$(BUILD_PATH)/$(BOARD).elf: $(BUILDDIRS) $(TGT_BIN) $(BUILD_PATH)/main.o
-#	$(SILENT_LD) $(CXX) $(LDFLAGS) -o $@ $(TGT_BIN) $(BUILD_PATH)/main.o -Wl,-Map,$(BUILD_PATH)/$(BOARD).map
-#
-#$(BUILD_PATH)/$(BOARD).bin: $(BUILD_PATH)/$(BOARD).elf
-#	$(SILENT_OBJCOPY) $(OBJCOPY) -v -Obinary $(BUILD_PATH)/$(BOARD).elf $@ 1>/dev/null
-#	$(SILENT_DISAS) $(DISAS) -d $(BUILD_PATH)/$(BOARD).elf > $(BUILD_PATH)/$(BOARD).disas
-#	@echo " "
-#	@echo "Object file sizes:"
-#	@find $(BUILD_PATH) -iname *.o | xargs $(SIZE) -t > $(BUILD_PATH)/$(BOARD).sizes
-#	@cat $(BUILD_PATH)/$(BOARD).sizes
-#	@echo " "
-#	@echo "Final Size:"
-#	@$(SIZE) $<
-#	@echo $(MEMORY_TARGET) > $(BUILD_PATH)/build-type
-#
-#$(BUILDDIRS):
-#	@mkdir -p $@
-#
-#library: $(BUILD_PATH)/libmaple.a
-#
-#
-### Conditionally upload to whatever the last build was
-##install: INSTALL_TARGET = $(shell cat $(BUILD_PATH)/build-type 2>/dev/null)
-##install: $(BUILD_PATH)/$(BOARD).bin
-##	@echo "Install target:" $(INSTALL_TARGET)
-##	$(UPLOAD_$(INSTALL_TARGET))
-#
-#clean:
-#	rm -rf build/*
-#	
-#help:
-#	@echo ""
-#	@echo "  Breeze ARM makefile help"
-#	@echo "  ----------------------"
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ######################################################################################
 # GNU GCC ARM Embeded Toolchain base directories and binaries 
@@ -210,11 +109,53 @@ LD_SYS_LIBS = $(SYS_LIBRARIES)
 BUILD_PATH = build
 BUILD_TARGET = $(BUILD_PATH)/$(PROJECT)
 
+   MCU := STM32F103RE
+   PRODUCT_ID := 0003
+   ERROR_LED_PORT := GPIOA
+   ERROR_LED_PIN := 5
+   DENSITY := STM32_HIGH_DENSITY
+   FLASH_SIZE := 524288
+   SRAM_SIZE := 65536
 
 UPLOADER := dfu-util
 USBID := 1EAF:0003
 PRODUCT_ID := 0003
 LD_MEM_DIR := sram_64k_flash_512k
+
+###############################################################################
+# Library
+###############################################################################
+LIB_PATH = lib
+COREOBJS = #$(LIB_PATH)/libmaple/*.o $(LIB_PATH)/libmaple/usb/stm32f1/*.o $(LIB_PATH)/libmaple/stm32f1/*.o $(LIB_PATH)/libmaple/usb/usb_lib/*.o $(LIB_PATH)/libmaple/usb/usb_lib/*.o $(LIB_PATH)/libmaple/stm32f1/performance/*.o $(LIB_PATH)/wirish/*.o $(LIB_PATH)/wirish/boards/maple/*.o $(LIB_PATH)/wirish/stm32f1/*.o $(LIB_PATH)/libraries/Wire/*.o
+COREINCLUDES = -I$(LIB_PATH)/libmaple -I$(LIB_PATH)/wirish -I$(LIB_PATH)/libraries  -I$(LIB_PATH)/libmaple/include/libmaple -I$(LIB_PATH)/wirish/include/wirish   -I$(LIB_PATH)/libmaple/include -I$(LIB_PATH)/libmaple/stm32f1/include -I$(LIB_PATH)/wirish/include -I$(LIB_PATH)/wirish/boards/maple/include  -I$(LIB_PATH)/Wire
+
+# Library object files
+LIBOBJS			:=	$(COREOBJS)
+
+
+#
+# Build sketch objects
+#
+#SKETCH_INCLUDES	= $(COREINCLUDES)
+#SRCROOT = lib/libmaple
+##
+#$(LIB_PATH)/libmaple/*.o: $(LIB_PATH)/libmaple/*.cpp
+#	$(CPP) $(CC_FLAGS) -c -o $@ $< $(SKETCH_INCLUDES)
+##
+#$(LIB_PATH)/*.o: $(SRCROOT)/*.c
+#	$(v)$(CC) $(CC_FLAGS) -c -o $@ $< $(SKETCH_INCLUDES)
+##
+#$(LIB_PATH)/*.o: $(SRCROOT)/*.S
+#	$(v)$(AS) $(CC_FLAGS) -c -o $@ $< $(SKETCH_INCLUDES)
+##	
+##	
+##
+#$(LIB_PATH)/libmaple.a: $(BUILDDIRS) $(TGT_BIN)
+#	- rm -f $@
+#	$(AR) crv $(LIB_PATH)/libmaple.a $(TGT_BIN)
+##
+#library: $(BUILD_PATH)/libmaple.a
+
 
 ############################################################################### 
 # Makefile execution
@@ -241,13 +182,13 @@ clean:
 	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) -o $@ $<
 	
 $(PROJECT_OBJECTS): src/main.cpp
-	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) -o $@ $<
+	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) -Lstaticlib/libmaple.a -o $@ $<
 	
 #$(BUILD_PATH)/main.o: src/main.cpp
 #	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) $(LIBMAPLE_INCLUDES) $(WIRISH_INCLUDES) -o $@ -c $< 
 
-$(BUILD_TARGET).elf: $(PROJECT_OBJECTS) $(SYS_OBJECTS)
-	$(LD) $(LD_FLAGS)  $(LIBRARY_PATHS) -o $@ $^ $(PROJECT_LIBRARIES) $(SYS_LIBRARIES) $(PROJECT_LIBRARIES) $(SYS_LIBRARIES)
+$(BUILD_TARGET).elf: $(PROJECT_OBJECTS) $(SYS_OBJECTS) $(LIBOBJS)
+	$(LD) $(LD_FLAGS)  $(LIBRARY_PATHS) -o $@ $^ $(PROJECT_LIBRARIES) $(SYS_LIBRARIES) $(PROJECT_LIBRARIES) $(SYS_LIBRARIES) -Lstaticlib/libmaple.a
 
 #removed : -T$(LINKER_SCRIPT)
 # OLD bin elf $(BUILD_TARGET).bin: $(BUILD_TARGET).elf
