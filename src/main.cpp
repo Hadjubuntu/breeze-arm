@@ -6,7 +6,8 @@
  */
 
 
-#include "lib/wirish/wirish.h"
+#include "lib/wirish.h"
+#include "lib/io.h"
 
 void setup() {
     pinMode(BOARD_LED_PIN, OUTPUT);

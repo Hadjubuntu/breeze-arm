@@ -62,6 +62,54 @@ DEBUG_LEVEL       =
 OPTIM_LEVEL       = 
 LINKER_SCRIPT     = ./cortex-rm.ld
 PROJECT_OBJECTS   = main.o
+LIB_OBJECTS		  =	src/lib/rcc.o \
+					src/lib/adc.o \
+					src/lib/bkp.o \
+					src/lib/boards.o \
+					src/lib/cxxabi-compat.o \
+					src/lib/dac.o \
+					src/lib/ext_interrupts.o \
+					src/lib/exti.o
+					
+					
+LO0 = src/lib/rcc.o
+LO01 = src/lib/dma.o
+LO02 = src/lib/gpio.o
+LO04 = src/lib/flash.o
+LO05 = src/lib/fsmc.o
+LO06 = src/lib/iwdg.o
+LO07 = src/lib/nvic.o
+LO08 = src/lib/pwr.o
+LO09 = src/lib/i2c.o
+LO010 = src/lib/spi.o
+LO011 = src/lib/syscalls.o
+LO012 = src/lib/systick.o
+LO013 = src/lib/timer.o
+LO014 = src/lib/usart.o
+LO015 = src/lib/util.o
+LO016 = src/lib/usb.o
+LO017 = src/lib/usb_reg_map.o
+LO018 = src/lib/usb_cdcacm.o
+LO019 = src/lib/usb_core.o
+LO020 = src/lib/usb_init.o
+LO021 = src/lib/usb_mem.o
+LO022 = src/lib/usb_regs.o
+LO1 = src/lib/adc.o
+LO2 = src/lib/bkp.o
+LO3 = src/lib/boards.o
+LO4 = src/lib/cxxabi-compat.o
+LO5 = src/lib/dac.o
+LO6 = src/lib/ext_interrupts.o
+LO7 = src/lib/exti.o
+
+LO80 = src/lib/wirish_analog.o
+LO81 = src/lib/wirish_digital.o
+LO82 = src/lib/wirish_math.o
+LO83 = src/lib/wirish_shift.o
+LO84 = src/lib/wirish_time.o
+
+LO90 = src/lib/maple_RET6.o
+					
 PROJECT_INC_PATHS = -I.
 PROJECT_LIB_PATHS = -L.
 PROJECT_LIBRARIES =
@@ -130,7 +178,8 @@ COREOBJS = #$(LIB_PATH)/libmaple/*.o $(LIB_PATH)/libmaple/usb/stm32f1/*.o $(LIB_
 COREINCLUDES = -I$(LIB_PATH)/libmaple -I$(LIB_PATH)/wirish -I$(LIB_PATH)/libraries  -I$(LIB_PATH)/libmaple/include/libmaple -I$(LIB_PATH)/wirish/include/wirish   -I$(LIB_PATH)/libmaple/include -I$(LIB_PATH)/libmaple/stm32f1/include -I$(LIB_PATH)/wirish/include -I$(LIB_PATH)/wirish/boards/maple/include  -I$(LIB_PATH)/Wire
 
 # Library object files
-LIBOBJS			:=	$(COREOBJS)
+LIBCOMPILE 		:= src/lib/
+# $(COREOBJS)
 
 
 #
@@ -161,6 +210,7 @@ LIBOBJS			:=	$(COREOBJS)
 # Makefile execution
 ###############################################################################
 
+
 all: $(BUILD_TARGET).bin
 
 flymaple-upload: upload
@@ -169,7 +219,7 @@ flymaple-upload: upload
 
 
 clean:
-	rm -f $(BUILD_TARGET).bin $(BUILD_TARGET).elf $(PROJECT_OBJECTS) $(BUILD_PATH)/*
+	rm -f $(BUILD_TARGET).bin $(BUILD_TARGET).elf $(PROJECT_OBJECTS) $(BUILD_PATH)/* src/lib/*.o
 	
 	
 .s.o:
@@ -182,13 +232,98 @@ clean:
 	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) -o $@ $<
 	
 $(PROJECT_OBJECTS): src/main.cpp
-	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) -Lstaticlib/libmaple.a -o $@ $<
+	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) -o $@ $<
+	
+	
+$(LIB_OBJECTS): src/lib/*.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS) -o $@ $<
+	
+# OK NOT NICE BUT I DONT SUCCEED TO COMPILE ALL OBJECT AT ONCE
+
+$(LO0): src/lib/rcc.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO01): src/lib/dma.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO02): src/lib/gpio.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO04): src/lib/flash.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO05): src/lib/fsmc.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO06): src/lib/iwdg.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO07): src/lib/nvic.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO08): src/lib/pwr.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO09): src/lib/i2c.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO010): src/lib/spi.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO011): src/lib/syscalls.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO012): src/lib/systick.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO013): src/lib/timer.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO014): src/lib/usart.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO015): src/lib/util.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO016): src/lib/usb.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+
+
+$(LO017): src/lib/usb_reg_map.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO018): src/lib/usb_cdcacm.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO019): src/lib/usb_core.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO020): src/lib/usb_init.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO021): src/lib/usb_mem.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO022): src/lib/usb_regs.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+
+
+
+$(LO1): src/lib/adc.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS)  -o $@ $<
+$(LO2): src/lib/bkp.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS) -o $@ $<
+$(LO3): src/lib/boards.cpp
+	$(CPP)  $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11   $(INCLUDE_PATHS) -o $@ $<
+$(LO4): src/lib/cxxabi-compat.cpp
+	$(CPP)  $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11   $(INCLUDE_PATHS) -o $@ $<
+$(LO5): src/lib/dac.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS) -o $@ $<
+$(LO6): src/lib/ext_interrupts.cpp
+	$(CPP)  $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11   $(INCLUDE_PATHS) -o $@ $<
+$(LO7): src/lib/exti.c
+	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS) -o $@ $<
+	
+$(LO80): src/lib/wirish_analog.cpp
+	$(CPP)  $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11   $(INCLUDE_PATHS) -o $@ $<
+$(LO81): src/lib/wirish_digital.cpp
+	$(CPP)  $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11   $(INCLUDE_PATHS) -o $@ $<
+$(LO82): src/lib/wirish_math.cpp
+	$(CPP)  $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11   $(INCLUDE_PATHS) -o $@ $<
+$(LO83): src/lib/wirish_shift.cpp
+	$(CPP)  $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11   $(INCLUDE_PATHS) -o $@ $<
+$(LO85): src/lib/wirish_time.cpp
+	$(CPP)  $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11   $(INCLUDE_PATHS) -o $@ $<
+	
+	
+$(LO90): src/lib/maple_RET6.cpp
+	$(CPP)  $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11   $(INCLUDE_PATHS) -o $@ $<
 	
 #$(BUILD_PATH)/main.o: src/main.cpp
 #	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=c++11 $(INCLUDE_PATHS) $(LIBMAPLE_INCLUDES) $(WIRISH_INCLUDES) -o $@ -c $< 
 
-$(BUILD_TARGET).elf: $(PROJECT_OBJECTS) $(SYS_OBJECTS) $(LIBOBJS)
-	$(LD) $(LD_FLAGS)  $(LIBRARY_PATHS) -o $@ $^ $(PROJECT_LIBRARIES) $(SYS_LIBRARIES) $(PROJECT_LIBRARIES) $(SYS_LIBRARIES) -Lstaticlib/libmaple.a
+$(BUILD_TARGET).elf: $(PROJECT_OBJECTS) $(SYS_OBJECTS) $(LO90) $(LO80) $(LO81) $(LO82) $(LO83) $(LO84) $(LO022) $(LO021)  $(LO020) $(LO019) $(LO018) $(LO017) $(LO016) $(LO015) $(LO014) $(LO013) $(LO012) $(LO011) $(LO010) $(LO09) $(LO08) $(LO07) $(LO06) $(LO05) $(LO04) $(LO02) $(LO01) $(LO0) $(LO1) $(LO2) $(LO3) $(LO4) $(LO5) $(LO6) $(LO7)
+	$(LD) $(LD_FLAGS)  $(LIBRARY_PATHS) -o $@ $^ $(PROJECT_LIBRARIES) $(SYS_LIBRARIES) $(PROJECT_LIBRARIES) $(SYS_LIBRARIES)
 
 #removed : -T$(LINKER_SCRIPT)
 # OLD bin elf $(BUILD_TARGET).bin: $(BUILD_TARGET).elf
