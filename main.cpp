@@ -106,7 +106,7 @@ void writeArr(void * varr, uint8 arr_length, uint8 type_bytes)
   {
     writeVar(&arr[i * type_bytes], type_bytes);
   }
-}
+}u
 
 
 // thanks to Francesco Ferrara and the Simplo project for the following code!
