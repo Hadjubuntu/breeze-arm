@@ -8,6 +8,7 @@
 #include "libmaple/i2c.h"
 
 
+
 ////////Acceleration sensor ADXL345 function/////////////////////////////
 #define ACC (0x53)    //Defined ADXL345 address, ALT ADDRESS pin is grounded
 #define A_TO_READ (6) //the number of bytes to read(each axis accounted for two-byte)

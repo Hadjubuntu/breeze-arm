@@ -80,6 +80,9 @@ LIBMAPLE_MODULES += $(SRCROOT)/libraries/Wire
 # Experimental libraries:
 LIBMAPLE_MODULES += $(SRCROOT)/libraries/FreeRTOS
 
+#Own Breeze librairies
+LIBMAPLE_MODULES += $(SRCROOT)/src/core
+
 # User modules:
 ifneq ($(USER_MODULES),)
 LIBMAPLE_MODULES += $(USER_MODULES)
