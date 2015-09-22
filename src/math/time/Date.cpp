@@ -5,10 +5,25 @@
  *      Author: adrien
  */
 
+#include <wirish/wirish.h>
 #include "Date.h"
 
-Date::Date() {
-	// TODO Auto-generated constructor stub
 
+
+int Date::compareTo(Date& date)
+{
+	if (_timeElapsedSinceStartUs < date.getTimeElapsedSinceStartUs()) {
+		return -1;
+	}
+	else if (_timeElapsedSinceStartUs == date.getTimeElapsedSinceStartUs()) {
+		return 0;
+	}
+	else {
+		return 1;
+	}
 }
 
+float Date::durationFrom(Date& date)
+{
+	return DateUtils::microToSeconds(_timeElapsedSinceStartUs - date.getTimeElapsedSinceStartUs());
+}

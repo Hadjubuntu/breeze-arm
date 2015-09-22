@@ -6,7 +6,7 @@
 #include <vector>
 #include "libraries/Wire/Wire.h"
 #include "libmaple/i2c.h"
-
+#include "src/core/Brain.h"
 
 
 ////////Acceleration sensor ADXL345 function/////////////////////////////
@@ -205,6 +205,8 @@ void getAccelerometerData(int16 * result)
 	result[2] = ((((int16)buff[5]) << 8) | buff[4]) - a_offset[2];
 }
 
+Brain uavBrain;
+
 
 void setup() {
 	/* Set up the LED to blink  */
@@ -217,6 +219,7 @@ void setup() {
 	 i2c_master_enable(I2C1, I2C_FAST_MODE);
 
 	initAcc();
+
 }
 
 void loop() {
@@ -228,8 +231,10 @@ void loop() {
 	getAccelerometerData(accData);
 
 	char str[60];
-	sprintf(str, "accX: %d | accY: %d", accData[0], accData[1]);
+	sprintf(str, "accX: %d | accY: %d | tick: %lu", accData[0], accData[1], uavBrain.getTickId());
 	Serial3.println(str);
+
+	uavBrain.loop();
 
 	delay(500);
 }

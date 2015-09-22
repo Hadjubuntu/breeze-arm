@@ -10,23 +10,37 @@
 
 #include <vector>
 
-using namespace std;
-
+/**
+ * Class keeping history of a generic object T
+ */
 template <class T>
 class History {
 private:
 	int _size;
-	vector<T> _history;
+	std::vector<T> _history;
 public:
 	/**
 	 * Constructor
 	 */
-	History();
+	History(int size) : _size(size) {
+		_history.reserve(_size);
+	}
+
+
+	/**
+	 * Add element to history
+	 */
+	void add(T e);
 
 	/**
 	 * Erase history
 	 */
 	void clear();
+
+	static History<T> getDefault() {
+		History<T> e(10);
+		return e;
+	}
 };
 
 #endif /* CORE_HISTORY_H_ */

@@ -7,8 +7,17 @@
 
 #include "History.h"
 
-template <class T>
-History<T>::History() {
-	_size = 10;
+
+
+template<class T>
+void History<T>::add(T element)
+{
+	_history.push_back(element);
 }
 
+
+template<class T>
+void History<T>::clear()
+{
+	_history.erase();
+}
