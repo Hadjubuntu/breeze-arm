@@ -10,6 +10,7 @@
 
 #include "../../core/Processing.h"
 #include "../../math/vector/Quaternion.h"
+#include "../../peripherals/IMU/Accelerometer.h"
 
 class AHRS : public Processing {
 private:
@@ -19,6 +20,7 @@ private:
 	/** Gyroscope */
 
 	/** Accelerometer */
+	Accelerometer _accelerometer;
 
 public:
 	AHRS();

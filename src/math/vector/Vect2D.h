@@ -16,8 +16,9 @@ public:
 	/**
 	 * Default constructor
 	 */
-	Vect2D(double x, double y);
+	Vect2D(float x, float y) : _x(x), _y(y) {
 
+	}
 
 	/** *************************************************
 	 * Basic functions on vectors
@@ -33,19 +34,20 @@ public:
 	/** *************************************************
 	 * Operators
 	 ************************************************** */
-	Vect2D operator*(float scalar) const
-	{
+	Vect2D operator*(float scalar) const {
 		return Vect2D(_x * scalar, _y * scalar);
 	}
-
-	Vect2D operator+(const Vect2D &vect) const
-	{
+	Vect2D operator+(const Vect2D &vect) const {
 		return Vect2D(_x + vect._x, _y + vect._y);
 	}
-
-	Vect2D operator-(const Vect2D &vect) const
-	{
+	Vect2D operator-(const Vect2D &vect) const {
 		return Vect2D(_x - vect._x, _y - vect._y);
+	}
+	Vect2D operator*(const Vect2D &vect) const {
+		return Vect2D(_x * vect._x, _y * vect._y);
+	}
+	Vect2D operator/(const Vect2D &vect) const {
+		return Vect2D(_x / vect._x, _y / vect._y);
 	}
 
 	/** *************************************************

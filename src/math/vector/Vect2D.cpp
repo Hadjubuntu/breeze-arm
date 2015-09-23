@@ -7,8 +7,3 @@
 
 #include "Vect2D.h"
 
-Vect2D::Vect2D(double x, double y) {
-	_x = x;
-	_y = y;
-}
-
