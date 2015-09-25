@@ -7,6 +7,7 @@
 #include "libraries/Wire/Wire.h"
 #include "libmaple/i2c.h"
 #include "src/core/Brain.h"
+#include "src/processing/ahrs/AHRS.h"
 
 
 ////////Acceleration sensor ADXL345 function/////////////////////////////
@@ -206,7 +207,7 @@ void getAccelerometerData(int16 * result)
 }
 
 Brain uavBrain;
-
+AHRS ahrs;
 
 void setup() {
 	/* Set up the LED to blink  */
@@ -218,12 +219,11 @@ void setup() {
 
 	 i2c_master_enable(I2C1, I2C_FAST_MODE);
 
-	initAcc();
-
+	 ahrs.initSensors();
 }
 
-void loop() {
-
+void loop()
+{
 
 	toggleLED();
 
@@ -231,7 +231,7 @@ void loop() {
 	getAccelerometerData(accData);
 
 	char str[60];
-	sprintf(str, "accX: %d | accY: %d | tick: %lu", accData[0], accData[1], uavBrain.getTickId());
+	sprintf(str, "accX: %d | accY: %d | tickId: %lu", accData[0], accData[1], uavBrain.getTickId());
 	Serial3.println(str);
 
 	uavBrain.loop();

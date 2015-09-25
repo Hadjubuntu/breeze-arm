@@ -66,11 +66,15 @@ public:
 		_y = vect._y;
 		_z = vect._z;
 	}
-	void operator=(float array[]) {
-		_x = array[0];
-		_y = array[1];
-		_z = array[2];
-	}
+
+
+	/** *************************************************
+		 * Setter
+		 ************************************************** */
+	void setX(float x) { _x = x; }
+	void setY(float y) { _y = y; }
+	void setZ(float z) { _z = z; }
+	void set(float x, float y, float z) { _x = x; _y = y; _z = z; }
 
 	/** *************************************************
 	 * Getters

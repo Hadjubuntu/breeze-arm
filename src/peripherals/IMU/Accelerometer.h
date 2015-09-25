@@ -55,9 +55,19 @@ public:
 
 	}
 
+	/** Initialize accelerometer */
 	void init();
 
-	void read();
+	/** Read new data sensor */
+	void update();
+
+	/**
+	 * Create a new accelerometer instance
+	 */
+	static Accelerometer create() {
+		Accelerometer e;
+		return e;
+	}
 };
 
 #endif /* PERIPHERALS_IMU_ACCELEROMETER_H_ */

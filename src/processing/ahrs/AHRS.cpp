@@ -7,7 +7,12 @@
 
 #include "AHRS.h"
 
-AHRS::AHRS() : _attitude(Quaternion::zero()) {
+AHRS::AHRS() : _attitude(Quaternion::zero()), _accelerometer(Accelerometer::create())
+{
 
 }
 
+void AHRS::initSensors()
+{
+	_accelerometer.init();
+}
