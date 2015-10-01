@@ -11,6 +11,7 @@
 #include "../../core/Processing.h"
 #include "../../math/vector/Quaternion.h"
 #include "../../peripherals/IMU/Accelerometer.h"
+#include "../../peripherals/IMU/Gyro.h"
 
 class AHRS : public Processing {
 private:
@@ -18,6 +19,7 @@ private:
 	Quaternion _attitude;
 
 	/** Gyroscope */
+	Gyro _gyro;
 
 	/** Accelerometer */
 	Accelerometer _accelerometer;
@@ -34,6 +36,12 @@ public:
 	 * Process and update data
 	 */
 	void process();
+
+	/******************************************************
+	 * GETTERS
+	 *****************************************************/
+	Accelerometer getAcc() { return _accelerometer; }
+	Gyro getGyro() { return _gyro; }
 };
 
 #endif /* PROCESSING_AHRS_AHRS_H_ */

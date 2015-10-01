@@ -14,7 +14,7 @@ private:
 
 public:
 	I2C(uint8 deviceAddr) : _deviceAddr(deviceAddr) {
-
+//		reset();
 	}
 
 	/**
@@ -30,11 +30,16 @@ public:
 	 */
 	int readFrom(uint8 addr, uint8 nbBytes, uint8 *msgData);
 
+
+	void reset();
+
+
 	/** Return instance */
 	static I2C getInstance(uint8 deviceAddr) {
 		I2C instance(deviceAddr);
 		return instance;
 	}
+
 };
 
 #endif /* PERIPHERALS_I2C_I2C_H_ */

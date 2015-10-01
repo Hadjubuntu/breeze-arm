@@ -12,9 +12,9 @@
 #include "../../peripherals/I2C/I2C.h"
 
 ////////Acceleration sensor ADXL345 function/////////////////////////////
-#define ACC (0x53)    //Defined ADXL345 address, ALT ADDRESS pin is grounded
-#define A_TO_READ (6) //the number of bytes to read(each axis accounted for two-byte)
-#define XL345_DEVID   0xE5 //ADXL345 ID register，需要注意芯片有一个地址选择线将AD0连接到GND口
+#define ACC (0x53)    // Defined ADXL345 address, ALT ADDRESS pin is grounded
+#define A_TO_READ (6) // Number of bytes to read(each axis accounted for two-byte)
+#define XL345_DEVID   0xE5 // ADXL345 ID register
 // ADXL345 Control register
 #define ADXLREG_TAP_AXES     0x2A
 #define ADXLREG_BW_RATE      0x2C
@@ -33,6 +33,8 @@
 #define ADXLREG_DATAZ0       0x36
 #define ADXLREG_DATAZ1       0x37
 
+#define ACC_SENSITIVITY 0.003906f
+
 
 class Accelerometer
 {
@@ -47,6 +49,9 @@ class Accelerometer
 	/** Initial offset acceleration */
 	Vect3D _offset;
 public:
+	/**
+	 * Constructor
+	 */
 	Accelerometer() :
 		_i2c(I2C::getInstance(ACC)),
 		_accFiltered(Vect3D::zero()),
@@ -68,6 +73,20 @@ public:
 		Accelerometer e;
 		return e;
 	}
+
+
+	/****************************************************
+	 * GETTERS
+	 ***************************************************/
+	Vect3D getAccRaw() {
+		return _accRaw;
+	}
+	Vect3D getAccFiltered() {
+		return _accFiltered;
+	}
+
+	// TODO to be deleted
+	I2C getI2C() { return _i2c; }
 };
 
 #endif /* PERIPHERALS_IMU_ACCELEROMETER_H_ */

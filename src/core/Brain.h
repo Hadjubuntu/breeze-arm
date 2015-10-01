@@ -12,7 +12,6 @@
 #include "../math/time/Date.h"
 #include "Processing.h"
 
-
 /**
  * The brain manage time by calling processing needed to be executed on the schedule
  */
@@ -44,6 +43,7 @@ public:
 
 	/** Loop */
 	void loop();
+
 
 
 	// Getters

@@ -14,7 +14,6 @@ Processing::Processing() : _freqHz(50), _lastExecutionDate(Date::zero()) {
 
 void Processing::process()
 {
-
 	// Update last execution date
 	_lastExecutionDate = Date::now();
 }

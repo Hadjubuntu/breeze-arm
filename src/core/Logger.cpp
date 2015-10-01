@@ -9,18 +9,18 @@
 #include <wirish/wirish.h>
 #include "Logger.h"
 
-	void Logger::info(const char str[])
+void Logger::info(const char str[])
+{
+	if (_mode == INFO || _mode == DEBUG)
 	{
-		if (_mode == INFO || _mode == DEBUG)
-		{
-			Serial3.println(str);
-		}
+		Serial3.println(str);
 	}
+}
 
-	void Logger::debug(const char str[])
-	{
-		if (_mode == DEBUG) {
-			Serial3.println(str);
-		}
+void Logger::debug(const char str[])
+{
+	if (_mode == DEBUG) {
+		Serial3.println(str);
 	}
+}
 

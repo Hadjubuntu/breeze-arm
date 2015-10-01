@@ -23,7 +23,7 @@ def unix_get_maple_path(file_prefix, dev_is_maple=lambda dev: True):
                       if x.startswith(file_prefix) and dev_is_maple(x)]
     return choose_path(possible_paths)
 
-def linux_get_maple_path(file_prefix='ttyACM'):
+def linux_get_maple_path(file_prefix='ttyUSB'):
     """Specialized unix_get_maple_path() for Linux.
 
     Attempts to check that a candidate device has the correct ID in
@@ -87,8 +87,8 @@ if plat_sys == 'Linux':
     maple_path = linux_get_maple_path()
     # fall back on /dev/maple if that doesn't work
     if maple_path is None:
-        maple_path = '/dev/maple'
-        print('Could not find Maple serial port; defaulting to /dev/maple.')
+        maple_path = '/dev/ttyUSB0'
+        print('Could not find Maple serial port; defaulting to /dev/ttyUSB0.')
 elif plat_sys == 'Darwin':
     maple_path = unix_get_maple_path('tty.usbmodem')
 elif plat_sys == 'Windows':
