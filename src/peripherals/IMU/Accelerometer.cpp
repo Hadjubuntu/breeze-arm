@@ -86,9 +86,12 @@ void Accelerometer::update()
 	result[2] = ((((int16) buff[5]) << 8) | buff[4]) ;
 
 	Vect3D cAcc = Vect3D::zero();
-	cAcc.setX((result[0] - _offset.getX()) * ACC_SENSITIVITY);
-	cAcc.setY((result[1] - _offset.getY()) * ACC_SENSITIVITY);
-	cAcc.setZ((result[2] - _offset.getZ()) * ACC_SENSITIVITY);
+	cAcc.setX(result[0] * ACC_SENSITIVITY);
+	cAcc.setY(result[1] * ACC_SENSITIVITY);
+	cAcc.setZ(result[2] * ACC_SENSITIVITY);
+
+	// Retrieve offset
+	cAcc -= _offset;
 
 	_accRaw = cAcc;
 	_accFiltered = cAcc;

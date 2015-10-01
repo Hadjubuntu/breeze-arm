@@ -1,0 +1,4 @@
+# Breeze-Arm
+# Ignore some file
+build/*
+*.tar.gz
