@@ -9,8 +9,8 @@
 #include "src/core/Brain.h"
 #include "src/processing/ahrs/AHRS.h"
 
-Brain uavBrain;
 AHRS ahrs;
+Brain uavBrain;
 
 void setup() {
 	/* Set up the LED to blink  */
@@ -22,6 +22,7 @@ void setup() {
 
 	i2c_master_enable(I2C1, I2C_FAST_MODE);
 
+	uavBrain.addProcessing(&ahrs);
 	ahrs.initSensors();
 }
 
@@ -29,17 +30,22 @@ void loop()
 {
 	toggleLED();
 
-
-	ahrs.process();
 	uavBrain.loop();
 
-	if (uavBrain.getTickId() % 200 == 0)
+	if (uavBrain.getTickId() % 100 == 0)
 	{
+//		char str[90];
+//		sprintf(str, "Gyro [%.2f, %.2f, %.2f]",
+//				ahrs.getGyro().getGyroFiltered().getX(),
+//				ahrs.getGyro().getGyroFiltered().getY(),
+//				ahrs.getGyro().getGyroFiltered().getZ()
+//		);
+
 		char str[90];
-		sprintf(str, "Gyro [%.2f, %.2f, %.2f]",
-				ahrs.getGyro().getGyroFiltered().getX(),
-				ahrs.getGyro().getGyroFiltered().getY(),
-				ahrs.getGyro().getGyroFiltered().getZ()
+		sprintf(str, "Acc [%.2f, %.2f, %.2f]",
+				ahrs.getAcc().getAccRaw().getX(),
+				ahrs.getAcc().getAccRaw().getY(),
+				ahrs.getAcc().getAccRaw().getZ()
 		);
 
 		Serial3.println(str);

@@ -63,30 +63,41 @@ public:
 			return _z;
 		}
 	}
-	void operator=(Vect3D &vect) {
+	Vect3D operator=(Vect3D &vect) {
 		_x = vect._x;
 		_y = vect._y;
 		_z = vect._z;
+		return (*this);
 	}
-	void operator=(float array[]) {
+	Vect3D operator=(float array[]) {
 		_x = array[0];
 		_y = array[1];
 		_z = array[2];
+		return (*this);
 	}
-	void operator=(int16 array[]) {
+	Vect3D operator=(int16 array[]) {
 		_x = (float) array[0];
 		_y = (float) array[1];
 		_z = (float) array[2];
+		return (*this);
 	}
-	void operator-=(Vect3D vect)	{
+	Vect3D operator+=(Vect3D vect)	{
+		_x += vect._x;
+		_y += vect._y;
+		_z += vect._z;
+		return (*this);
+	}
+	Vect3D operator-=(Vect3D vect)	{
 		_x -= vect._x;
 		_y -= vect._y;
 		_z -= vect._z;
+		return (*this);
 	}
-	void operator*=(float scalar) {
+	Vect3D operator*=(float scalar) {
 		_x *= scalar;
 		_y *= scalar;
 		_z *= scalar;
+		return (*this);
 	}
 	/** *************************************************
 	 * Setter
@@ -108,6 +119,10 @@ public:
 
 	float getZ() {
 		return _z;
+	}
+
+	float getNorm() {
+		return _x*_x + _y*_y + _z*_z;
 	}
 
 	/** *************************************************

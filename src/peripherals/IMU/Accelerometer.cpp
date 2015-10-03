@@ -76,6 +76,7 @@ void Accelerometer::init()
 
 void Accelerometer::update()
 {
+	// Retrieve raw data from I2C
 	uint8 buff[A_TO_READ];
 
 	_i2c.readFrom(ADXLREG_DATAX0, A_TO_READ, buff);
@@ -85,10 +86,11 @@ void Accelerometer::update()
 	result[1] = ((((int16) buff[3]) << 8) | buff[2]) ;
 	result[2] = ((((int16) buff[5]) << 8) | buff[4]) ;
 
-	Vect3D cAcc = Vect3D::zero();
-	cAcc.setX(result[0] * ACC_SENSITIVITY);
-	cAcc.setY(result[1] * ACC_SENSITIVITY);
-	cAcc.setZ(result[2] * ACC_SENSITIVITY);
+	// Create vector 3D from array of int16
+	Vect3D cAcc = Vect3D::fromInt16Array(result);
+
+	// Apply scale factor from LSB to g
+	cAcc *= ACC_SENSITIVITY;
 
 	// Retrieve offset
 	cAcc -= _offset;

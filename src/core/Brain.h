@@ -11,6 +11,7 @@
 #include "History.h"
 #include "../math/time/Date.h"
 #include "Processing.h"
+#include "../processing/ahrs/AHRS.h"
 
 /**
  * The brain manage time by calling processing needed to be executed on the schedule
@@ -27,10 +28,12 @@ private:
 	Date _referenceDate;
 
 	// Processing needed to be executed
-	std::vector<Processing> _processings;
+	std::vector<Processing*> _processings;
 
 	// History of link command
 	History<int> _commands;
+
+	AHRS _ahrs;
 public:
 	/**
 	 * Initialize brain
@@ -38,7 +41,7 @@ public:
 	Brain();
 
 	/** Add a new processing on the scheduler */
-	void addProcessing(Processing& e) { _processings.push_back(e); }
+	void addProcessing(Processing *e) { _processings.push_back(e); }
 
 
 	/** Loop */

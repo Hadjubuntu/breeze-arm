@@ -8,14 +8,7 @@
 #include "Processing.h"
 #include "../math/time/Date.h"
 
-Processing::Processing() : _freqHz(50), _lastExecutionDate(Date::zero()) {
-}
-
-
-void Processing::process()
-{
-	// Update last execution date
-	_lastExecutionDate = Date::now();
+Processing::Processing() : _freqHz(50), _lastExecutionDate(Date::zero()), _dt(0.0) {
 }
 
 

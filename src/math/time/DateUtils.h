@@ -10,21 +10,19 @@
 
 #include "Date.h"
 
-// Date constants
-//------------------------------------------
-#define S_TO_NS 1000000l
-
 
 /**
  * Useful function to manipulate dates
  */
 class DateUtils {
+private:
+	static constexpr float S_TO_US = 1000000.0f;
 public:
 	/**
 	 * Transform delta time in microseconds into delta time in seconds
 	 */
 	static float microToSeconds(long dt) {
-		return (float) (dt / S_TO_NS);
+		return ((float) dt / S_TO_US);
 	}
 
 

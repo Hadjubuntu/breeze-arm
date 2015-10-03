@@ -17,7 +17,6 @@
 Brain::Brain() : _referenceDate(Date::zero()), _commands(History<int>::getDefault()) {
 	_tickId = 0;
 	_referenceDate.setTimElapsedSinceStartUs(micros());
-
 }
 
 
@@ -25,13 +24,16 @@ Brain::Brain() : _referenceDate(Date::zero()), _commands(History<int>::getDefaul
 void Brain::loop()
 {
 	// For each processing
-	for (Processing proc : _processings)
+	for (Processing *proc : _processings)
 	{
 		// Check if the processing needs to be executed
-		if (proc.isReady())
+		if (proc->isReady())
 		{
+			// Update execution date
+			proc->updateExecDate();
+
 			// Then execute the processing
-			proc.process();
+			proc->process();
 		}
 	}
 

@@ -14,18 +14,30 @@
  * Abstract class of a processing
  */
 class Processing {
-private:
+protected:
 	/** Frequency of process function calling (Hertz) */
 	int _freqHz;
 	/** Date last execution */
 	Date _lastExecutionDate;
+	/** Last dt (Seconds) */
+	float _dt;
 public:
 	Processing();
 
-	/**
-	 * Execute the processsing
-	 */
-	void process();
+	virtual void process() = 0;
+
+	void updateExecDate()
+	{
+		// Get now date
+		Date now = Date::now();
+
+		// Store dt
+		_dt = now.durationFrom(_lastExecutionDate);
+
+		// Update last execution date
+		_lastExecutionDate = now;
+	}
+
 
 	/**
 	 * Tells whether the processing needs to be called again or not

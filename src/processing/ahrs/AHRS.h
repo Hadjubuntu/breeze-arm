@@ -15,6 +15,9 @@
 
 class AHRS : public Processing {
 private:
+	/** Rotation gravity body frame */
+	Vect3D _grot;
+
 	/** Quaternion of attitude */
 	Quaternion _attitude;
 

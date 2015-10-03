@@ -18,7 +18,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	Date(long timeElapsedSinceStartNs)  : _timeElapsedSinceStartUs(timeElapsedSinceStartNs) {
+	Date(long timeElapsedSinceStartUs)  : _timeElapsedSinceStartUs(timeElapsedSinceStartUs) {
 	}
 
 
