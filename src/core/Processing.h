@@ -8,6 +8,7 @@
 #ifndef CORE_PROCESSING_H_
 #define CORE_PROCESSING_H_
 
+#include "../core/Logger.h"
 #include "../math/time/Date.h"
 
 /**
@@ -15,10 +16,15 @@
  */
 class Processing {
 protected:
+	/** Internal logger */
+	Logger _logger;
+
 	/** Frequency of process function calling (Hertz) */
 	int _freqHz;
+
 	/** Date last execution */
 	Date _lastExecutionDate;
+
 	/** Last dt (Seconds) */
 	float _dt;
 public:

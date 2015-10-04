@@ -17,19 +17,16 @@ enum LoggerMode
 	OPERATIONNAL
 };
 
+
 class Logger {
 private:
-	static Logger _instance;
 	LoggerMode _mode;
 public:
-	Logger() : _mode(DEBUG) {
-
-	}
+	Logger();
 
 	void info(const char str[]) ;
 	void debug(const char str[]);
-
+	void error(const char str[]);
 };
-
 
 #endif /* CORE_LOGGER_H_ */

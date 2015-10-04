@@ -5,6 +5,7 @@
  *      Author: adrien
  */
 
+#include <stdio.h>
 #include "AHRS.h"
 
 inline float _fast_invsqrtf(float v)   // rel. err. < 0.07%
@@ -17,13 +18,21 @@ inline float _fast_invsqrtf(float v)   // rel. err. < 0.07%
 
 float gyro_correct_int[2];
 
-AHRS::AHRS() : _grot(Vect3D::zero()), _attitude(Quaternion::zero()),
+AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
+		_attitude(Quaternion::zero()),
 		_gyro(Gyro::create()),
 		_accelerometer(Accelerometer::create())
 {
 	// 400 Hz update
 	_freqHz = 400;
+
+	gyro_correct_int[0] = 0.0;
+	gyro_correct_int[1] = 0.0;
+	_roll = 0.0;
+	_pitch = 0.0;
+	_yaw = 0.0;
 }
+
 
 void AHRS::initSensors()
 {
@@ -31,36 +40,28 @@ void AHRS::initSensors()
 	_gyro.init();
 }
 
-void Quaternion2RPY(Quaternion q, float rpy[3])
-{
-    float R13, R11, R12, R23, R33;
-    float q0s = q[0] * q[0];
-    float q1s = q[1] * q[1];
-    float q2s = q[2] * q[2];
-    float q3s = q[3] * q[3];
 
-    R13    = 2 * (q[1] * q[3] - q[0] * q[2]);
-    R11    = q0s + q1s - q2s - q3s;
-    R12    = 2 * (q[1] * q[2] + q[0] * q[3]);
-    R23    = 2 * (q[2] * q[3] + q[0] * q[1]);
-    R33    = q0s - q1s - q2s + q3s;
-
-    float RAD2DEG = 57.29577951;
-
-    rpy[1] = RAD2DEG * asinf(-R13); // pitch always between -pi/2 to pi/2
-    rpy[2] = RAD2DEG * atan2f(R12, R11);
-    rpy[0] = RAD2DEG * atan2f(R23, R33);
-
-    // TODO: consider the cases where |R13| ~= 1, |pitch| ~= pi/2
-}
 
 void AHRS::process()
 {
-	const float accelKi = 0.0005;
-	const float accelKp = 0.004;
+	const float accelKi = 0.0001;
+	const float accelKp = 0.03;
+	const float rollPitchBiasRate = 0.01;
 
 	_accelerometer.update();
 	_gyro.update();
+
+	// Retrieve Gyro
+	Vect3D gyros = _gyro.getGyroFiltered();
+	// Correct value
+	gyros.setX(gyros.getX() + gyro_correct_int[0]);
+	gyros.setY(gyros.getY() + gyro_correct_int[1]);
+	// TODO zeroing the z axis gyro val
+
+	// Zeroing error
+	// Force the roll & pitch gyro rates to average to zero
+	gyro_correct_int[0] *= rollPitchBiasRate;
+	gyro_correct_int[1] *= rollPitchBiasRate;
 
 	// TODO as https://github.com/openpilot/OpenPilot/blob/master/flight/modules/Attitude/attitude.c
 	//---------------------
@@ -77,7 +78,7 @@ void AHRS::process()
 	if (invAccelMag > 1e3f) {
 		return;
 	}
-	float  invGRotMag = _fast_invsqrtf(_gyro.getGyroFiltered().getNorm());
+	float  invGRotMag = _fast_invsqrtf(gyros.getNorm());
 
 	if (invGRotMag > 1e3f) {
 		return;
@@ -89,10 +90,12 @@ void AHRS::process()
 	gyro_correct_int[0] += accelError[0] * accelKi;
 	gyro_correct_int[1] += accelError[1] * accelKi;
 
+
 	// Correct rates based on error, integral component dealt with in updateSensors
-	const float kpInvdT = accelKp / _dt;
-	Vect3D gyros = _gyro.getGyroFiltered();
-	gyros += (accelError * kpInvdT);
+	if (_dt > 0) {
+		const float kpInvdT = accelKp / _dt;
+		gyros += (accelError * kpInvdT);
+	}
 
 	float qdot[4];
 	float M_PI_F = 3.141592653;
@@ -114,13 +117,14 @@ void AHRS::process()
 	// THIS SHOULD NEVER ACTUALLY HAPPEN
 	if ((fabsf(inv_qmag) > 1e3f) || isnan(inv_qmag)) {
 		_attitude = Quaternion::zero();
+		_logger.error("inv_qmag > 1e3f");
 	} else {
 		_attitude *= inv_qmag;
 	}
 
 	float rpy[3];
-	Quaternion2RPY(_attitude, rpy);
+	_attitude.toRollPitchYaw(rpy);
 
-	Serial3.print("roll:");
-	Serial3.println(rpy[0]);
+	_roll = rpy[1];
+	_pitch = rpy[0];
 }

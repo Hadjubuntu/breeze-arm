@@ -9,6 +9,13 @@
 #include <wirish/wirish.h>
 #include "Logger.h"
 
+
+
+Logger::Logger()  : _mode(DEBUG) {
+	// Initialize serial
+	Serial3.begin(57600);
+}
+
 void Logger::info(const char str[])
 {
 	if (_mode == INFO || _mode == DEBUG)
@@ -24,3 +31,6 @@ void Logger::debug(const char str[])
 	}
 }
 
+void Logger::error(const char str[]) {
+	Serial3.println(str);
+}

@@ -8,7 +8,15 @@
 #include "FastMath.h"
 
 FastMath::FastMath() {
-	// TODO Auto-generated constructor stub
 
+}
+float FastMath::toRadians(float angleDegrees)
+{
+	return angleDegrees / RAD2DEG;
+}
+
+float FastMath::toDegrees(float angleRadians)
+{
+	return angleRadians * RAD2DEG;
 }
 

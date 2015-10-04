@@ -38,6 +38,7 @@
 
 class Accelerometer
 {
+private:
 	/** I2C communication */
 	I2C _i2c;
 	/** Filtered acceleration */
@@ -48,6 +49,9 @@ class Accelerometer
 
 	/** Initial offset acceleration */
 	Vect3D _offset;
+
+	/** Filter coefficient */
+	float _filterNewDataCoeff;
 public:
 	/**
 	 * Constructor
@@ -56,7 +60,8 @@ public:
 		_i2c(I2C::getInstance(ACC)),
 		_accFiltered(Vect3D::zero()),
 		_accRaw(Vect3D::zero()),
-		_offset(Vect3D::zero()) {
+		_offset(Vect3D::zero()),
+		_filterNewDataCoeff(0.5) {
 
 	}
 

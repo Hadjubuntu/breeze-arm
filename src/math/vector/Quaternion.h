@@ -21,10 +21,11 @@ public:
 	/**
 	 * Constructor of a quaternion
 	 */
-	Quaternion(float w, float x, float y, float z) : _w(w), _x(x), _y(y), _z(z)
-{
+	Quaternion(float w, float x, float y, float z) : _w(w), _x(x), _y(y), _z(z) {
+		// Default constructor
+	}
 
-}
+	void toRollPitchYaw(float *rpy);
 
 
 	float getNorm() { return _w *_w + _x*_x +_y*_y + _z*_z; }
@@ -74,12 +75,12 @@ public:
 		return (*this);
 	}
 	Quaternion operator-() {
-			_w = -_w;
-			_x = -_x;
-			_y = -_y;
-			_z = -_z;
-			return (*this);
-		}
+		_w = -_w;
+		_x = -_x;
+		_y = -_y;
+		_z = -_z;
+		return (*this);
+	}
 	// TODO
 	static Quaternion fromEuler(float rollRad, float pitchRad, float yawRad) {
 		return Quaternion(0, 0, 0, 0);

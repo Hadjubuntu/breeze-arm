@@ -81,6 +81,7 @@ LIBMAPLE_MODULES += $(SRCROOT)/libraries/Wire
 LIBMAPLE_MODULES += $(SRCROOT)/libraries/FreeRTOS
 
 #Own Breeze librairies
+LIBMAPLE_MODULES += $(SRCROOT)/src/math/common
 LIBMAPLE_MODULES += $(SRCROOT)/src/math/time
 LIBMAPLE_MODULES += $(SRCROOT)/src/math/vector
 LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/I2C

@@ -8,7 +8,7 @@
 #include "Processing.h"
 #include "../math/time/Date.h"
 
-Processing::Processing() : _freqHz(50), _lastExecutionDate(Date::zero()), _dt(0.0) {
+Processing::Processing() : _logger(Logger()), _freqHz(50), _lastExecutionDate(Date::zero()), _dt(0.0) {
 }
 
 
