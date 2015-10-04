@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <wirish/wirish.h>
 #include "../core/Brain.h"
+#include "libmaple/i2c.h"
 
 
 // SEE
@@ -19,7 +20,11 @@ Brain::Brain() : _referenceDate(Date::zero()), _commands(History<int>::getDefaul
 	_referenceDate.setTimElapsedSinceStartUs(micros());
 }
 
-
+void Brain::init()
+{
+	// Initialize I2C com
+	i2c_master_enable(I2C1, I2C_FAST_MODE);
+}
 
 void Brain::loop()
 {

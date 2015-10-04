@@ -8,6 +8,10 @@
 #ifndef MATH_COMMON_FASTMATH_H_
 #define MATH_COMMON_FASTMATH_H_
 
+#define min(a,b) ((a)<(b)?(a):(b))
+#define max(a,b) ((a)>(b)?(a):(b))
+#define Bound(_x, _min, _max) { if (_x > (_max)) _x = (_max); else if (_x < (_min)) _x = (_min); }
+#define BoundAbs(_x, _max) Bound(_x, -(_max), (_max))
 
 class FastMath {
 private:
@@ -16,6 +20,8 @@ public:
 	FastMath();
 	static float toDegrees(float angleRadians);
 	static float toRadians(float angleDegrees);
+	static float exp(float x);
+	static float fastpow2(float x);
 };
 
 #endif /* MATH_COMMON_FASTMATH_H_ */

@@ -36,9 +36,13 @@ private:
 	AHRS _ahrs;
 public:
 	/**
-	 * Initialize brain
+	 * Constructor brain
 	 */
 	Brain();
+
+
+	void init();
+
 
 	/** Add a new processing on the scheduler */
 	void addProcessing(Processing *e) { _processings.push_back(e); }

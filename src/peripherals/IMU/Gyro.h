@@ -35,6 +35,9 @@ private:
 	/** Initial offset acceleration */
 	Vect3D _offset;
 
+	/** Filter coefficient */
+	float _filterNewDataCoeff;
+
 public:
 	/**
 	 * Constructor
@@ -43,7 +46,8 @@ public:
 		_i2c(I2C::getInstance(GYRO_ADDR)),
 		_gyroRaw(Vect3D::zero()),
 		_gyroFiltered(Vect3D::zero()),
-		_offset(Vect3D::zero()) {
+		_offset(Vect3D::zero()),
+		_filterNewDataCoeff(0.5) {
 
 	}
 

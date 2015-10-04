@@ -76,5 +76,8 @@ void Gyro::update()
 
 	// Store data and filter gyro output
 	_gyroRaw = cGyro ;
-	_gyroFiltered = cGyro ;
+
+	// Filter gyro data
+	_gyroFiltered = cGyro;
+//	_gyroFiltered = (_gyroFiltered * (1.0 - 0.5) + cGyro * 0.5) ;
 }

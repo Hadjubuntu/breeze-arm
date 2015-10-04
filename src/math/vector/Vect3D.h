@@ -63,7 +63,7 @@ public:
 			return _z;
 		}
 	}
-	Vect3D operator=(Vect3D &vect) {
+	Vect3D operator=(Vect3D vect) {
 		_x = vect._x;
 		_y = vect._y;
 		_z = vect._z;

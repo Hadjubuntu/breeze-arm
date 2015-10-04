@@ -5,7 +5,6 @@
 #include <wirish/wirish.h>
 #include <vector>
 #include "libraries/Wire/Wire.h"
-#include "libmaple/i2c.h"
 #include "src/core/Brain.h"
 #include "src/processing/ahrs/AHRS.h"
 #include "src/core/Logger.h"
@@ -19,11 +18,14 @@ void setup() {
 	/* Set up the LED to blink  */
 	pinMode(BOARD_LED_PIN, OUTPUT);
 
-	/* Send a message out USART2  */
-	logger.info("Hello world!");
+	logger.info("BREEZE-UAV-ARM");
 
-	i2c_master_enable(I2C1, I2C_FAST_MODE);
+	// Initialize brain
+	//---------------------
+	uavBrain.init();
 
+	// Add processings
+	//----------------------
 	uavBrain.addProcessing(&ahrs);
 	ahrs.initSensors();
 }

@@ -82,6 +82,7 @@ LIBMAPLE_MODULES += $(SRCROOT)/libraries/FreeRTOS
 
 #Own Breeze librairies
 LIBMAPLE_MODULES += $(SRCROOT)/src/math/common
+LIBMAPLE_MODULES += $(SRCROOT)/src/math/pid
 LIBMAPLE_MODULES += $(SRCROOT)/src/math/time
 LIBMAPLE_MODULES += $(SRCROOT)/src/math/vector
 LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/I2C
@@ -130,7 +131,7 @@ ifneq ($(PREV_BUILD_TYPE), $(MEMORY_TARGET))
 	$(shell rm -rf $(BUILD_PATH))
 endif
 
-sketch: build-check MSG_INFO $(BUILD_PATH)/$(BOARD).bin
+sketch: clean build-check MSG_INFO $(BUILD_PATH)/$(BOARD).bin
 
 clean:
 	rm -rf build

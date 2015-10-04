@@ -96,6 +96,8 @@ void Accelerometer::update()
 	cAcc -= _offset;
 
 	_accRaw = cAcc;
+
 	_accFiltered = cAcc;
+//	_accFiltered = (_accFiltered * (1.0 - 0.5) + cAcc * 0.5);
 
 }
