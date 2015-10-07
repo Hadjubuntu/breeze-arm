@@ -17,11 +17,13 @@ class FastMath {
 private:
 	static constexpr float RAD2DEG = 57.29577951f;
 public:
+
 	FastMath();
 	static float toDegrees(float angleRadians);
 	static float toRadians(float angleDegrees);
 	static float exp(float x);
 	static float fastpow2(float x);
+	static float sqrt(float x);
 };
 
 #endif /* MATH_COMMON_FASTMATH_H_ */

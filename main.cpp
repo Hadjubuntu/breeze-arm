@@ -7,9 +7,11 @@
 #include "libraries/Wire/Wire.h"
 #include "src/core/Brain.h"
 #include "src/processing/ahrs/AHRS.h"
+#include "src/processing/flightcontrol/FlightControl.h"
 #include "src/core/Logger.h"
 
 AHRS ahrs;
+FlightControl flightControl;
 Brain uavBrain;
 Logger logger;
 
@@ -27,6 +29,8 @@ void setup() {
 	// Add processings
 	//----------------------
 	uavBrain.addProcessing(&ahrs);
+	uavBrain.addProcessing(&flightControl);
+
 	ahrs.initSensors();
 }
 
@@ -38,9 +42,15 @@ void loop()
 
 	if (uavBrain.getTickId() % 100 == 0)
 	{
+		// FIXME : how to set input with generic processings ?????
+		flightControl.setInputs(Quaternion(1.0, 0.0, 0.0, 0.0), ahrs.getAttitude(), ahrs.getGyro().getGyroFiltered());
+
+		float rpy[3];
+		ahrs.getAttitude().toRollPitchYaw(rpy);
+
 		char str[90];
-		sprintf(str, "Roll: %.2f",
-				ahrs.getRoll()
+		sprintf(str, "Roll = %.2f | Tau(x) = %.2f | Tau(y) = %.2f",
+				rpy[1], flightControl.getTau().getX(), flightControl.getTau().getY()
 		);
 
 		logger.info(str);

@@ -35,6 +35,8 @@ public:
 		return e;
 	}
 
+	Vect3D toRad();
+
 	/** *************************************************
 	 * Operators
 	 ************************************************** */
@@ -44,7 +46,7 @@ public:
 	Vect3D operator+(const Vect3D &vect) const {
 		return Vect3D(_x + vect._x, _y + vect._y, _z + vect._z);
 	}
-	Vect3D operator-(const Vect3D &vect) const {
+	Vect3D operator-(const Vect3D vect) const {
 		return Vect3D(_x - vect._x, _y - vect._y, _z - vect._z);
 	}
 	Vect3D operator*(const Vect3D &vect) const {

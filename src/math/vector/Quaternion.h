@@ -8,6 +8,8 @@
 #ifndef MATH_VECTOR_QUATERNION_H_
 #define MATH_VECTOR_QUATERNION_H_
 
+#include "Vect3D.h"
+
 /**
  * Quaternion
  */
@@ -25,10 +27,58 @@ public:
 		// Default constructor
 	}
 
+	Quaternion(float roll, float pitch, float yaw);
+
+	/**
+	 * Quaternion to roll pitch yaw
+	 */
 	void toRollPitchYaw(float *rpy);
 
+	/** Conjugate quaternion */
+	Quaternion conjugate() {
+		Quaternion e(_w, -_x, -_y, -_z);
+		return e;
+	}
 
-	float getNorm() { return _w *_w + _x*_x +_y*_y + _z*_z; }
+	Quaternion inv() {
+		Quaternion conj = (*this).conjugate();
+		return (conj / conj.getNorm2());
+	}
+
+	Vect3D getVect3DPart() {
+		Vect3D e(_x, _y, _z);
+		return e;
+	}
+	/* ********************************
+	 * Norm
+	 ******************************** */
+	float getNorm2();
+	float getNorm();
+
+	/* ********************************
+	 * Operators
+	 ******************************** */
+
+	Quaternion operator/(float v)
+	{
+		Quaternion e(_w/v, _x/v, _y/v,  _z/v);
+		return e;
+	}
+
+	Quaternion operator*(Quaternion q) {
+		float w = _w * q._w - _x * q._x - _y * q._y - _z * q._z;
+		float x = _w * q._x + _x * q._w + _y * q._z - _z * q._y;
+		float y = _w * q._y - _x * q._z + _y * q._w + _z * q._x;
+		float z = _w * q._z + _x * q._y - _y * q._x + _z * q._w;
+
+		Quaternion e(w, x, y, z);
+		return e;
+	}
+
+	Quaternion operator*=(Quaternion q) {
+		(*this) = (*this) * q;
+		return (*this);
+	}
 
 	float operator[](int x) {
 		if (x == 0) {
@@ -66,7 +116,6 @@ public:
 		_z *= v;
 		return (*this);
 	}
-
 	Quaternion operator=(Quaternion q) {
 		_w = q[0];
 		_x = q[1];

@@ -31,11 +31,6 @@ private:
 	/** Accelerometer */
 	Accelerometer _accelerometer;
 
-	/** Computed roll pitch yaw */
-	float _roll;
-	float _pitch;
-	float _yaw;
-
 public:
 	AHRS();
 
@@ -55,8 +50,7 @@ public:
 	Accelerometer getAcc() { return _accelerometer; }
 	Gyro getGyro() { return _gyro; }
 
-	float getRoll() { return _roll; }
-	float getPitch() { return _pitch; }
+	Quaternion getAttitude() { return _attitude; }
 };
 
 #endif /* PROCESSING_AHRS_AHRS_H_ */

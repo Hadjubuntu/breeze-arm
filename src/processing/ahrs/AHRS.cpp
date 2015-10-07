@@ -28,9 +28,6 @@ AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 
 	gyro_correct_int[0] = 0.0;
 	gyro_correct_int[1] = 0.0;
-	_roll = 0.0;
-	_pitch = 0.0;
-	_yaw = 0.0;
 }
 
 
@@ -46,7 +43,7 @@ void AHRS::process()
 {
 	const float accelKi = 0.0001;
 	const float accelKp = 0.03;
-	const float rollPitchBiasRate = 0.01;
+	const float rollPitchBiasRate = 0.5;
 
 	_accelerometer.update();
 	_gyro.update();
@@ -111,7 +108,7 @@ void AHRS::process()
 		_attitude = -_attitude;
 	}
 
-	float inv_qmag = _fast_invsqrtf(_attitude.getNorm());
+	float inv_qmag = _fast_invsqrtf(_attitude.getNorm2());
 
 	// If quaternion has become inappropriately short or is nan reinit.
 	// THIS SHOULD NEVER ACTUALLY HAPPEN
@@ -121,10 +118,4 @@ void AHRS::process()
 	} else {
 		_attitude *= inv_qmag;
 	}
-
-	float rpy[3];
-	_attitude.toRollPitchYaw(rpy);
-
-	_roll = rpy[1];
-	_pitch = rpy[0];
 }

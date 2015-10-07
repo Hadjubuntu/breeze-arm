@@ -4,7 +4,9 @@
  *  Created on: Sep 18, 2015
  *      Author: adrien
  */
+
 #include <stdint.h>
+#include <cmath>
 #include "FastMath.h"
 
 
@@ -35,4 +37,8 @@ inline float FastMath::fastpow2(float p)
 inline float FastMath::exp(float x)
 {
 	return FastMath::fastpow2(1.442695040f * x);
+}
+
+inline float FastMath::sqrt(float x) {
+	return std::sqrt(x);
 }
