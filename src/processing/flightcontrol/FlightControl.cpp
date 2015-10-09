@@ -15,7 +15,7 @@
  */
 
 FlightControl::FlightControl() :
-_Pq(5), _Pw(1),
+_Pq(20), _Pw(4),
 _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
 _tau(Vect3D::zero())
@@ -41,7 +41,11 @@ void FlightControl::process()
 	Vect3D axisError = qError.getVect3DPart();
 
 	// Compute tau rotation
-	_tau =  ((axisError * _Pq) + ( _gyroRot * _Pw)) * (-1);
+	float rpy[3];
+	qError.toRollPitchYaw(rpy);
+	_tau =  Vect3D(rpy[0], rpy[1], rpy[2]);
+
+	// ((axisError * _Pq) + ( _gyroRot * _Pw)) * (-1);
 
 	// Update PID output for attitude
 

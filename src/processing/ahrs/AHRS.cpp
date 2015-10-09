@@ -8,11 +8,25 @@
 #include <stdio.h>
 #include "AHRS.h"
 
-inline float _fast_invsqrtf(float v)   // rel. err. < 0.07%
+inline float _fast_invsqrtf(float number)   // rel. err. < 0.07%
 {                               // Jan Kaldec, http://rrrola.wz.cz/inv_sqrt.html
-	union {float f; unsigned int u;} i = {v};
-	i.u = 0x5F1FFFF9u - (i.u >> 1);
-	return 0.703952253f * i.f * (2.38924456f - v * i.f * i.f);
+	float x2, y;
+	const float threehalfs = 1.5F;
+
+	union {
+		float    f;
+		uint32_t u;
+	} i;
+
+	x2  = number * 0.5F;
+	y   = number;
+
+	i.f = y; // evil floating point bit level hacking
+	i.u = 0x5f3759df - (i.u >> 1); // what the fxck?
+	y   = i.f;
+	y   = y * (threehalfs - (x2 * y * y));   // 1st iteration
+
+	return y;
 }
 
 
@@ -43,7 +57,7 @@ void AHRS::process()
 {
 	const float accelKi = 0.0001;
 	const float accelKp = 0.03;
-	const float rollPitchBiasRate = 0.5;
+	const float rollPitchBiasRate = 0.99;
 
 	_accelerometer.update();
 	_gyro.update();
@@ -64,18 +78,18 @@ void AHRS::process()
 	//---------------------
 
 	// TODO accel filter
-	_grot.setX(-(2.0 * (_attitude[1] * _attitude[3] - _attitude[0] * _attitude[2])));
-	_grot.setY(-(2.0 * (_attitude[2] * _attitude[3] + _attitude[0] * _attitude[1])));
-	_grot.setZ(-(_attitude[0] * _attitude[0] - _attitude[1] * _attitude[1] - _attitude[2] * _attitude[2] + _attitude[3] * _attitude[3]));
+	_grot.setX((2.0 * (_attitude[1] * _attitude[3] - _attitude[0] * _attitude[2])));
+	_grot.setY((2.0 * (_attitude[2] * _attitude[3] + _attitude[0] * _attitude[1])));
+	_grot.setZ((_attitude[0] * _attitude[0] - _attitude[1] * _attitude[1] - _attitude[2] * _attitude[2] + _attitude[3] * _attitude[3]));
 
 	// filter g rot
 	Vect3D accelError = _accelerometer.getAccFiltered().crossProduct(_grot);
-	float invAccelMag = _fast_invsqrtf(_accelerometer.getAccFiltered().getNorm());
+	float invAccelMag = _fast_invsqrtf(_accelerometer.getAccFiltered().getNorm2());
 
 	if (invAccelMag > 1e3f) {
 		return;
 	}
-	float  invGRotMag = _fast_invsqrtf(gyros.getNorm());
+	float  invGRotMag = _fast_invsqrtf(gyros.getNorm2());
 
 	if (invGRotMag > 1e3f) {
 		return;

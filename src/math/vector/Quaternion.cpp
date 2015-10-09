@@ -12,14 +12,36 @@
 
 /**
  * Constructor from roll pitch yaw
+ * @param rollRad roll [radians]
+ * @param pitchRad pitch [radians]
+ * @param yawRad yaw [radians]
  * */
-Quaternion::Quaternion(float roll, float pitch, float yaw)
+Quaternion::Quaternion(float rollRad, float pitchRad, float yawRad)
 {
-	/** TODO */
-	_w = 0.0;
-	_x = 0.0;
-	_y = 0.0;
-	_z = 0.0;
+	float phi, theta, psi;
+	float cphi, sphi, ctheta, stheta, cpsi, spsi;
+
+	phi    = rollRad / 2.0;
+	theta  = pitchRad / 2.0;
+	psi    = yawRad / 2.0;
+	cphi   = cosf(phi);
+	sphi   = sinf(phi);
+	ctheta = cosf(theta);
+	stheta = sinf(theta);
+	cpsi   = cosf(psi);
+	spsi   = sinf(psi);
+
+	_w   = cphi * ctheta * cpsi + sphi * stheta * spsi;
+	_x   = sphi * ctheta * cpsi - cphi * stheta * spsi;
+	_y   = cphi * stheta * cpsi + sphi * ctheta * spsi;
+	_z   = cphi * ctheta * spsi - sphi * stheta * cpsi;
+
+	if (_w < 0) { // q0 always positive for uniqueness
+		_w = -_w;
+		_x = -_x;
+		_y = -_y;
+		_z = -_z;
+	}
 }
 
 void Quaternion::toRollPitchYaw(float rpy[3])
@@ -30,10 +52,10 @@ void Quaternion::toRollPitchYaw(float rpy[3])
 	float q2s = _y * _y;
 	float q3s = _z * _z;
 
-	R13    = 2 * (_x * _z - _w * _y);
+	R13    = 2.0 * (_x * _z - _w * _y);
 	R11    = q0s + q1s - q2s - q3s;
-	R12    = 2 * (_x * _y + _w * _z);
-	R23    = 2 * (_y * _z + _w * _x);
+	R12    = 2.0 * (_x * _y + _w * _z);
+	R23    = 2.0 * (_y * _z + _w * _x);
 	R33    = q0s - q1s - q2s + q3s;
 
 	rpy[1] = FastMath::toDegrees(asinf(-R13)); // pitch always between -pi/2 to pi/2

@@ -123,7 +123,7 @@ public:
 		return _z;
 	}
 
-	float getNorm() {
+	float getNorm2() {
 		return _x*_x + _y*_y + _z*_z;
 	}
 

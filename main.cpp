@@ -6,6 +6,7 @@
 #include <vector>
 #include "libraries/Wire/Wire.h"
 #include "src/core/Brain.h"
+#include "src/math/common/FastMath.h"
 #include "src/processing/ahrs/AHRS.h"
 #include "src/processing/flightcontrol/FlightControl.h"
 #include "src/core/Logger.h"
@@ -40,18 +41,24 @@ void loop()
 
 	uavBrain.loop();
 
-	if (uavBrain.getTickId() % 100 == 0)
+	if (uavBrain.getTickId() % 300 == 0)
 	{
 		// FIXME : how to set input with generic processings ?????
-		flightControl.setInputs(Quaternion(1.0, 0.0, 0.0, 0.0), ahrs.getAttitude(), ahrs.getGyro().getGyroFiltered());
+		flightControl.setInputs(Quaternion(0.0, 0.0, 0.0), ahrs.getAttitude(), ahrs.getGyro().getGyroFiltered());
 
 		float rpy[3];
 		ahrs.getAttitude().toRollPitchYaw(rpy);
 
 		char str[90];
-		sprintf(str, "Roll = %.2f | Tau(x) = %.2f | Tau(y) = %.2f",
-				rpy[1], flightControl.getTau().getX(), flightControl.getTau().getY()
+		sprintf(str, "Roll = %.1f | Pitch = %.1f | Tau(x) = %.1f | Tau(y) = %.1f",
+				rpy[0], rpy[1], flightControl.getTau().getX(), flightControl.getTau().getY()
 		);
+
+//		sprintf(str, "Rollacc: %.1f | GyroX: %.1f | GyroY: %.1f",
+//					FastMath::toDegrees(atan(-ahrs.getAcc().getAccFiltered().getX() / ahrs.getAcc().getAccFiltered().getZ())),
+//					ahrs.getGyro().getGyroFiltered().getX(),
+//					ahrs.getGyro().getGyroFiltered().getY()
+//			);
 
 		logger.info(str);
 	}
