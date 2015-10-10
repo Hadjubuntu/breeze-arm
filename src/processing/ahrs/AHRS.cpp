@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include "AHRS.h"
 
+
+float gyro_correct_int[3];
+
 inline float _fast_invsqrtf(float number)   // rel. err. < 0.07%
 {                               // Jan Kaldec, http://rrrola.wz.cz/inv_sqrt.html
 	float x2, y;
@@ -30,7 +33,6 @@ inline float _fast_invsqrtf(float number)   // rel. err. < 0.07%
 }
 
 
-float gyro_correct_int[2];
 
 AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 		_attitude(Quaternion::zero()),
@@ -51,23 +53,25 @@ void AHRS::initSensors()
 	_gyro.init();
 }
 
+float* AHRS::getGyroCorr() {
+	return gyro_correct_int;
+}
+
 
 
 void AHRS::process()
 {
-	const float accelKi = 0.0001;
-	const float accelKp = 0.03;
-	const float rollPitchBiasRate = 0.99;
+	const float accelKi = 0.01;
+	const float accelKp = 0.1;
+	const float rollPitchBiasRate = 0.999;
 
 	_accelerometer.update();
 	_gyro.update();
 
 	// Retrieve Gyro
-	Vect3D gyros = _gyro.getGyroFiltered();
+	Vect3D tmpGyros = _gyro.getGyroFiltered();
 	// Correct value
-	gyros.setX(gyros.getX() + gyro_correct_int[0]);
-	gyros.setY(gyros.getY() + gyro_correct_int[1]);
-	// TODO zeroing the z axis gyro val
+	Vect3D gyros = Vect3D(tmpGyros.getX() + gyro_correct_int[0], tmpGyros.getY() + gyro_correct_int[1], tmpGyros.getZ());
 
 	// Zeroing error
 	// Force the roll & pitch gyro rates to average to zero
@@ -77,10 +81,13 @@ void AHRS::process()
 	// TODO as https://github.com/openpilot/OpenPilot/blob/master/flight/modules/Attitude/attitude.c
 	//---------------------
 
-	// TODO accel filter
-	_grot.setX((2.0 * (_attitude[1] * _attitude[3] - _attitude[0] * _attitude[2])));
-	_grot.setY((2.0 * (_attitude[2] * _attitude[3] + _attitude[0] * _attitude[1])));
-	_grot.setZ((_attitude[0] * _attitude[0] - _attitude[1] * _attitude[1] - _attitude[2] * _attitude[2] + _attitude[3] * _attitude[3]));
+	// Compute rotation
+	float arrayGrot[3];
+	arrayGrot[0] = -(2.0 * (_attitude[1] * _attitude[3] - _attitude[0] * _attitude[2]));
+	arrayGrot[1] = -(2.0 * (_attitude[2] * _attitude[3] + _attitude[0] * _attitude[1]));
+	arrayGrot[2] = -(_attitude[0] * _attitude[0] - _attitude[1] * _attitude[1] - _attitude[2] * _attitude[2] + _attitude[3] * _attitude[3]);
+	_grot = Vect3D(arrayGrot[0], arrayGrot[1], arrayGrot[2]);
+
 
 	// filter g rot
 	Vect3D accelError = _accelerometer.getAccFiltered().crossProduct(_grot);
@@ -103,7 +110,7 @@ void AHRS::process()
 
 
 	// Correct rates based on error, integral component dealt with in updateSensors
-	if (_dt > 0) {
+	if (_dt > 0.0) {
 		const float kpInvdT = accelKp / _dt;
 		gyros += (accelError * kpInvdT);
 	}

@@ -11,6 +11,7 @@
 #include "src/processing/flightcontrol/FlightControl.h"
 #include "src/core/Logger.h"
 
+
 AHRS ahrs;
 FlightControl flightControl;
 Brain uavBrain;
@@ -49,9 +50,11 @@ void loop()
 		float rpy[3];
 		ahrs.getAttitude().toRollPitchYaw(rpy);
 
+		float* gyro_correct_int = ahrs.getGyroCorr();
+
 		char str[90];
-		sprintf(str, "Roll = %.1f | Pitch = %.1f | Tau(x) = %.1f | Tau(y) = %.1f",
-				rpy[0], rpy[1], flightControl.getTau().getX(), flightControl.getTau().getY()
+		sprintf(str, "Roll = %.1f | Pitch = %.1f | Acc(x) = %.3f | Acc(y) = %.3f | Acc(z) = %.3f",
+				rpy[0], rpy[1], ahrs.getAcc().getAccFiltered().getX(), ahrs.getAcc().getAccFiltered().getY(), ahrs.getAcc().getAccFiltered().getZ()
 		);
 
 //		sprintf(str, "Rollacc: %.1f | GyroX: %.1f | GyroY: %.1f",

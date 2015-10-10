@@ -47,7 +47,7 @@ public:
 		_gyroRaw(Vect3D::zero()),
 		_gyroFiltered(Vect3D::zero()),
 		_offset(Vect3D::zero()),
-		_filterNewDataCoeff(0.5) {
+		_filterNewDataCoeff(0.3) {
 
 	}
 

@@ -43,10 +43,9 @@ void FlightControl::process()
 	// Compute tau rotation
 	float rpy[3];
 	qError.toRollPitchYaw(rpy);
-	_tau =  Vect3D(rpy[0], rpy[1], rpy[2]);
+	_tau = ((axisError * _Pq) + ( _gyroRot * _Pw)) * (-1); //  Vect3D(rpy[0], rpy[1], rpy[2]);
 
-	// ((axisError * _Pq) + ( _gyroRot * _Pw)) * (-1);
-
+	//
 	// Update PID output for attitude
 
 	// Update PID output for thrust

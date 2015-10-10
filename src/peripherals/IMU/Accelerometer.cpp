@@ -65,7 +65,7 @@ void Accelerometer::init()
 	{
 		accumulator[i] /= num_samples;
 	}
-	accumulator[2] -= 1.0; // 1g at 2mg/LSB more or less.
+	accumulator[2] = 0.0; // Force 0.0 offset on z axis
 
 	_offset = accumulator;
 
@@ -82,8 +82,8 @@ void Accelerometer::update()
 	_i2c.readFrom(ADXLREG_DATAX0, A_TO_READ, buff);
 
 	int16 result[3];
-	result[0] = -((((int16) buff[1]) << 8) | buff[0]) ;
-	result[1] = -((((int16) buff[3]) << 8) | buff[2]) ;
+	result[1] = -((((int16) buff[1]) << 8) | buff[0]) ;
+	result[0] = -((((int16) buff[3]) << 8) | buff[2]) ;
 	result[2] = -((((int16) buff[5]) << 8) | buff[4]) ;
 
 	// Create vector 3D from array of int16

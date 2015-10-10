@@ -17,8 +17,10 @@
 #include "../../peripherals/IMU/Gyro.h"
 
 
+
 class AHRS : public Processing {
 private:
+
 	/** Rotation gravity body frame */
 	Vect3D _grot;
 
@@ -43,6 +45,8 @@ public:
 	 * Process and update data
 	 */
 	void process();
+
+	float* getGyroCorr();
 
 	/******************************************************
 	 * GETTERS
