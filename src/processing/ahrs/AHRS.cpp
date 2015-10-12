@@ -38,6 +38,7 @@ AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 		_attitude(Quaternion::zero()),
 		_gyro(Gyro::create()),
 		_accelerometer(Accelerometer::create())
+//		_baro(Baro::create())
 {
 	// 400 Hz update
 	_freqHz = 400;
@@ -61,8 +62,8 @@ float* AHRS::getGyroCorr() {
 
 void AHRS::process()
 {
-	const float accelKi = 0.01;
-	const float accelKp = 0.1;
+	const float accelKi = 0.000174;
+	const float accelKp = 0.00174;
 	const float rollPitchBiasRate = 0.999;
 
 	_accelerometer.update();
@@ -116,11 +117,10 @@ void AHRS::process()
 	}
 
 	float qdot[4];
-	float M_PI_F = 3.141592653;
-	qdot[0] = (-_attitude[1] * gyros[0] - _attitude[2] * gyros[1] - _attitude[3] * gyros[2]) * _dt * (M_PI_F / 180.0f / 2.0f);
-	qdot[1] = (_attitude[0] * gyros[0] - _attitude[3] * gyros[1] + _attitude[2] * gyros[2]) * _dt * (M_PI_F / 180.0f / 2.0f);
-	qdot[2] = (_attitude[3] * gyros[0] + _attitude[0] * gyros[1] - _attitude[1] * gyros[2]) * _dt * (M_PI_F / 180.0f / 2.0f);
-	qdot[3] = (-_attitude[2] * gyros[0] + _attitude[1] * gyros[1] + _attitude[0] * gyros[2]) * _dt * (M_PI_F / 180.0f / 2.0f);
+	qdot[0] = (-_attitude[1] * gyros[0] - _attitude[2] * gyros[1] - _attitude[3] * gyros[2]) * _dt *  0.5f;
+	qdot[1] = (_attitude[0] * gyros[0] - _attitude[3] * gyros[1] + _attitude[2] * gyros[2]) * _dt  * 0.5f;
+	qdot[2] = (_attitude[3] * gyros[0] + _attitude[0] * gyros[1] - _attitude[1] * gyros[2]) * _dt * 0.5f;
+	qdot[3] = (-_attitude[2] * gyros[0] + _attitude[1] * gyros[1] + _attitude[0] * gyros[2]) * _dt * 0.5f;
 
 	// Take a time step
 	_attitude += qdot;

@@ -31,6 +31,8 @@
 #ifndef _WIRISH_HARDWARETIMER_H_
 #define _WIRISH_HARDWARETIMER_H_
 
+
+
 // TODO [0.1.0] Remove deprecated pieces, pick a better API
 
 #include <libmaple/timer.h>

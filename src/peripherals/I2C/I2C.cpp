@@ -5,7 +5,7 @@
  *      Author: adrien
  */
 
-#include "libmaple/i2c.h"
+#include <libmaple/i2c.h>
 #include "I2C.h"
 
 // This is the instance of the libmaple I2C device to use

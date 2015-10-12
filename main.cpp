@@ -10,12 +10,15 @@
 #include "src/processing/ahrs/AHRS.h"
 #include "src/processing/flightcontrol/FlightControl.h"
 #include "src/core/Logger.h"
-
+#include "src/peripherals/IMU/Baro.h"
+#include "src/link/RfControler.h"
 
 AHRS ahrs;
 FlightControl flightControl;
 Brain uavBrain;
 Logger logger;
+RfControler rfControler;
+
 
 
 void setup() {
@@ -32,6 +35,7 @@ void setup() {
 	//----------------------
 	uavBrain.addProcessing(&ahrs);
 	uavBrain.addProcessing(&flightControl);
+	uavBrain.addProcessing(&rfControler);
 
 	ahrs.initSensors();
 }
@@ -42,7 +46,7 @@ void loop()
 
 	uavBrain.loop();
 
-	if (uavBrain.getTickId() % 300 == 0)
+	if (uavBrain.getTickId() % 600 == 0)
 	{
 		// FIXME : how to set input with generic processings ?????
 		flightControl.setInputs(Quaternion(0.0, 0.0, 0.0), ahrs.getAttitude(), ahrs.getGyro().getGyroFiltered());
@@ -52,10 +56,13 @@ void loop()
 
 		float* gyro_correct_int = ahrs.getGyroCorr();
 
+
 		char str[90];
 		sprintf(str, "Roll = %.1f | Pitch = %.1f | Acc(x) = %.3f | Acc(y) = %.3f | Acc(z) = %.3f",
 				rpy[0], rpy[1], ahrs.getAcc().getAccFiltered().getX(), ahrs.getAcc().getAccFiltered().getY(), ahrs.getAcc().getAccFiltered().getZ()
 		);
+
+
 
 //		sprintf(str, "Rollacc: %.1f | GyroX: %.1f | GyroY: %.1f",
 //					FastMath::toDegrees(atan(-ahrs.getAcc().getAccFiltered().getX() / ahrs.getAcc().getAccFiltered().getZ())),

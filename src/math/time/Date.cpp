@@ -5,7 +5,6 @@
  *      Author: adrien
  */
 
-#include <wirish/wirish.h>
 #include "Date.h"
 
 

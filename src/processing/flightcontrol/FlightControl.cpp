@@ -28,7 +28,7 @@ void FlightControl::setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAtt
 {
 	_targetAttitude = pTargetAttitude;
 	_currentAttitude = pCurrentAttitude;
-	_gyroRot = pGyroRot.toRad(); // FIXME works with radians in gyro
+	_gyroRot = pGyroRot;
 }
 
 

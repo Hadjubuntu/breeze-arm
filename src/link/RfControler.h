@@ -8,11 +8,13 @@
 #ifndef LINK_CONTROLER_RFCONTROLER_H_
 #define LINK_CONTROLER_RFCONTROLER_H_
 
-#include <iostream>
+#include "../core/Processing.h"
+#include "../core/History.h"
+#include "RfPacket.h"
 
 using namespace std;
 
-class RfControler {
+class RfControler : public Processing  {
 private:
 	History<std::string> _packets;
 public:
@@ -21,7 +23,7 @@ public:
 	/**
 	 * Listen to new packets which may have been received
 	 */
-	void listen();
+	void process();
 
 	void send(RfPacket &);
 };

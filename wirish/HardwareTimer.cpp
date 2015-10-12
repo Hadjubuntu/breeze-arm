@@ -33,6 +33,10 @@
 
 // TODO [0.1.0] Remove deprecated pieces
 
+// Moved here due to duplicated code
+#define min(a,b)                ((a)<(b)?(a):(b))
+#define max(a,b)                ((a)>(b)?(a):(b))
+
 /*
  * Evil hack to infer this->dev from timerNum in the HardwareTimer
  * constructor. See:

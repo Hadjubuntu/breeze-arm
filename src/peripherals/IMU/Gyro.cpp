@@ -6,7 +6,6 @@
  */
 #include <wirish/wirish.h>
 #include <stdio.h>
-#include "libmaple/i2c.h"
 #include "Gyro.h"
 
 
@@ -70,6 +69,7 @@ void Gyro::update()
 
 	// Scale gyro from LSB to deg/s
 	cGyro *= GYRO_LSB_TO_DEGS;
+	cGyro = cGyro.toRad();
 
 	// Retrieve offset
 	cGyro -= _offset;

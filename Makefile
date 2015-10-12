@@ -29,7 +29,7 @@ BOARD_INCLUDE_DIR := $(MAKEDIR)/board-includes
 
 # Try "make help" for more information on BOARD and MEMORY_TARGET;
 # these default to a Maple Flash build.
-BOARD ?= maple
+BOARD ?= maple_RET6
 MEMORY_TARGET ?= flash
 
 # $(BOARD)- and $(MEMORY_TARGET)-specific configuration
@@ -89,7 +89,9 @@ LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/I2C
 LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/IMU
 LIBMAPLE_MODULES += $(SRCROOT)/src/processing/ahrs
 LIBMAPLE_MODULES += $(SRCROOT)/src/processing/flightcontrol
+LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/radio
 LIBMAPLE_MODULES += $(SRCROOT)/src/core
+LIBMAPLE_MODULES += $(SRCROOT)/src/link
 
 # User modules:
 ifneq ($(USER_MODULES),)

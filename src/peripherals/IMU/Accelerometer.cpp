@@ -7,7 +7,6 @@
 #include <wirish/wirish.h>
 #include <stdio.h>
 #include "Accelerometer.h"
-#include "libmaple/i2c.h"
 
 /**
  * Reference:
