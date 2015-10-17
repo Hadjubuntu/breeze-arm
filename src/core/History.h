@@ -16,13 +16,13 @@
 template <class T>
 class History {
 private:
-	int _size;
+	unsigned int _size;
 	std::vector<T> _history;
 public:
 	/**
 	 * Constructor
 	 */
-	History(int size) : _size(size) {
+	History(unsigned int size) : _size(size) {
 		_history.reserve(_size);
 	}
 

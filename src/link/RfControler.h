@@ -8,15 +8,24 @@
 #ifndef LINK_CONTROLER_RFCONTROLER_H_
 #define LINK_CONTROLER_RFCONTROLER_H_
 
+
+#include <list>
 #include "../core/Processing.h"
-#include "../core/History.h"
 #include "RfPacket.h"
 
-using namespace std;
+
+#define RfSerial Serial3
 
 class RfControler : public Processing  {
 private:
-	History<std::string> _packets;
+	/** Packet end char */
+	const char _endPacketChar = '\n';
+
+	/** List of packets received */
+	std::list<RfPacket> _packets;
+
+	/** Incoming packet in construction until end character is received */
+	std::string _incomingPacket;
 public:
 	RfControler();
 
@@ -26,6 +35,10 @@ public:
 	void process();
 
 	void send(RfPacket &);
+
+	RfPacket popFirstPacket();
+
+	bool hasPacketPending();
 };
 
 #endif /* LINK_CONTROLER_RFCONTROLER_H_ */

@@ -12,12 +12,14 @@
 #include "src/core/Logger.h"
 #include "src/peripherals/IMU/Baro.h"
 #include "src/link/RfControler.h"
+#include "src/link/RfRouter.h"
 
 AHRS ahrs;
 FlightControl flightControl;
 Brain uavBrain;
 Logger logger;
 RfControler rfControler;
+RfRouter rfRouter(&rfControler);
 
 
 
@@ -36,6 +38,7 @@ void setup() {
 	uavBrain.addProcessing(&ahrs);
 	uavBrain.addProcessing(&flightControl);
 	uavBrain.addProcessing(&rfControler);
+	uavBrain.addProcessing(&rfRouter);
 
 	ahrs.initSensors();
 }
