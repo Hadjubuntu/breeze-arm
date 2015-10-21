@@ -6,6 +6,7 @@
  */
 
 #include "FlightControl.h"
+#include "../../math/common/FastMath.h"
 
 FlightControl::FlightControl(RadioControler *radioController,
 		FlightStabilization *flightStabilization,
@@ -26,7 +27,10 @@ void FlightControl::process()
 
 	// In manual mode
 	// Compute roll, pitch, yaw desired by using the radio values
-	float roll = 0.0;
+
+
+
+	float roll = radioToRad(_radioController->getHandler().channels[0]);
 	float pitch = 0.0;
 	float yaw = 0.0;
 
@@ -37,3 +41,15 @@ void FlightControl::process()
 	_flightStabilization->setInputs(attitudeDesired, _ahrs->getAttitude(), _ahrs->getGyro().getGyroFiltered());
 }
 
+
+float FlightControl::radioToRad(int radioValue)
+{
+	// TODO a lot to do here..
+	int offset = 1023;
+	float maxAngle = FastMath::toRadians(50);
+	int dradio = radioValue - offset;
+	BoundAbs(dradio, 800);
+	float angleRad = dradio / 800 * maxAngle;
+
+	return angleRad;
+}
