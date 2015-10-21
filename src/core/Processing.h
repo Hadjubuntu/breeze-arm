@@ -30,8 +30,16 @@ protected:
 public:
 	Processing();
 
+	/** Initialize processing */
+	virtual void init() = 0;
+
+	/** Execute processing */
 	virtual void process() = 0;
 
+	/**
+	 * Update execution date
+	 * This function is called by UAV brain
+	 */
 	void updateExecDate()
 	{
 		// Get now date
@@ -44,6 +52,8 @@ public:
 		_lastExecutionDate = now;
 	}
 
+	/** Wait for dt seconds */
+	void wait(float dtWait);
 
 	/**
 	 * Tells whether the processing needs to be called again or not

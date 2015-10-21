@@ -15,13 +15,17 @@ RfRouter::RfRouter(RfControler *pControler) {
 
 void RfRouter::process()
 {
+	// If controler has new packet awaiting
 	if (_controler->hasPacketPending())
 	{
+		// Remove first packet
 		RfPacket packet = _controler->popFirstPacket();
+
+		// Get payload
 		std::string packetStr = packet.getPayload();
 
-		char charArray[packetStr.length()];
-		strncpy(charArray, packetStr.c_str(), sizeof(packetStr.length()));
+		char charArray[RF_PACKET_MAX_LENGTH];
+		strncpy(charArray, packetStr.c_str(), RF_PACKET_MAX_LENGTH-1);
 
 		Serial3.println(charArray);
 	}

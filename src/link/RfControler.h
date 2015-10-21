@@ -29,6 +29,10 @@ private:
 public:
 	RfControler();
 
+	void init() {
+		// TODO
+	}
+
 	/**
 	 * Listen to new packets which may have been received
 	 */

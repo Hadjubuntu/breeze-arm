@@ -24,6 +24,7 @@ public:
 	static float exp(float x);
 	static float fastpow2(float x);
 	static float sqrt(float x);
+	static float fast_invsqrtf(float);
 };
 
 #endif /* MATH_COMMON_FASTMATH_H_ */

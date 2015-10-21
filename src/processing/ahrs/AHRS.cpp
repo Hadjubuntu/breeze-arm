@@ -6,34 +6,15 @@
  */
 
 #include <stdio.h>
+#include "../../math/common/FastMath.h"
 #include "AHRS.h"
 
 
 float gyro_correct_int[3];
 
-inline float _fast_invsqrtf(float number)   // rel. err. < 0.07%
-{                               // Jan Kaldec, http://rrrola.wz.cz/inv_sqrt.html
-	float x2, y;
-	const float threehalfs = 1.5F;
-
-	union {
-		float    f;
-		uint32_t u;
-	} i;
-
-	x2  = number * 0.5F;
-	y   = number;
-
-	i.f = y; // evil floating point bit level hacking
-	i.u = 0x5f3759df - (i.u >> 1); // what the fxck?
-	y   = i.f;
-	y   = y * (threehalfs - (x2 * y * y));   // 1st iteration
-
-	return y;
-}
-
-
-
+/**
+ * Constructor
+ */
 AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 		_attitude(Quaternion::zero()),
 		_gyro(Gyro::create()),
@@ -48,7 +29,7 @@ AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 }
 
 
-void AHRS::initSensors()
+void AHRS::init()
 {
 	_accelerometer.init();
 	_gyro.init();
@@ -92,12 +73,12 @@ void AHRS::process()
 
 	// filter g rot
 	Vect3D accelError = _accelerometer.getAccFiltered().crossProduct(_grot);
-	float invAccelMag = _fast_invsqrtf(_accelerometer.getAccFiltered().getNorm2());
+	float invAccelMag = FastMath::fast_invsqrtf(_accelerometer.getAccFiltered().getNorm2());
 
 	if (invAccelMag > 1e3f) {
 		return;
 	}
-	float  invGRotMag = _fast_invsqrtf(gyros.getNorm2());
+	float  invGRotMag = FastMath::fast_invsqrtf(gyros.getNorm2());
 
 	if (invGRotMag > 1e3f) {
 		return;
@@ -129,7 +110,7 @@ void AHRS::process()
 		_attitude = -_attitude;
 	}
 
-	float inv_qmag = _fast_invsqrtf(_attitude.getNorm2());
+	float inv_qmag = FastMath::fast_invsqrtf(_attitude.getNorm2());
 
 	// If quaternion has become inappropriately short or is nan reinit.
 	// THIS SHOULD NEVER ACTUALLY HAPPEN

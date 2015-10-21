@@ -25,3 +25,16 @@ bool Processing::isReady() {
 	// Returns yes if processing needs to be executed
 	return durationLastExecutionSeconds >= dtExecExpected;
 }
+
+
+void Processing::wait(float pDtWait)
+{
+	Date currentTime = Date::now();
+
+	while (Date::now().durationFrom(currentTime) < pDtWait)
+	{
+		// Update data
+		process();
+	}
+
+}

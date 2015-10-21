@@ -5,7 +5,7 @@
  *      Author: adrien
  */
 
-#include "FlightControl.h"
+#include "../flightstabilization/FlightStabilization.h"
 
 
 /**
@@ -14,7 +14,7 @@
  * http://www.nt.ntnu.no/users/skoge/prost/proceedings/ecc-2013/data/papers/0927.pdf
  */
 
-FlightControl::FlightControl() :
+FlightStabilization::FlightStabilization() :
 _Pq(20), _Pw(4),
 _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
@@ -23,8 +23,10 @@ _tau(Vect3D::zero())
 	_freqHz = 50;
 }
 
-
-void FlightControl::setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, Vect3D pGyroRot)
+/**
+ * Set input parameters
+ */
+void FlightStabilization::setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, Vect3D pGyroRot)
 {
 	_targetAttitude = pTargetAttitude;
 	_currentAttitude = pCurrentAttitude;
@@ -32,7 +34,7 @@ void FlightControl::setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAtt
 }
 
 
-void FlightControl::process()
+void FlightStabilization::process()
 {
 	// Compute error from attitude commanded to current attitude using the combined rotation
 	Quaternion qError = _targetAttitude * (_currentAttitude.conjugate());

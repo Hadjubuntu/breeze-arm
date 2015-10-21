@@ -8,6 +8,8 @@
 #ifndef PROCESSING_UAV_UAVSTATE_H_
 #define PROCESSING_UAV_UAVSTATE_H_
 
+#include "../../math/vector/Quaternion.h"
+
 class UavState {
 private:
 	// Date related to the state
@@ -16,11 +18,12 @@ private:
 	// GeoPosition
 	GeoPosition _geoPosition;
 
-	// Speed
-	double _speedMs;
-
 	// AHRS state
-	//
+	Quaternion _attitude;
+
+	// Speed
+	float _speedMs;
+
 public:
 	UavState();
 };

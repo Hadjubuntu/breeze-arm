@@ -32,8 +32,6 @@ private:
 
 	// History of link command
 	History<int> _commands;
-
-	AHRS _ahrs;
 public:
 	/**
 	 * Constructor brain
@@ -41,8 +39,10 @@ public:
 	Brain();
 
 
-	void init();
+	void enableI2C();
 
+	/** Initialize processings */
+	void initProcessings();
 
 	/** Add a new processing on the scheduler */
 	void addProcessing(Processing *e) { _processings.push_back(e); }

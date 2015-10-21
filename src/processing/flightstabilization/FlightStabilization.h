@@ -5,13 +5,13 @@
  *      Author: adrien
  */
 
-#ifndef PROCESSING_FLIGHTCONTROL_FLIGHTCONTROL_H_
-#define PROCESSING_FLIGHTCONTROL_FLIGHTCONTROL_H_
+#ifndef PROCESSING_FLIGHTSTABILIZATION_FLIGHTSTABILIZATION_H_
+#define PROCESSING_FLIGHTSTABILIZATION_FLIGHTSTABILIZATION_H_
 
 #include "../../math/vector/Quaternion.h"
 #include "../../core/Processing.h"
 
-class FlightControl : public Processing {
+class FlightStabilization : public Processing {
 private:
 	float _Pq;
 	float _Pw;
@@ -23,7 +23,14 @@ public:
 	/**
 	 * Constructor
 	 */
-	FlightControl();
+	FlightStabilization();
+
+	/**
+	 * TODO
+	 */
+	void init() {
+
+	}
 
 
 	/** Set input parameters */
@@ -44,4 +51,4 @@ public:
 
 };
 
-#endif /* PROCESSING_FLIGHTCONTROL_FLIGHTCONTROL_H_ */
+#endif /* PROCESSING_FLIGHTSTABILIZATION_FLIGHTSTABILIZATION_H_ */

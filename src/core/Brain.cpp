@@ -20,10 +20,18 @@ Brain::Brain() : _referenceDate(Date::zero()), _commands(History<int>::getDefaul
 	_referenceDate.setTimElapsedSinceStartUs(micros());
 }
 
-void Brain::init()
+void Brain::enableI2C()
 {
 	// Initialize I2C com
 	i2c_master_enable(I2C1, I2C_FAST_MODE);
+}
+
+void Brain::initProcessings()
+{
+	for (Processing *proc : _processings)
+	{
+		proc->init();
+	}
 }
 
 void Brain::loop()

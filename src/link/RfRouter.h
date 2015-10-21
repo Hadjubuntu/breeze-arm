@@ -16,6 +16,9 @@ private:
 public:
 	RfRouter(RfControler *);
 
+	void init() {
+		// TODO
+	}
 	void process();
 };
 

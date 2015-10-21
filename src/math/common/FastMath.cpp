@@ -42,3 +42,25 @@ inline float FastMath::exp(float x)
 inline float FastMath::sqrt(float x) {
 	return std::sqrt(x);
 }
+
+
+float FastMath::fast_invsqrtf(float number)   // rel. err. < 0.07%
+{                               // Jan Kaldec, http://rrrola.wz.cz/inv_sqrt.html
+	float x2, y;
+	const float threehalfs = 1.5F;
+
+	union {
+		float    f;
+		uint32_t u;
+	} i;
+
+	x2  = number * 0.5F;
+	y   = number;
+
+	i.f = y; // evil floating point bit level hacking
+	i.u = 0x5f3759df - (i.u >> 1); // what the fxck?
+	y   = i.f;
+	y   = y * (threehalfs - (x2 * y * y));   // 1st iteration
+
+	return y;
+}

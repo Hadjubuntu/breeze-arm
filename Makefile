@@ -88,8 +88,8 @@ LIBMAPLE_MODULES += $(SRCROOT)/src/math/vector
 LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/I2C
 LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/IMU
 LIBMAPLE_MODULES += $(SRCROOT)/src/processing/ahrs
-LIBMAPLE_MODULES += $(SRCROOT)/src/processing/flightcontrol
-LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/radio
+LIBMAPLE_MODULES += $(SRCROOT)/src/processing/flightstabilization
+LIBMAPLE_MODULES += $(SRCROOT)/src/processing/link
 LIBMAPLE_MODULES += $(SRCROOT)/src/core
 LIBMAPLE_MODULES += $(SRCROOT)/src/link
 

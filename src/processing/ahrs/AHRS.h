@@ -18,7 +18,6 @@
 #include "../../peripherals/IMU/Gyro.h"
 
 
-
 class AHRS : public Processing {
 private:
 
@@ -43,7 +42,7 @@ public:
 	/**
 	 * Initialize sensors accelerometer and gyro
 	 */
-	void initSensors();
+	void init();
 
 	/**
 	 * Process and update data
