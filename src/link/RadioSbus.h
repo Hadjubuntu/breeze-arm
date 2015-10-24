@@ -17,8 +17,19 @@
 #define SBUS_AUTO_CHANNEL 		4
 #define BAUDRATE 100000
 #define SBUS_SIGNAL_LOST_DELAY_US 800000L
+#define RADIO_OFFSET 1023
+#define RADIO_VAR 680
 //#define ALL_CHANNELS
 
+
+/**
+ * Memo channels:
+ * ch0 : roll
+ * ch1 : pitch
+ * ch2: throttle
+ * ch3: yaw
+ * ch... : aux
+ */
 class RadioSbus {
 public:
 	Date lastUpdate;
@@ -53,6 +64,11 @@ public:
 	void resetLostCom() {
 		iterLostCom = 0;
 	}
+
+	float getChannelNormed(uint8_t ch) {
+		return (Channel(ch) - RADIO_OFFSET) / RADIO_VAR;
+	}
+
 private:
 	uint8_t byte_in_sbus;
 	uint8_t bit_in_sbus;

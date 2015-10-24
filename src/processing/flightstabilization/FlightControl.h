@@ -18,16 +18,14 @@ private:
 	RadioControler *_radioController;
 	FlightStabilization *_flightStabilization;
 	AHRS *_ahrs;
+	float _throttleInitUs;
 public:
 	FlightControl(RadioControler*, FlightStabilization*, AHRS*);
 
-	void init()
-	{
-
-	}
+	void init();
 	void process();
 
-	float radioToRad(int radioValue);
+	float radioToRad(float);
 };
 
 #endif /* PROCESSING_FLIGHTSTABILIZATION_FLIGHTCONTROL_H_ */

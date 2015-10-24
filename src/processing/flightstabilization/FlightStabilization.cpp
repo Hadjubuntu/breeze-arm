@@ -21,16 +21,22 @@ _gyroRot(Vect3D::zero()),
 _tau(Vect3D::zero())
 {
 	_freqHz = 50;
+	_throttle = 0;
 }
 
 /**
  * Set input parameters
+ * @param pTargetAttitude
+ * @param pCurrentAttitude
+ * @param pGyroRot
+ * @param pThrottle given between 0 and 1
  */
-void FlightStabilization::setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, Vect3D pGyroRot)
+void FlightStabilization::setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, Vect3D pGyroRot, float pThrottle)
 {
 	_targetAttitude = pTargetAttitude;
 	_currentAttitude = pCurrentAttitude;
 	_gyroRot = pGyroRot;
+	_throttle = pThrottle;
 }
 
 
@@ -50,5 +56,5 @@ void FlightStabilization::process()
 	//
 	// Update PID output for attitude
 
-	// Update PID output for thrust
+	// Update PID output for throttle
 }

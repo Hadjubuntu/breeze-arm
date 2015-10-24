@@ -7,13 +7,18 @@
 
 #include "RadioControler.h"
 
+/**
+ * Constructor
+ */
 RadioControler::RadioControler()
 {
 	// 100 Hz updater
 	_freqHz = 100;
 }
 
-
+/**
+ * Initialize radio controller
+ */
 void RadioControler::init()
 {
 	// Start serial for sbus radio

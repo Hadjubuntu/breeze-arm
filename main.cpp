@@ -16,6 +16,7 @@
 #include "src/peripherals/IMU/Baro.h"
 #include "src/link/RfControler.h"
 #include "src/link/RfRouter.h"
+#include "src/processing/actuator/ActuatorControl.h"
 #include "src/processing/flightstabilization/FlightStabilization.h"
 #include "src/processing/flightstabilization/FlightControl.h"
 
@@ -43,6 +44,8 @@ RadioControler radioControler;
 /** Route flight mode to mission / stabilization */
 FlightControl flightControl(&radioControler, &flightStabilization, &ahrs);
 
+/** Motor and servo control */
+ActuatorControl actuatorControl(&flightStabilization);
 
 void setup() {
 	/* Set up the LED to blink  */
@@ -62,6 +65,7 @@ void setup() {
 	uavBrain.addProcessing(&rfRouter);
 	uavBrain.addProcessing(&radioControler);
 	uavBrain.addProcessing(&flightControl);
+	uavBrain.addProcessing(&actuatorControl);
 
 	// Initialize all processings
 	//----------------------
@@ -89,21 +93,23 @@ void loop()
 
 		float* gyro_correct_int = ahrs.getGyroCorr();
 
+		// TODO map channels to roll pitch yaw throttle and optionnal channels
 		int ch0 = radioControler.getHandler().channels[0];
 
+
 		char str[90];
-		sprintf(str, "Roll = %.1f | Pitch = %.1f | Acc(x) = %.3f | Acc(y) = %.3f | Acc(z) = %.3f | ch0: %d",
-				rpy[0], rpy[1], ahrs.getAcc().getAccFiltered().getX(),
-				ahrs.getAcc().getAccFiltered().getY(), ahrs.getAcc().getAccFiltered().getZ(),
-				ch0
-		);
+//		sprintf(str, "Roll = %.1f | Pitch = %.1f | Acc(x) = %.3f | Acc(y) = %.3f | Acc(z) = %.3f | throttle: %.2f",
+//				rpy[0], rpy[1], ahrs.getAcc().getAccFiltered().getX(),
+//				ahrs.getAcc().getAccFiltered().getY(), ahrs.getAcc().getAccFiltered().getZ(),
+//				flightStabilization.getThrottle()
+//		);
 
+		sprintf(str, "ch0: %d | ch1: %d | ch2 : %d | ch3: %d",
+				radioControler.getHandler().channels[0],
+				radioControler.getHandler().channels[1],
+				radioControler.getHandler().channels[2],
+				radioControler.getHandler().channels[3]);
 
-//		sprintf(str, "Rollacc: %.1f | GyroX: %.1f | GyroY: %.1f",
-//					FastMath::toDegrees(atan(-ahrs.getAcc().getAccFiltered().getX() / ahrs.getAcc().getAccFiltered().getZ())),
-//					ahrs.getGyro().getGyroFiltered().getX(),
-//					ahrs.getGyro().getGyroFiltered().getY()
-//			);
 
 		logger.info(str);
 	}

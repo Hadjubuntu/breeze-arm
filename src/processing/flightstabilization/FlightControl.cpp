@@ -18,38 +18,46 @@ FlightControl::FlightControl(RadioControler *radioController,
 
 	// Runs at 50Hz
 	_freqHz = 50;
+
+	_throttleInitUs = 400;
+}
+
+void FlightControl::init()
+{
+	// Init throttle at minimum value [us]
+	_throttleInitUs = _radioController->getHandler().Channel(3);
 }
 
 void FlightControl::process()
 {
 	// Check radio state mode: auto or manual
-//	_radioController->isAutoMode();
+	//	_radioController->isAutoMode();
 
-	// In manual mode
+	// AUTO mode
+	// ------------------
+
+	// Update mission naviguation
+
+	// MANUAL mode
+	// ------------------
+
 	// Compute roll, pitch, yaw desired by using the radio values
-
-
-
-	float roll = radioToRad(_radioController->getHandler().channels[0]);
-	float pitch = 0.0;
-	float yaw = 0.0;
+	float roll = radioToRad(_radioController->getHandler().getChannelNormed(1));
+	float pitch = radioToRad(_radioController->getHandler().getChannelNormed(2));
+	float yaw = radioToRad(_radioController->getHandler().getChannelNormed(4));
+	// Throttle from 0 to 1
+	float throttle = (_radioController->getHandler().Channel(3) - _throttleInitUs) / 1000.0;
 
 	// Transform RPY to quaternion
 	Quaternion attitudeDesired = Quaternion::fromEuler(roll, pitch, yaw);
 
 	// Update input parameters of flight stabilization function
-	_flightStabilization->setInputs(attitudeDesired, _ahrs->getAttitude(), _ahrs->getGyro().getGyroFiltered());
+	_flightStabilization->setInputs(attitudeDesired, _ahrs->getAttitude(), _ahrs->getGyro().getGyroFiltered(), throttle);
 }
 
 
-float FlightControl::radioToRad(int radioValue)
+float FlightControl::radioToRad(float radioNormed)
 {
-	// TODO a lot to do here..
-	int offset = 1023;
-	float maxAngle = FastMath::toRadians(50);
-	int dradio = radioValue - offset;
-	BoundAbs(dradio, 800);
-	float angleRad = dradio / 800 * maxAngle;
-
-	return angleRad;
+	float maxAngle = FastMath::toRadians(40);
+	return  radioNormed * maxAngle;
 }

@@ -19,6 +19,7 @@ private:
 	Quaternion _currentAttitude;
 	Vect3D _gyroRot;
 	Vect3D _tau;
+	float _throttle;
 public:
 	/**
 	 * Constructor
@@ -34,7 +35,7 @@ public:
 
 
 	/** Set input parameters */
-	void setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, Vect3D pGyroRot);
+	void setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, Vect3D pGyroRot, float pThrottle);
 
 	/**
 	 * Process and update data
@@ -46,6 +47,10 @@ public:
 	 *************************** */
 	Vect3D getTau() {
 		return _tau;
+	}
+
+	float getThrottle() {
+		return _throttle;
 	}
 
 
