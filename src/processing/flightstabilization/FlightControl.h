@@ -25,7 +25,7 @@ public:
 	void init();
 	void process();
 
-	float radioToRad(float);
+	float radioToRad(float, float);
 };
 
 #endif /* PROCESSING_FLIGHTSTABILIZATION_FLIGHTCONTROL_H_ */

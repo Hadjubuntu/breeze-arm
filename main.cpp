@@ -104,11 +104,7 @@ void loop()
 //				flightStabilization.getThrottle()
 //		);
 
-		sprintf(str, "ch0: %d | ch1: %d | ch2 : %d | ch3: %d",
-				radioControler.getHandler().channels[0],
-				radioControler.getHandler().channels[1],
-				radioControler.getHandler().channels[2],
-				radioControler.getHandler().channels[3]);
+		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
 
 
 		logger.info(str);

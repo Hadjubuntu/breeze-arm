@@ -15,6 +15,7 @@
  */
 
 FlightStabilization::FlightStabilization() :
+Processing(),
 _Pq(20), _Pw(4),
 _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
