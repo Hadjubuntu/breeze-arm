@@ -6,6 +6,7 @@
  */
 
 #include <wirish.h>
+#include "../../data/conf/Conf.h"
 #include "ActuatorControl.h"
 
 /**
@@ -51,16 +52,16 @@ void ActuatorControl::init()
 	// Prepare all pin output
 	// -----------------------
 	// Timer 3 for motors at 480 Hz
-//	pinMode(D12, PWM);
-//	pinMode(D11, PWM);
-//	pinMode(D27, PWM);
+	//	pinMode(D12, PWM);
+	//	pinMode(D11, PWM);
+	//	pinMode(D27, PWM);
 	pinMode(D28, PWM);
 
 	// Timer 4 for servos at 50 Hz
 	pinMode(D14, PWM);
-//	pinMode(D24, PWM);
-//	pinMode(D5, PWM);
-//	pinMode(D9, PWM);
+	//	pinMode(D24, PWM);
+	//	pinMode(D5, PWM);
+	//	pinMode(D9, PWM);
 
 
 	// Set frequency for timers
@@ -75,9 +76,34 @@ void ActuatorControl::init()
 void ActuatorControl::process()
 {
 	// Converts 0 to 1 signal to us signal 2000us wide
-	unsigned short int val = (_flightStabilization->getThrottle() * 1850);
+	unsigned short int throttle = (_flightStabilization->getThrottle() * 1850);
 
-	// Write pulse
-	pwmWrite(D28, US_TO_COMPARE(val + PULSE_MIN_WIDTH));
-	pwmWrite(D14, US_TO_COMPARE(val + PULSE_MIN_WIDTH));
+	switch (Conf::getInstance().firmware)
+	{
+	case FIXED_WING:
+		processFixedWing(throttle);
+		break;
+	case MULTICOPTER:
+		processMulticopter(throttle);
+		break;
+	default:
+		// Throw error unknow firmware
+		break;
+	}
+}
+
+void ActuatorControl::processFixedWing(unsigned short int  throttle)
+{
+	// Write pulse for motors
+	pwmWrite(D28, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+
+	// Write pulse for servo
+	pwmWrite(D14, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+}
+
+void ActuatorControl::processMulticopter(unsigned short int  throttle)
+{
+//	float X1 = throttle +
+	// Write pulse for motors
+	pwmWrite(D28, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
 }

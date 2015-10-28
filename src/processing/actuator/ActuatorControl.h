@@ -21,6 +21,10 @@ public:
 	void init();
 
 	void process();
+
+	void processFixedWing(unsigned short int);
+
+	void processMulticopter(unsigned short int);
 };
 
 #endif /* PROCESSING_ACTUATOR_ACTUATORCONTROL_H_ */

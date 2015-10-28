@@ -39,7 +39,7 @@ void FlightControl::process()
 	// AUTO mode
 	// ------------------
 
-	// Update mission naviguation
+	// Update mission navigation
 
 	// MANUAL mode
 	// ------------------

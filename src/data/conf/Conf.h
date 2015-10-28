@@ -11,6 +11,11 @@
 #ifndef DATA_CONF_CONF_H_
 #define DATA_CONF_CONF_H_
 
+enum Firmware: int {
+	FIXED_WING = 0,
+	MULTICOPTER = 1
+};
+
 class Conf {
 private:
 	// Singleton variables and functions
@@ -20,7 +25,7 @@ private:
 	Conf& operator= (const Conf&){}
 	Conf (const Conf &){}
 
-	Conf();
+	Conf() ;
 
 public:
 	static Conf& getInstance();
@@ -33,6 +38,17 @@ public:
 	const float maxAbsRollAngle = 0.8;
 	const float maxAbsPitchAngle = 0.8;
 	const float maxAbsCombinedAngle = 0.7;
+
+
+	// Firmware
+	const int firmware = Firmware::FIXED_WING;
+
+	bool isFixedWing() {
+		return (firmware == Firmware::FIXED_WING);
+	}
+	bool isMulticopter() {
+		return (firmware == Firmware::MULTICOPTER);
+	}
 };
 
 #endif /* DATA_CONF_CONF_H_ */
