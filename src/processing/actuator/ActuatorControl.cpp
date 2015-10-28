@@ -17,7 +17,7 @@ Timer3 	12 	11 	27 	28
 Timer4 	5 	9 	14 	24
  */
 
-#define PULSE_MIN_WIDTH 700
+#define PULSE_MIN_WIDTH 600
 
 // This picks the smallest prescaler that allows an overflow < 2^16.
 #define MAX_OVERFLOW    ((1 << 16) - 1)
@@ -50,21 +50,21 @@ void ActuatorControl::init()
 {
 	// Prepare all pin output
 	// -----------------------
-	// Timer 3
+	// Timer 3 for motors at 480 Hz
 //	pinMode(D12, PWM);
 //	pinMode(D11, PWM);
 //	pinMode(D27, PWM);
-//	pinMode(D28, PWM);
+	pinMode(D28, PWM);
 
-	// Timer 4
-//	pinMode(D14, PWM);
-	pinMode(D24, PWM);
+	// Timer 4 for servos at 50 Hz
+	pinMode(D14, PWM);
+//	pinMode(D24, PWM);
 //	pinMode(D5, PWM);
 //	pinMode(D9, PWM);
 
 
 	// Set frequency for timers
-//	Timer3.setPeriod((uint32) HZ_TO_US(490)); // 490 Hz
+	Timer3.setPeriod((uint32) HZ_TO_US(490)); // 490 Hz
 	Timer4.setPeriod(20000); // 20000 microseconds = 50hz refresh
 }
 
@@ -74,9 +74,10 @@ void ActuatorControl::init()
  */
 void ActuatorControl::process()
 {
-	// Converts 0 to 1 signal to us signal
-	unsigned short int val = (_flightStabilization->getThrottle() * 1000);
+	// Converts 0 to 1 signal to us signal 2000us wide
+	unsigned short int val = (_flightStabilization->getThrottle() * 1850);
 
 	// Write pulse
-	pwmWrite(D24, US_TO_COMPARE(val + PULSE_MIN_WIDTH));
+	pwmWrite(D28, US_TO_COMPARE(val + PULSE_MIN_WIDTH));
+	pwmWrite(D14, US_TO_COMPARE(val + PULSE_MIN_WIDTH));
 }

@@ -21,14 +21,14 @@ FlightControl::FlightControl(RadioControler *radioController,
 	// Runs at 50Hz
 	_freqHz = 50;
 
-	_throttleInitUs = 350;
+	_throttleInitUs = 370;
 }
 
 void FlightControl::init()
 {
 	// Init throttle at minimum value [us]
 	//TODO wait until value between 300 and 500 ..
-//	_throttleInitUs = _radioController->getHandler().Channel(3);
+	//	_throttleInitUs = _radioController->getHandler().Channel(3);
 }
 
 void FlightControl::process()
@@ -49,7 +49,7 @@ void FlightControl::process()
 	float pitch = radioToRad(_radioController->getHandler().getChannelNormed(2), Conf::getInstance().maxAbsPitchAngle);
 	float yaw = radioToRad(_radioController->getHandler().getChannelNormed(4), Conf::getInstance().maxAbsCombinedAngle);
 	// Throttle from 0 to 1
-	float throttle = (_radioController->getHandler().Channel(3) - _throttleInitUs) / 1000.0;
+	float throttle = (_radioController->getHandler().Channel(3) - _throttleInitUs) / 1310.0;
 
 	// Transform RPY to quaternion
 	Quaternion attitudeDesired = Quaternion::fromEuler(roll, pitch, yaw);
