@@ -17,8 +17,8 @@
 #define SBUS_AUTO_CHANNEL 		4
 #define BAUDRATE 100000
 #define SBUS_SIGNAL_LOST_DELAY_US 800000L
-#define RADIO_OFFSET 1023
-#define RADIO_VAR 680
+#define RADIO_OFFSET 1023.0f
+#define RADIO_VAR 680.0f
 //#define ALL_CHANNELS
 
 
@@ -51,22 +51,20 @@ public:
 	uint8_t Failsafe(void);
 	void PassthroughSet(int mode);
 	int PassthroughRet(void);
-	void UpdateServos(void);
 	void UpdateChannels(void);
 	void FeedLine(void);
 
-	void incrLostCom() {
-		iterLostCom ++;
-	}
 	bool isComLost() {
-		return (iterLostCom > 5);
-	}
-	void resetLostCom() {
-		iterLostCom = 0;
+		return (Date::now().durationFrom(lastUpdate) > 1.0);
 	}
 
 	float getChannelNormed(uint8_t ch) {
-		return (Channel(ch) - RADIO_OFFSET) / RADIO_VAR;
+		int16_t channelValue = RADIO_OFFSET;
+
+		if (!isComLost()) {
+			channelValue = Channel(ch);
+		}
+		return (channelValue - RADIO_OFFSET) / RADIO_VAR;
 	}
 
 private:
@@ -79,7 +77,6 @@ private:
 	int bufferIndex;
 	uint8_t inData;
 	int feedState;
-	int iterLostCom;
 
 };
 

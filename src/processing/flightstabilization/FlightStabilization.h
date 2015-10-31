@@ -52,8 +52,6 @@ public:
 	float getThrottle() {
 		return _throttle;
 	}
-
-
 };
 
 #endif /* PROCESSING_FLIGHTSTABILIZATION_FLIGHTSTABILIZATION_H_ */

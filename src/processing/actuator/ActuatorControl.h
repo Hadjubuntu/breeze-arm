@@ -25,6 +25,8 @@ public:
 	void processFixedWing(unsigned short int);
 
 	void processMulticopter(unsigned short int);
+
+	int getCommandNmToSignalUs(float, float);
 };
 
 #endif /* PROCESSING_ACTUATOR_ACTUATORCONTROL_H_ */

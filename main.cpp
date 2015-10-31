@@ -98,14 +98,19 @@ void loop()
 
 
 		char str[90];
-//		sprintf(str, "Roll = %.1f | Pitch = %.1f | Acc(x) = %.3f | Acc(y) = %.3f | Acc(z) = %.3f | throttle: %.2f",
-//				rpy[0], rpy[1], ahrs.getAcc().getAccFiltered().getX(),
-//				ahrs.getAcc().getAccFiltered().getY(), ahrs.getAcc().getAccFiltered().getZ(),
-//				flightStabilization.getThrottle()
-//		);
+		sprintf(str, "Roll = %.1f | Pitch = %.1f | Acc(x) = %.3f | Acc(y) = %.3f | Acc(z) = %.3f | ch1: %.2f",
+				rpy[0], rpy[1], ahrs.getAcc().getAccFiltered().getX(),
+				ahrs.getAcc().getAccFiltered().getY(), ahrs.getAcc().getAccFiltered().getZ(),
+				radioControler.getHandler().getChannelNormed(1)
+		);
 
-		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
+//		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
 
+		// Print tau
+//		sprintf(str, "tau_x = %.2f | tau_y = %.2f | tau_z = %.2f",
+//				flightStabilization.getTau().getX(),
+//				flightStabilization.getTau().getY(),
+//				flightStabilization.getTau().getZ());
 
 		logger.info(str);
 	}

@@ -6,7 +6,9 @@
  */
 
 #include <wirish.h>
+#include "../../math/common/FastMath.h"
 #include "../../data/conf/Conf.h"
+#include "../../link/RadioSbus.h"
 #include "ActuatorControl.h"
 
 /**
@@ -92,13 +94,36 @@ void ActuatorControl::process()
 	}
 }
 
+int ActuatorControl::getCommandNmToSignalUs(float commandNm, float nmToDeltaSignalUs)
+{
+	BoundAbs(commandNm, Conf::getInstance().maxCommandNm);
+	int deltaSignal = (int) commandNm * nmToDeltaSignalUs;
+
+	BoundAbs(deltaSignal, RADIO_VAR);
+	return deltaSignal;
+}
+
 void ActuatorControl::processFixedWing(unsigned short int  throttle)
 {
-	// Write pulse for motors
+	// Motors - write pulse
 	pwmWrite(D28, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
 
-	// Write pulse for servo
-	pwmWrite(D14, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+	// Servos - write pulse
+	// -----------------------
+	// Wings / Roll
+	Vect3D torqueCmd = _flightStabilization->getTau();
+	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 150.0f);
+
+//	pwmWrite(D14, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+//	pwmWrite(D24, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+//
+//	// Pitch
+//	pwmWrite(D5, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+//
+//	// Rubber
+//	pwmWrite(D9, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+
+	// Optionnal flaps
 }
 
 void ActuatorControl::processMulticopter(unsigned short int  throttle)

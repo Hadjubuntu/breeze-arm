@@ -87,97 +87,10 @@ int RadioSbus::PassthroughRet(void) {
 	// Return current passthrough mode
 	return sbus_passthrough;
 }
-void RadioSbus::UpdateServos(void) {
-	// Send data to servos
-	// Passtrough mode = false >> send own servo data
-	// Passtrough mode = true >> send received channel data
-	uint8_t i;
-	if (sbus_passthrough==0) {
-		// clear received channel data
-		for (i=1; i<24; i++) {
-			sbusData[i] = 0;
-		}
 
-		// reset counters
-		ch = 0;
-		bit_in_servo = 0;
-		byte_in_sbus = 1;
-		bit_in_sbus = 0;
-
-		// store servo data
-		for (i=0; i<176; i++) {
-			if (servos[ch] & (1<<bit_in_servo)) {
-				sbusData[byte_in_sbus] |= (1<<bit_in_sbus);
-			}
-			bit_in_sbus++;
-			bit_in_servo++;
-
-			if (bit_in_sbus == 8) {
-				bit_in_sbus =0;
-				byte_in_sbus++;
-			}
-			if (bit_in_servo == 11) {
-				bit_in_servo =0;
-				ch++;
-			}
-		}
-
-		// DigiChannel 1
-		if (channels[16] == 1) {
-			sbusData[23] |= (1<<0);
-		}
-		// DigiChannel 2
-		if (channels[17] == 1) {
-			sbusData[23] |= (1<<1);
-		}
-
-		// Failsafe
-		if (failsafe_status == SBUS_SIGNAL_LOST) {
-			sbusData[23] |= (1<<2);
-		}
-
-		if (failsafe_status == SBUS_SIGNAL_FAILSAFE) {
-			sbusData[23] |= (1<<2);
-			sbusData[23] |= (1<<3);
-		}
-	}
-	// send data out
-	//serialPort.write(sbusData,25);
-	for (i=0;i<25;i++) {
-		port.write(sbusData[i]);
-	}
-}
-void RadioSbus::UpdateChannels(void) {
-	//uint8_t i;
-	//uint8_t sbus_pointer = 0;
-	// clear channels[]
-	/*for (i=0; i<16; i++) {
-    channels[i] = 0;
-  }
-
-  // reset counters
-  byte_in_sbus = 1;
-  bit_in_sbus = 0;
-  ch = 0;
-  bit_in_channel = 0;
-  //this method is much slower than the other method
-  // process actual sbus data
-  for (i=0; i<176; i++) {
-    if (sbusData[byte_in_sbus] & (1<<bit_in_sbus)) {
-      channels[ch] |= (1<<bit_in_channel);
-    }
-    bit_in_sbus++;
-    bit_in_channel++;
-
-    if (bit_in_sbus == 8) {
-      bit_in_sbus =0;
-      byte_in_sbus++;
-    }
-    if (bit_in_channel == 11) {
-      bit_in_channel =0;
-      ch++;
-    }
-  }*/
+void RadioSbus::UpdateChannels(void)
+{
+	lastUpdate = Date::now();
 
 	channels[0]  = ((sbusData[1]|sbusData[2]<< 8) & 0x07FF);
 	channels[1]  = ((sbusData[2]>>3|sbusData[3]<<5) & 0x07FF);

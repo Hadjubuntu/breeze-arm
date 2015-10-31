@@ -38,6 +38,8 @@ public:
 	const float maxAbsRollAngle = 0.8;
 	const float maxAbsPitchAngle = 0.8;
 	const float maxAbsCombinedAngle = 0.7;
+	// Max command on the torque in Nm
+	const float maxCommandNm = 4.0;
 
 
 	// Firmware

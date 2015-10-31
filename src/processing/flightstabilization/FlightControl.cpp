@@ -24,6 +24,9 @@ FlightControl::FlightControl(RadioControler *radioController,
 	_throttleInitUs = 370;
 }
 
+/**
+ * Initialize flight controller
+ */
 void FlightControl::init()
 {
 	// Init throttle at minimum value [us]
@@ -63,7 +66,14 @@ void FlightControl::process()
 }
 
 
+/**
+ * Converts radio signal to angle in radians.
+ * Radio signal must be contained in [-1; 1] interval.
+ */
 float FlightControl::radioToRad(float radioNormed, float maxAngle)
 {
-	return  radioNormed * maxAngle;
+	// Signal is inverted, roll positive equals turns right,
+	//	pitch positive is nose high tail low,
+	// and yaw positive on the clockwise.
+	return -1.0 * radioNormed * maxAngle;
 }

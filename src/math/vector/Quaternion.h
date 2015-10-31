@@ -130,12 +130,14 @@ public:
 		_z = -_z;
 		return (*this);
 	}
-	// TODO
+
+	/**
+	 * Construct quaternion from euler angles
+	 */
 	static Quaternion fromEuler(float rollRad, float pitchRad, float yawRad) {
-		return Quaternion(0, 0, 0, 0);
+		return Quaternion(rollRad, pitchRad, yawRad);
 	}
 
-	// TODO toEuler > vect3D
 
 	static Quaternion zero() {
 		Quaternion e(1.0, 0.0, 0.0, 0.0);
