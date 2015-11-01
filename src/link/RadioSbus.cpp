@@ -33,7 +33,7 @@ void RadioSbus::begin(){
 	failsafe_status = SBUS_SIGNAL_OK;
 	sbus_passthrough = 1;
 	toChannels = 0;
-	bufferIndex=0;
+	bufferIndex = 0;
 	feedState = 0;
 	lastUpdate = Date::now();
 }
@@ -90,8 +90,6 @@ int RadioSbus::PassthroughRet(void) {
 
 void RadioSbus::UpdateChannels(void)
 {
-	lastUpdate = Date::now();
-
 	channels[0]  = ((sbusData[1]|sbusData[2]<< 8) & 0x07FF);
 	channels[1]  = ((sbusData[2]>>3|sbusData[3]<<5) & 0x07FF);
 	channels[2]  = ((sbusData[3]>>6|sbusData[4]<<2|sbusData[5]<<10) & 0x07FF);
@@ -136,8 +134,8 @@ void RadioSbus::UpdateChannels(void)
 
 }
 void RadioSbus::FeedLine(void){
-	if (port.available() > 24){
-		while(port.available() > 0){
+	if (port.available() > 24) {
+		while(port.available() > 0) {
 			inData = port.read();
 
 
@@ -159,12 +157,13 @@ void RadioSbus::FeedLine(void){
 			case 1:
 				bufferIndex ++;
 				inBuffer[bufferIndex] = inData;
-				if (bufferIndex < 24 && port.available() == 0){
+				if (bufferIndex < 24 && port.available() == 0) {
 					feedState = 0;
 				}
-				if (bufferIndex == 24){
+				if (bufferIndex == 24) {
 					feedState = 0;
-					if (inBuffer[0]==0x0f && inBuffer[24] == 0x00){
+					if (inBuffer[0]==0x0f && inBuffer[24] == 0x00) {
+						// Copy data
 						memcpy(sbusData,inBuffer,25);
 						toChannels = 1;
 					}

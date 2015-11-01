@@ -43,7 +43,7 @@ public:
 
 
 	// Firmware
-	const int firmware = Firmware::FIXED_WING;
+	const int firmware = Firmware::MULTICOPTER;
 
 	bool isFixedWing() {
 		return (firmware == Firmware::FIXED_WING);

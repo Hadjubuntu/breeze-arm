@@ -9,6 +9,7 @@
 #include <vector>
 #include "libraries/Wire/Wire.h"
 #include "src/core/Brain.h"
+#include "src/math/time/Date.h"
 #include "src/math/common/FastMath.h"
 #include "src/processing/ahrs/AHRS.h"
 #include "src/processing/link/RadioControler.h"
@@ -83,7 +84,7 @@ void loop()
 
 	// Prints infos
 	// ----
-	if (uavBrain.getTickId() % 1000 == 0)
+	if (uavBrain.getTickId() % 600 == 0)
 	{
 		toggleLED();
 
@@ -94,23 +95,28 @@ void loop()
 		float* gyro_correct_int = ahrs.getGyroCorr();
 
 		// TODO map channels to roll pitch yaw throttle and optionnal channels
-		int ch0 = radioControler.getHandler().channels[0];
+		int ch1 = radioControler.getHandler().channels[1];
 
 
 		char str[90];
-		sprintf(str, "Roll = %.1f | Pitch = %.1f | Acc(x) = %.3f | Acc(y) = %.3f | Acc(z) = %.3f | ch1: %.2f",
-				rpy[0], rpy[1], ahrs.getAcc().getAccFiltered().getX(),
-				ahrs.getAcc().getAccFiltered().getY(), ahrs.getAcc().getAccFiltered().getZ(),
-				radioControler.getHandler().getChannelNormed(1)
-		);
+//		sprintf(str, "Roll = %.1f | Pitch = %.1f",
+//				rpy[0], rpy[1]
+//		);
 
 //		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
+
 
 		// Print tau
 //		sprintf(str, "tau_x = %.2f | tau_y = %.2f | tau_z = %.2f",
 //				flightStabilization.getTau().getX(),
 //				flightStabilization.getTau().getY(),
-//				flightStabilization.getTau().getZ());
+//				flightStabilization.getTau().getZ());.
+		sprintf(str, "X1 = %d | X2 = %d | X3 = %d | X4 = %d",
+						actuatorControl.motorMap[0],
+						actuatorControl.motorMap[1],
+						actuatorControl.motorMap[2],
+						actuatorControl.motorMap[3]
+						);
 
 		logger.info(str);
 	}

@@ -15,25 +15,27 @@ RfControler::RfControler() : Processing()
 
 void RfControler::process()
 {
-	char inChar = (char) RfSerial.read();
+	if (RfSerial.available() > 0) {
+		char inChar = (char) RfSerial.read();
 
-	// If incoming character is a new line, then the packet is stored
-	//----------------------------------------------------------
-	if (inChar == _endPacketChar)
-	{
-		// Add packet to history
-		RfPacket e(Date::now(), "no_header", _incomingPacket);
-		_packets.push_back(e);
+		// If incoming character is a new line, then the packet is stored
+		//----------------------------------------------------------
+		if (inChar == _endPacketChar)
+		{
+			// Add packet to history
+			RfPacket e(Date::now(), "no_header", _incomingPacket);
+			_packets.push_back(e);
 
-		// Reset incoming packet
-		_incomingPacket.clear();
+			// Reset incoming packet
+			_incomingPacket.clear();
 
-	}
-	// Otherwise append new char to current incoming packet
-	else
-	{
-		// Push back character to string
-		_incomingPacket += inChar;
+		}
+		// Otherwise append new char to current incoming packet
+		else
+		{
+			// Push back character to string
+			_incomingPacket += inChar;
+		}
 	}
 }
 

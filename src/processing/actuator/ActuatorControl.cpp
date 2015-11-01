@@ -20,7 +20,6 @@ Timer3 	12 	11 	27 	28
 Timer4 	5 	9 	14 	24
  */
 
-#define PULSE_MIN_WIDTH 600
 
 // This picks the smallest prescaler that allows an overflow < 2^16.
 #define MAX_OVERFLOW    ((1 << 16) - 1)
@@ -36,6 +35,14 @@ Timer4 	5 	9 	14 	24
 #define COMPARE_TO_US(c)  ((uint32)map((c), 0, SERVO_OVERFLOW, 0, TAU_USEC))
 
 #define HZ_TO_US(f) (1000000.0f/f)
+
+unsigned short levelToCtrl(unsigned short level)
+{
+	unsigned short ctrl = (level < 0)?0:((level >= 1000)?50000:((1000 + level) * 24));
+	return ctrl;
+}
+
+
 
 /**
  * Processing constructor
@@ -54,10 +61,10 @@ void ActuatorControl::init()
 	// Prepare all pin output
 	// -----------------------
 	// Timer 3 for motors at 480 Hz
-	//	pinMode(D12, PWM);
-	//	pinMode(D11, PWM);
-	//	pinMode(D27, PWM);
 	pinMode(D28, PWM);
+	pinMode(D27, PWM);
+	pinMode(D11, PWM);
+	pinMode(D12, PWM);
 
 	// Timer 4 for servos at 50 Hz
 	pinMode(D14, PWM);
@@ -69,6 +76,12 @@ void ActuatorControl::init()
 	// Set frequency for timers
 	Timer3.setPeriod((uint32) HZ_TO_US(490)); // 490 Hz
 	Timer4.setPeriod(20000); // 20000 microseconds = 50hz refresh
+
+	// For multicopter only
+	pwmWrite(D28, levelToCtrl(0));
+	pwmWrite(D27, levelToCtrl(0));
+	pwmWrite(D11, levelToCtrl(0));
+	pwmWrite(D12, levelToCtrl(0));
 }
 
 
@@ -77,21 +90,23 @@ void ActuatorControl::init()
  */
 void ActuatorControl::process()
 {
-	// Converts 0 to 1 signal to us signal 2000us wide
-	unsigned short int throttle = (_flightStabilization->getThrottle() * 1850);
+	// Converts 0 to 1 signal to us signal 1000ms wide
+	unsigned short int throttle = (_flightStabilization->getThrottle() * 1000);
 
-	switch (Conf::getInstance().firmware)
-	{
-	case FIXED_WING:
-		processFixedWing(throttle);
-		break;
-	case MULTICOPTER:
-		processMulticopter(throttle);
-		break;
-	default:
-		// Throw error unknow firmware
-		break;
-	}
+	processMulticopter(throttle);
+
+//	switch (Conf::getInstance().firmware)
+//	{
+//	case FIXED_WING:
+//		processFixedWing(throttle);
+//		break;
+//	case MULTICOPTER:
+//		processMulticopter(throttle);
+//		break;
+//	default:
+//		// Throw error unknow firmware
+//		break;
+//	}
 }
 
 int ActuatorControl::getCommandNmToSignalUs(float commandNm, float nmToDeltaSignalUs)
@@ -106,7 +121,7 @@ int ActuatorControl::getCommandNmToSignalUs(float commandNm, float nmToDeltaSign
 void ActuatorControl::processFixedWing(unsigned short int  throttle)
 {
 	// Motors - write pulse
-	pwmWrite(D28, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+	pwmWrite(D28, US_TO_COMPARE(throttle));
 
 	// Servos - write pulse
 	// -----------------------
@@ -114,21 +129,57 @@ void ActuatorControl::processFixedWing(unsigned short int  throttle)
 	Vect3D torqueCmd = _flightStabilization->getTau();
 	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 150.0f);
 
-//	pwmWrite(D14, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
-//	pwmWrite(D24, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
-//
-//	// Pitch
-//	pwmWrite(D5, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
-//
-//	// Rubber
-//	pwmWrite(D9, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+	//	pwmWrite(D14, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+	//	pwmWrite(D24, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+	//
+	//	// Pitch
+	//	pwmWrite(D5, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+	//
+	//	// Rubber
+	//	pwmWrite(D9, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
 
 	// Optionnal flaps
 }
 
-void ActuatorControl::processMulticopter(unsigned short int  throttle)
+
+/**
+ * H-copter:
+ *
+ * X1 ------ X2
+ *      |
+ *      |
+ *      |
+ * X3 ------ X4
+ */
+void ActuatorControl::processMulticopter(unsigned short int throttle)
 {
-//	float X1 = throttle +
+	Vect3D torqueCmd = _flightStabilization->getTau();
+	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 50.0f);
+	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 50.0f);
+	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 30.0f);
+
+	int X1 = throttle - rollDeltaSignal + pitchDeltaSignal + yawDeltaSignal;
+	int X2 = throttle + rollDeltaSignal + pitchDeltaSignal - yawDeltaSignal;
+	int X3 = throttle - rollDeltaSignal - pitchDeltaSignal + yawDeltaSignal;
+	int X4 = throttle + rollDeltaSignal - pitchDeltaSignal - yawDeltaSignal;
+
+	Bound(X1, 0, 900);
+	Bound(X2, 0, 900);
+	Bound(X3, 0, 900);
+	Bound(X4, 0, 900);
+
+
+	motorMap[0] = X1;
+	motorMap[1] = X2;
+	motorMap[2] = X3;
+	motorMap[3] = X4;
+
 	// Write pulse for motors
-	pwmWrite(D28, US_TO_COMPARE(throttle + PULSE_MIN_WIDTH));
+	pwmWrite(D28, levelToCtrl(X1));
+	pwmWrite(D27, levelToCtrl(X2));
+	pwmWrite(D11, levelToCtrl(X3));
+	pwmWrite(D12, levelToCtrl(X4));
+
+	// Signal goes from 1000ms to 2000ms
+	pwmWrite(D14, US_TO_COMPARE(throttle * 1.6 + 650));
 }

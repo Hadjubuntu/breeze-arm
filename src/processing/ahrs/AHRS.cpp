@@ -45,7 +45,7 @@ void AHRS::process()
 {
 	const float accelKi = 0.000174;
 	const float accelKp = 0.00174;
-	const float rollPitchBiasRate = 0.999;
+	const float rollPitchBiasRate = 0.999999;
 
 	_accelerometer.update();
 	_gyro.update();

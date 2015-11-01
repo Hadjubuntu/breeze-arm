@@ -40,7 +40,7 @@ void RadioControler::process()
 	if (_handler.toChannels == 1)
 	{
 		_handler.UpdateChannels();
-		_handler.lastUpdate = Date::now();
 		_handler.toChannels = 0;
+		_handler.lastUpdate = Date::now();
 	}
 }
