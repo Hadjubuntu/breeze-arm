@@ -111,12 +111,7 @@ void loop()
 						flightStabilization.getTau().getX(),
 						flightStabilization.getTau().getY(),
 						flightControl.rpy[0], flightControl.rpy[1]);
-//				sprintf(str, "X1 = %d | X2 = %d | X3 = %d | X4 = %d",
-//								actuatorControl.motorMap[0],
-//								actuatorControl.motorMap[1],
-//								actuatorControl.motorMap[2],
-//								actuatorControl.motorMap[3]
-//								);
+
 
 		logger.info(str);
 	}

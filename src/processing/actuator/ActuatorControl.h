@@ -27,8 +27,6 @@ public:
 	void processMulticopter(unsigned short int);
 
 	int getCommandNmToSignalUs(float, float);
-
-	int motorMap[4];
 };
 
 #endif /* PROCESSING_ACTUATOR_ACTUATORCONTROL_H_ */

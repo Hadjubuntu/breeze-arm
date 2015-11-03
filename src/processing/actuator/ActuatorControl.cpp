@@ -95,18 +95,18 @@ void ActuatorControl::process()
 
 	processMulticopter(throttle);
 
-//	switch (Conf::getInstance().firmware)
-//	{
-//	case FIXED_WING:
-//		processFixedWing(throttle);
-//		break;
-//	case MULTICOPTER:
-//		processMulticopter(throttle);
-//		break;
-//	default:
-//		// Throw error unknow firmware
-//		break;
-//	}
+	//	switch (Conf::getInstance().firmware)
+	//	{
+	//	case FIXED_WING:
+	//		processFixedWing(throttle);
+	//		break;
+	//	case MULTICOPTER:
+	//		processMulticopter(throttle);
+	//		break;
+	//	default:
+	//		// Throw error unknow firmware
+	//		break;
+	//	}
 }
 
 int ActuatorControl::getCommandNmToSignalUs(float commandNm, float nmToDeltaSignalUs)
@@ -153,32 +153,47 @@ void ActuatorControl::processFixedWing(unsigned short int  throttle)
  */
 void ActuatorControl::processMulticopter(unsigned short int throttle)
 {
+	// Retrieve torque command
 	Vect3D torqueCmd = _flightStabilization->getTau();
-	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 50.0f);
-	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 50.0f);
-	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 30.0f);
 
-	int X1 = throttle + rollDeltaSignal + pitchDeltaSignal - yawDeltaSignal;
-	int X2 = throttle - rollDeltaSignal + pitchDeltaSignal + yawDeltaSignal;
-	int X3 = throttle + rollDeltaSignal - pitchDeltaSignal + yawDeltaSignal;
-	int X4 = throttle - rollDeltaSignal - pitchDeltaSignal - yawDeltaSignal;
+	// Compute delta signal from torque command
+	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 40.0f);
+	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 40.0f);
+	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 25.0f);
 
-	Bound(X1, 0, 900);
-	Bound(X2, 0, 900);
-	Bound(X3, 0, 900);
-	Bound(X4, 0, 900);
+	int motorX[4] = {0, 0, 0, 0};
+	int motorActivation[4][3] = {
+			{1, 1, -1},
+			{-1, 1, 1},
+			{1, -1, 1},
+			{-1, -1, -1}
+	};
 
+	// Set throttle repartition only throttle superior to a minimum threshold
+	if (throttle > 10)
+	{
+		for (int i = 0; i < 4; i ++)
+		{
+			motorX[i] = throttle
+					+ motorActivation[i][0] * rollDeltaSignal
+					+ motorActivation[i][1] * pitchDeltaSignal
+					+ motorActivation[i][2] * yawDeltaSignal;
 
-	motorMap[0] = X1;
-	motorMap[1] = X2;
-	motorMap[2] = X3;
-	motorMap[3] = X4;
+			Bound(motorX[i], 0, 900);
+		}
+
+		//		motorX[0] = throttle + rollDeltaSignal + pitchDeltaSignal - yawDeltaSignal;
+//		motorX[1] = throttle - rollDeltaSignal + pitchDeltaSignal + yawDeltaSignal;
+//		motorX[2] = throttle + rollDeltaSignal - pitchDeltaSignal + yawDeltaSignal;
+//		motorX[3] = throttle - rollDeltaSignal - pitchDeltaSignal - yawDeltaSignal;
+	}
+
 
 	// Write pulse for motors
-	pwmWrite(D28, levelToCtrl(X1));
-	pwmWrite(D27, levelToCtrl(X2));
-	pwmWrite(D11, levelToCtrl(X3));
-	pwmWrite(D12, levelToCtrl(X4));
+	pwmWrite(D28, levelToCtrl(motorX[0]));
+	pwmWrite(D27, levelToCtrl(motorX[1]));
+	pwmWrite(D11, levelToCtrl(motorX[2]));
+	pwmWrite(D12, levelToCtrl(motorX[3]));
 
 	// Signal goes from 650 to 2250 ms
 	pwmWrite(D14, US_TO_COMPARE(throttle * 1.6 + 650));
