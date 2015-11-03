@@ -99,24 +99,24 @@ void loop()
 
 
 		char str[90];
-//		sprintf(str, "Roll = %.1f | Pitch = %.1f",
-//				rpy[0], rpy[1]
-//		);
+		//		sprintf(str, "Roll = %.1f | Pitch = %.1f",
+		//				rpy[0], rpy[1]
+		//		);
 
-//		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
+		//		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
 
 
 		// Print tau
-//		sprintf(str, "tau_x = %.2f | tau_y = %.2f | tau_z = %.2f",
-//				flightStabilization.getTau().getX(),
-//				flightStabilization.getTau().getY(),
-//				flightStabilization.getTau().getZ());.
-		sprintf(str, "X1 = %d | X2 = %d | X3 = %d | X4 = %d",
-						actuatorControl.motorMap[0],
-						actuatorControl.motorMap[1],
-						actuatorControl.motorMap[2],
-						actuatorControl.motorMap[3]
-						);
+				sprintf(str, "tau_x = %.2f | tau_y = %.2f | rpy_x = %.1f | rpy_y = %.1f",
+						flightStabilization.getTau().getX(),
+						flightStabilization.getTau().getY(),
+						flightControl.rpy[0], flightControl.rpy[1]);
+//				sprintf(str, "X1 = %d | X2 = %d | X3 = %d | X4 = %d",
+//								actuatorControl.motorMap[0],
+//								actuatorControl.motorMap[1],
+//								actuatorControl.motorMap[2],
+//								actuatorControl.motorMap[3]
+//								);
 
 		logger.info(str);
 	}

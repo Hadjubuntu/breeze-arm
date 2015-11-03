@@ -112,7 +112,7 @@ void ActuatorControl::process()
 int ActuatorControl::getCommandNmToSignalUs(float commandNm, float nmToDeltaSignalUs)
 {
 	BoundAbs(commandNm, Conf::getInstance().maxCommandNm);
-	int deltaSignal = (int) commandNm * nmToDeltaSignalUs;
+	int deltaSignal = (int) (-1) * commandNm * nmToDeltaSignalUs;
 
 	BoundAbs(deltaSignal, RADIO_VAR);
 	return deltaSignal;
@@ -158,10 +158,10 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 50.0f);
 	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 30.0f);
 
-	int X1 = throttle - rollDeltaSignal + pitchDeltaSignal + yawDeltaSignal;
-	int X2 = throttle + rollDeltaSignal + pitchDeltaSignal - yawDeltaSignal;
-	int X3 = throttle - rollDeltaSignal - pitchDeltaSignal + yawDeltaSignal;
-	int X4 = throttle + rollDeltaSignal - pitchDeltaSignal - yawDeltaSignal;
+	int X1 = throttle + rollDeltaSignal + pitchDeltaSignal - yawDeltaSignal;
+	int X2 = throttle - rollDeltaSignal + pitchDeltaSignal + yawDeltaSignal;
+	int X3 = throttle + rollDeltaSignal - pitchDeltaSignal + yawDeltaSignal;
+	int X4 = throttle - rollDeltaSignal - pitchDeltaSignal - yawDeltaSignal;
 
 	Bound(X1, 0, 900);
 	Bound(X2, 0, 900);
@@ -180,6 +180,6 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 	pwmWrite(D11, levelToCtrl(X3));
 	pwmWrite(D12, levelToCtrl(X4));
 
-	// Signal goes from 1000ms to 2000ms
+	// Signal goes from 650 to 2250 ms
 	pwmWrite(D14, US_TO_COMPARE(throttle * 1.6 + 650));
 }

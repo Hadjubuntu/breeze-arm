@@ -54,6 +54,9 @@ void FlightControl::process()
 	// Throttle from 0 to 1
 	float throttle = (_radioController->getHandler().Channel(3) - _throttleInitUs) / 1310.0;
 
+	rpy[0] = roll;
+	rpy[1] = pitch;
+
 	// Transform RPY to quaternion
 	Quaternion attitudeDesired = Quaternion::fromEuler(roll, pitch, yaw);
 
@@ -75,5 +78,5 @@ float FlightControl::radioToRad(float radioNormed, float maxAngle)
 	// Signal is inverted, roll positive equals turns right,
 	//	pitch positive is nose high tail low,
 	// and yaw positive on the clockwise.
-	return -1.0 * radioNormed * maxAngle;
+	return 1.0 * radioNormed * maxAngle;
 }
