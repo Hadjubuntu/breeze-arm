@@ -78,5 +78,5 @@ void Gyro::update()
 	_gyroRaw = cGyro ;
 
 	// Filter gyro data
-	_gyroFiltered = cGyro.roundvect();
+	_gyroFiltered =  _gyroFiltered * (1.0 - _filterNewDataCoeff) + cGyro * _filterNewDataCoeff;
 }

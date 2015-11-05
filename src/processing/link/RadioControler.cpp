@@ -35,10 +35,13 @@ void RadioControler::init()
 
 void RadioControler::process()
 {
+	// Read bus data
 	_handler.FeedLine();
 
+	// If data are complete
 	if (_handler.toChannels == 1)
 	{
+		// Update channel data and last update date
 		_handler.UpdateChannels();
 		_handler.toChannels = 0;
 		_handler.lastUpdate = Date::now();

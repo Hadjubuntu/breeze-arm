@@ -157,17 +157,18 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 	Vect3D torqueCmd = _flightStabilization->getTau();
 
 	// Compute delta signal from torque command
-	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 40.0f);
-	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 40.0f);
-	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 25.0f);
+	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 20.0f);
+	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 20.0f);
+	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 10.0f);
 
 	int motorX[4] = {0, 0, 0, 0};
-	int motorActivation[4][3] = {
-			{1, 1, -1},
-			{-1, 1, 1},
-			{1, -1, 1},
-			{-1, -1, -1}
-	};
+
+	int _motorActivation[4][3] =  {
+				{1, 1, -1},
+				{-1, 1, 1},
+				{1, -1, 1},
+				{-1, -1, -1}
+		};
 
 	// Set throttle repartition only throttle superior to a minimum threshold
 	if (throttle > 10)
@@ -175,9 +176,9 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 		for (int i = 0; i < 4; i ++)
 		{
 			motorX[i] = throttle
-					+ motorActivation[i][0] * rollDeltaSignal
-					+ motorActivation[i][1] * pitchDeltaSignal
-					+ motorActivation[i][2] * yawDeltaSignal;
+					+ _motorActivation[i][0] * rollDeltaSignal
+					+ _motorActivation[i][1] * pitchDeltaSignal
+					+ _motorActivation[i][2] * yawDeltaSignal;
 
 			Bound(motorX[i], 0, 900);
 		}

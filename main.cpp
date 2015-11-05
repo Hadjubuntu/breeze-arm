@@ -99,9 +99,9 @@ void loop()
 
 
 		char str[90];
-		//		sprintf(str, "Roll = %.1f | Pitch = %.1f",
-		//				rpy[0], rpy[1]
-		//		);
+//				sprintf(str, "Roll = %.1f | Pitch = %.1f",
+//						rpy[0], rpy[1]
+//				);
 
 		//		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
 
@@ -110,7 +110,7 @@ void loop()
 				sprintf(str, "tau_x = %.2f | tau_y = %.2f | rpy_x = %.1f | rpy_y = %.1f",
 						flightStabilization.getTau().getX(),
 						flightStabilization.getTau().getY(),
-						flightControl.rpy[0], flightControl.rpy[1]);
+						rpy[0], rpy[1]);
 
 
 		logger.info(str);

@@ -24,9 +24,13 @@ void RfRouter::process()
 		// Get payload
 		std::string packetStr = packet.getPayload();
 
+		// Converts string to char array
 		char charArray[RF_PACKET_MAX_LENGTH];
 		strncpy(charArray, packetStr.c_str(), RF_PACKET_MAX_LENGTH-1);
 
+		// Print data
 		Serial3.println(charArray);
+
+		// Route regarding its header data
 	}
 }

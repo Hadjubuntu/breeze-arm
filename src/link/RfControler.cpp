@@ -5,6 +5,8 @@
  *      Author: adrien
  */
 
+
+#include <stdio.h>
 #include "RfControler.h"
 
 RfControler::RfControler() : Processing()
@@ -36,6 +38,25 @@ void RfControler::process()
 			// Push back character to string
 			_incomingPacket += inChar;
 		}
+	}
+}
+
+void RfControler::send(RfPacket& packet)
+{
+	std::string header = packet.getHeader();
+	std::string payload = packet.getPayload();
+
+	int byteBuffer = header.length() + payload.length() + 1;
+
+	if (byteBuffer <= RF_PACKET_MAX_LENGTH)
+	{
+		// Create byte to send
+		char charArray[byteBuffer];
+
+		// Concatenate data
+		sprintf(charArray, "%s|%s\n", header.c_str(), payload.c_str());
+
+		// Send data TODO
 	}
 }
 

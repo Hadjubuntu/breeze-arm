@@ -63,7 +63,6 @@ void FlightControl::process()
 
 	// Flight stabilization
 	// ------------------
-
 	// Update input parameters of flight stabilization function
 	_flightStabilization->setInputs(attitudeDesired, _ahrs->getAttitude(), _ahrs->getGyro().getGyroFiltered(), throttle);
 }
