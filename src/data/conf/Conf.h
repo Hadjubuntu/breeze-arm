@@ -34,9 +34,9 @@ public:
 	// Configuration parameters
 	// ------------------------------------
 	// Flight control parameters
-	const float maxAbsRollAngle = 0.8;
-	const float maxAbsPitchAngle = 0.8;
-	const float maxAbsCombinedAngle = 0.7;
+	const float maxAbsRollAngle = 0.34; // 0.34 for 20 degress, 0.5 for approx 30 degrees, go higher to 0.8 for 45 degrees
+	const float maxAbsPitchAngle = 0.34;
+	const float maxAbsCombinedAngle = 0.5;
 	// Max command on the torque in Nm
 	const float maxCommandNm = 4.0;
 

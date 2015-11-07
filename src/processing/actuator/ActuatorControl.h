@@ -16,6 +16,8 @@ private:
 	FlightStabilization *_flightStabilization;
 
 public:
+	// debug
+	int motors[4];
 	ActuatorControl(FlightStabilization *);
 
 	void init();

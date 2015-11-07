@@ -95,23 +95,27 @@ void loop()
 		float* gyro_correct_int = ahrs.getGyroCorr();
 
 		// TODO map channels to roll pitch yaw throttle and optionnal channels
-		int ch1 = radioControler.getHandler().channels[1];
+		int ch2 = radioControler.getHandler().channels[2];
 
 
 		char str[90];
-//				sprintf(str, "Roll = %.1f | Pitch = %.1f",
-//						rpy[0], rpy[1]
-//				);
+		//				sprintf(str, "Roll = %.1f | Pitch = %.1f",
+		//						rpy[0], rpy[1]
+		//				);
 
 		//		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
 
 
 		// Print tau
-				sprintf(str, "tau_x = %.2f | tau_y = %.2f | rpy_x = %.1f | rpy_y = %.1f",
-						flightStabilization.getTau().getX(),
-						flightStabilization.getTau().getY(),
-						rpy[0], rpy[1]);
+		sprintf(str, "tau_x = %.2f | tau_y = %.2f | rpy_x = %.1f | rpy_y = %.1f",
+				flightStabilization.getTau().getX(),
+				flightStabilization.getTau().getY(),
+				rpy[0], rpy[1]);
 
+		//		sprintf(str, "roll : %.1f | pitch : %.1f | m1 : %d | m2 : %d | m3 : %d | m4 : %d",
+		//				rpy[0], rpy[1],
+		//				actuatorControl.motors[0], actuatorControl.motors[1],
+		//				actuatorControl.motors[2], actuatorControl.motors[3]);
 
 		logger.info(str);
 	}

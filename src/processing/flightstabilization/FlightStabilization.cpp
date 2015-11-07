@@ -14,9 +14,10 @@
  * http://www.nt.ntnu.no/users/skoge/prost/proceedings/ecc-2013/data/papers/0927.pdf
  */
 
+// strong value 12 | 1.0
 FlightStabilization::FlightStabilization() :
 Processing(),
-_Pq(12), _Pw(0.5),
+_Pq(20.0), _Pw(3.0),
 _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
 _tau(Vect3D::zero())
@@ -50,14 +51,13 @@ void FlightStabilization::process()
 	Vect3D axisError = qError.getVect3DPart();
 
 	// Compute tau rotation
+	// Convention:
+	// axisError positive roll right, pitch up
+	// and gyroRot positive pitching up, rolling right
 	float rpy[3];
 	qError.toRollPitchYaw(rpy);
-	_tau = ((axisError * _Pq) + ( _gyroRot * _Pw)) * (-1);
+	_tau = ((axisError * _Pq) * (-1)) + ( _gyroRot * _Pw);
 
-	//
-	// Update PID output for attitude
-
-	// Update PID output for throttle
 }
 
 

@@ -66,7 +66,8 @@ void Accelerometer::init()
 	}
 	accumulator[2] = 0.0; // Force 0.0 offset on z axis
 
-	_offset = accumulator;
+	// DEBUG 0 offset
+//	_offset = accumulator;
 
 	char str[60];
 	sprintf(str, "Offset: {x:%f, y:%f, z:%f}", _offset.getX(), _offset.getY(), _offset.getZ());

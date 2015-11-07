@@ -159,7 +159,7 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 	// Compute delta signal from torque command
 	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 20.0f);
 	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 20.0f);
-	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 10.0f);
+	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 5.0f);
 
 	int motorX[4] = {0, 0, 0, 0};
 
@@ -169,6 +169,7 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 				{1, -1, 1},
 				{-1, -1, -1}
 		};
+
 
 	// Set throttle repartition only throttle superior to a minimum threshold
 	if (throttle > 10)
@@ -181,13 +182,12 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 					+ _motorActivation[i][2] * yawDeltaSignal;
 
 			Bound(motorX[i], 0, 900);
-		}
 
-		//		motorX[0] = throttle + rollDeltaSignal + pitchDeltaSignal - yawDeltaSignal;
-//		motorX[1] = throttle - rollDeltaSignal + pitchDeltaSignal + yawDeltaSignal;
-//		motorX[2] = throttle + rollDeltaSignal - pitchDeltaSignal + yawDeltaSignal;
-//		motorX[3] = throttle - rollDeltaSignal - pitchDeltaSignal - yawDeltaSignal;
+			// Debug
+			motors[i] = motorX[i];
+		}
 	}
+
 
 
 	// Write pulse for motors
