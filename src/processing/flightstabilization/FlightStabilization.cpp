@@ -53,7 +53,7 @@ void FlightStabilization::process()
 	// Compute tau rotation
 	// Convention:
 	// axisError positive roll right, pitch up
-	// and gyroRot positive pitching up, rolling right
+	// and gyroRot positive pitching up, rolling right (see Gyro.cpp for sign from raw data)
 	float rpy[3];
 	qError.toRollPitchYaw(rpy);
 	_tau = ((axisError * _Pq) * (-1)) + ( _gyroRot * _Pw);
