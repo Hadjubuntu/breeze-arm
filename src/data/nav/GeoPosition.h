@@ -11,26 +11,32 @@
 class GeoPosition {
 private:
 	/** Latitude in degrees */
-	double _lat;
+	float _lat;
 	/** Longitude in radians */
-	double _lon;
+	float _lon;
 	/** Altitude in meters */
-	double _alt;
+	float _alt;
 public:
 	/**
 	 * Default constructor
 	 */
-	GeoPosition(double pLat, double pLon, double pLat);
+	GeoPosition(float pLat, float pLon, float pLat);
 
 	/**
 	 * Distance to another geo position in meters
 	 */
-	double distance(const GeoPosition&);
+	float distance(const GeoPosition&);
 
 	/**
 	 * Heading needed to reach another point (radians)
 	 */
-	double headingTo(const GeoPosition &);
+	float headingTo(const GeoPosition &);
+
+	/** **************************************
+	 *  GETTERS
+	 *****************************************/
+	float getLat() { return _lat; }
+	float getLon() { return _lon; }
 };
 
 #endif /* PROCESSING_NAV_GEOPOSITION_H_ */

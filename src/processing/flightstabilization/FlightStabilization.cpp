@@ -5,6 +5,7 @@
  *      Author: adrien
  */
 
+#include "../../data/conf/Conf.h"
 #include "../flightstabilization/FlightStabilization.h"
 
 
@@ -50,14 +51,24 @@ void FlightStabilization::process()
 	// Axis error
 	Vect3D axisError = qError.getVect3DPart();
 
-	// Compute tau rotation
-	// Convention:
+	// Compute tau from error and gyro rate
+	// Note:
 	// axisError positive roll right, pitch up
 	// and gyroRot positive pitching up, rolling right (see Gyro.cpp for sign from raw data)
 	float rpy[3];
 	qError.toRollPitchYaw(rpy);
 	_tau = ((axisError * _Pq) * (-1)) + ( _gyroRot * _Pw);
 
+	if (Conf::getInstance().useBoostMotors)
+	{
+		// TODO compute delta angle from quaternion attitude and quat ez axis
+
+		_throttleOut = _throttle;
+	}
+	else {
+		// Keep throttle as given
+		_throttleOut = _throttle;
+	}
 }
 
 

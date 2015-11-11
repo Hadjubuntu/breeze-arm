@@ -25,6 +25,7 @@ public:
 	static float fastpow2(float x);
 	static float sqrt(float x);
 	static float fast_invsqrtf(float);
+	static int toCenti(float x);
 };
 
 #endif /* MATH_COMMON_FASTMATH_H_ */

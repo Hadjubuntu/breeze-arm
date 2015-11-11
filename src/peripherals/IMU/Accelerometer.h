@@ -8,7 +8,7 @@
 #ifndef PERIPHERALS_IMU_ACCELEROMETER_H_
 #define PERIPHERALS_IMU_ACCELEROMETER_H_
 
-#include "../../math/vector/Vect3D.h"
+#include "../../peripherals/sensor/Sensor.h"
 #include "../../peripherals/I2C/I2C.h"
 
 ////////Acceleration sensor ADXL345 function/////////////////////////////
@@ -36,32 +36,23 @@
 #define ACC_SENSITIVITY 0.003906f
 
 
-class Accelerometer
+class Accelerometer : public Sensor
 {
 private:
-	/** I2C communication */
-	I2C _i2c;
+	// TODO refactor and delete those data (use dataFiltered / dataRaw instead)
 	/** Filtered acceleration */
 	Vect3D _accFiltered;
 
 	/** Raw data acceleration */
 	Vect3D _accRaw;
-
-	/** Initial offset acceleration */
-	Vect3D _offset;
-
-	/** Filter coefficient */
-	float _filterNewDataCoeff;
 public:
 	/**
 	 * Constructor
 	 */
 	Accelerometer() :
-		_i2c(I2C::getInstance(ACC)),
+		Sensor(I2C::getInstance(ACC)),
 		_accFiltered(Vect3D::zero()),
-		_accRaw(Vect3D::zero()),
-		_offset(Vect3D::zero()),
-		_filterNewDataCoeff(0.5) {
+		_accRaw(Vect3D::zero()) {
 
 	}
 
@@ -89,9 +80,6 @@ public:
 	Vect3D getAccFiltered() {
 		return _accFiltered;
 	}
-
-	// TODO to be deleted
-	I2C getI2C() { return _i2c; }
 };
 
 #endif /* PERIPHERALS_IMU_ACCELEROMETER_H_ */

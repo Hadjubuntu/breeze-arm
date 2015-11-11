@@ -6,9 +6,12 @@
  */
 
 #include <cstring>
+#include "../data/conf/Conf.h"
 #include "RfRouter.h"
 
-RfRouter::RfRouter(RfControler *pControler) {
+RfRouter::RfRouter(RfControler *pControler)
+{
+	// Rf router check for new message at 20Hz and route packet regarding their header
 	_freqHz = 20;
 	_controler = pControler;
 }
@@ -24,13 +27,15 @@ void RfRouter::process()
 		// Get payload
 		std::string packetStr = packet.getPayload();
 
-		// Converts string to char array
-		char charArray[RF_PACKET_MAX_LENGTH];
-		strncpy(charArray, packetStr.c_str(), RF_PACKET_MAX_LENGTH-1);
-
-		// Print data
-		Serial3.println(charArray);
-
 		// Route regarding its header data
+//		switch (packet.getHeader())
+//		{
+//		case 'CONF':
+//			Conf::getInstance().parseRf(packet.getPayload());
+//			break;
+//		default:
+//			// Unknow message
+//			break;
+//		}
 	}
 }

@@ -59,6 +59,7 @@ void Gyro::update()
 
 	_i2c.readFrom(GYRO_REG_ADDR, 6, buff);
 
+	// Convention : positive when rolling right, pitching up
 	int16 result[3];
 	result[1] = -((((int16) buff[0]) << 8) | buff[1]) ;
 	result[0] = -((((int16) buff[2]) << 8) | buff[3]) ;

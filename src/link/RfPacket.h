@@ -18,6 +18,7 @@ using namespace std;
 class RfPacket {
 private:
 	Date _date;
+	int _groupId; // 0 means no group id, otherwise unique id for the packets group
 	std::string _header;
 	std::string _payload;
 public:
@@ -28,7 +29,16 @@ public:
 	 * @param pPayload Payload
 	 */
 	RfPacket(Date pDate, std::string pHeader, std::string pPayload);
+	RfPacket(Date pDate, std::string pHeader, std::string pPayload, int pGroupId);
 
+
+	/** ***********************************************
+	 *  SETTER
+	 ************************************************ */
+	void setGroupId(int pGroupId)
+	{
+		_groupId = pGroupId;
+	}
 
 	/** ***********************************************
 	 *  GETTERS

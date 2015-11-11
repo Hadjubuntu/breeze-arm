@@ -93,20 +93,19 @@ void ActuatorControl::process()
 	// Converts 0 to 1 signal to us signal 1000ms wide
 	unsigned short int throttle = (_flightStabilization->getThrottle() * 1000);
 
-	processMulticopter(throttle);
 
-	//	switch (Conf::getInstance().firmware)
-	//	{
-	//	case FIXED_WING:
-	//		processFixedWing(throttle);
-	//		break;
-	//	case MULTICOPTER:
-	//		processMulticopter(throttle);
-	//		break;
-	//	default:
-	//		// Throw error unknow firmware
-	//		break;
-	//	}
+	switch (Conf::getInstance().firmware)
+	{
+	case FIXED_WING:
+		processFixedWing(throttle);
+		break;
+	case MULTICOPTER:
+		processMulticopter(throttle);
+		break;
+	default:
+		// Throw error unknow firmware
+		break;
+	}
 }
 
 int ActuatorControl::getCommandNmToSignalUs(float commandNm, float nmToDeltaSignalUs)
@@ -164,14 +163,15 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 	int motorX[4] = {0, 0, 0, 0};
 
 	int _motorActivation[4][3] =  {
-				{1, 1, -1},
-				{-1, 1, 1},
-				{1, -1, 1},
-				{-1, -1, -1}
-		};
+			{1, 1, -1},
+			{-1, 1, 1},
+			{1, -1, 1},
+			{-1, -1, -1}
+	};
 
 
 	// Set throttle repartition only throttle superior to a minimum threshold
+	// Otherwise cut-off motors
 	if (throttle > 10)
 	{
 		for (int i = 0; i < 4; i ++)
@@ -189,13 +189,13 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 	}
 
 
-
 	// Write pulse for motors
 	pwmWrite(D28, levelToCtrl(motorX[0]));
 	pwmWrite(D27, levelToCtrl(motorX[1]));
 	pwmWrite(D11, levelToCtrl(motorX[2]));
 	pwmWrite(D12, levelToCtrl(motorX[3]));
 
+	// DEBUG servo
 	// Signal goes from 650 to 2250 ms
 	pwmWrite(D14, US_TO_COMPARE(throttle * 1.6 + 650));
 }

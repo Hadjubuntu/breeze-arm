@@ -12,3 +12,8 @@ RfPacket::RfPacket(Date pDate, std::string pHeader, std::string pPayload) : _dat
 	_payload = pPayload;
 }
 
+RfPacket::RfPacket(Date pDate, std::string pHeader, std::string pPayload, int pGroupId) : _date(pDate) {
+	_header = pHeader;
+	_payload = pPayload;
+	_groupId = pGroupId;
+}

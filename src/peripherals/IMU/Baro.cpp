@@ -8,6 +8,24 @@
 #include "Baro.h"
 
 
+
+Baro::Baro() : _i2c(I2C::getInstance(BMP085_ADDRESS))
+{
+	_freqHz = 50;
+
+	_dev_address = BMP085_ADDRESS;
+	_pressure_samples = 1;
+	_retry_time = 0;
+	_last_temp_read_command_time = 0;
+	_last_press_read_command_time = 0;
+}
+
+void Baro::process()
+{
+	accumulate();
+	read();
+}
+
 long Baro::get_alt_cm() {
 	return 0;
 }
@@ -21,7 +39,7 @@ bool Baro::BMP_DATA_READY() {
 	else {
 		dtMin = 26;
 	}
-	if (t_us-_last_temp_read_command_time > dtMin) {
+	if (t_us-(long)_last_temp_read_command_time > dtMin) {
 		return true;
 	}
 	else {
@@ -29,19 +47,12 @@ bool Baro::BMP_DATA_READY() {
 	}
 }
 
-Baro::Baro() : _i2c(I2C::getInstance(BMP085_ADDRESS))
-{
-	_dev_address = BMP085_ADDRESS;
-	_pressure_samples = 1;
-	_retry_time = 0;
-	_last_temp_read_command_time = 0;
-	_last_press_read_command_time = 0;
-}
+
 
 
 
 // Public Methods //////////////////////////////////////////////////////////////
-bool Baro::init()
+void Baro::init()
 {
 	uint8 buff[22];
 
@@ -75,8 +86,6 @@ bool Baro::init()
 	GroundPressure = 0;
 	GroundTemp = 0;
 	Calibrate();
-
-	return true;
 }
 
 void Baro::Calibrate() {

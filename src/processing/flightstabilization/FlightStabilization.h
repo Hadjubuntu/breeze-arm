@@ -13,13 +13,18 @@
 
 class FlightStabilization : public Processing {
 private:
+	// Inputs
+	// ------------------
 	float _Pq;
 	float _Pw;
 	Quaternion _targetAttitude;
 	Quaternion _currentAttitude;
 	Vect3D _gyroRot;
-	Vect3D _tau;
 	float _throttle;
+	// Outputs
+	// ------------------
+	Vect3D _tau;
+	float _throttleOut;
 public:
 	/**
 	 * Constructor
@@ -50,7 +55,7 @@ public:
 	}
 
 	float getThrottle() {
-		return _throttle;
+		return _throttleOut;
 	}
 };
 

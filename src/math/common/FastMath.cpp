@@ -64,3 +64,9 @@ float FastMath::fast_invsqrtf(float number)   // rel. err. < 0.07%
 
 	return y;
 }
+
+
+int FastMath::toCenti(float x)
+{
+	return (int) (100*x);
+}

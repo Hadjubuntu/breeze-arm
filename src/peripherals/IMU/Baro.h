@@ -9,6 +9,7 @@
 #define PERIPHERALS_IMU_BARO_H_
 
 #include "../../peripherals/I2C/I2C.h"
+#include "../../core/Processing.h"
 
 #define BMP085_ADDRESS 0x77  //(0xEE >> 1)
 #define BMP085_EOC 30        // End of conversion pin PC7 on APM1
@@ -23,8 +24,8 @@
 // oversampling 3 gives 26ms conversion time. We then average
 #define OVERSAMPLING 3
 
-class Baro {
-	private:
+class Baro : public Processing {
+private:
 	I2C _i2c;
 	uint8 _dev_address;
 
@@ -65,7 +66,10 @@ public:
 	float 			GroundTemp;
 
 	Baro();
-	bool            init();
+
+	void init();
+	void process();
+
 	uint8        read();
 	void 			accumulate(void);
 	float           getPressure();

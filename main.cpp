@@ -20,6 +20,7 @@
 #include "src/processing/actuator/ActuatorControl.h"
 #include "src/processing/flightstabilization/FlightStabilization.h"
 #include "src/processing/flightstabilization/FlightControl.h"
+#include "src/processing/link/Telemetry.h"
 
 /** Attitude and heading reference system */
 AHRS ahrs;
@@ -48,6 +49,9 @@ FlightControl flightControl(&radioControler, &flightStabilization, &ahrs);
 /** Motor and servo control */
 ActuatorControl actuatorControl(&flightStabilization);
 
+/** Telemetry to keep GCS update */
+Telemetry telemetry(&ahrs);
+
 void setup() {
 	/* Set up the LED to blink  */
 	pinMode(BOARD_LED_PIN, OUTPUT);
@@ -67,6 +71,7 @@ void setup() {
 	uavBrain.addProcessing(&radioControler);
 	uavBrain.addProcessing(&flightControl);
 	uavBrain.addProcessing(&actuatorControl);
+	uavBrain.addProcessing(&telemetry);
 
 	// Initialize all processings
 	//----------------------
@@ -88,15 +93,11 @@ void loop()
 	{
 		toggleLED();
 
-
 		float rpy[3];
 		ahrs.getAttitude().toRollPitchYaw(rpy);
 
-		float* gyro_correct_int = ahrs.getGyroCorr();
-
 		// TODO map channels to roll pitch yaw throttle and optionnal channels
 		int ch2 = radioControler.getHandler().channels[2];
-
 
 		char str[90];
 		//				sprintf(str, "Roll = %.1f | Pitch = %.1f",

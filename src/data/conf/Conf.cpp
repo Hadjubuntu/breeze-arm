@@ -8,6 +8,7 @@
  *      Author: Adrien HADJ-SALAH
  */
 
+#include <string>
 #include "Conf.h"
 
 Conf Conf::INSTANCE = Conf();
@@ -20,4 +21,9 @@ Conf::Conf() {
 Conf& Conf::getInstance()
 {
 	return INSTANCE;
+}
+
+void Conf::parseRf(std::string payload)
+{
+
 }
