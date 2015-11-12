@@ -74,8 +74,5 @@ void FlightControl::process()
  */
 float FlightControl::radioToRad(float radioNormed, float maxAngle)
 {
-	// Signal is inverted, roll positive equals turns right,
-	//	pitch positive is nose high tail low,
-	// and yaw positive on the clockwise.
-	return 1.0 * radioNormed * maxAngle;
+	return radioNormed * maxAngle;
 }

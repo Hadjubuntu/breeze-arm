@@ -158,15 +158,15 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 	// Compute delta signal from torque command
 	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 20.0f);
 	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 20.0f);
-	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 5.0f);
+	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 10.0f);
 
 	int motorX[4] = {0, 0, 0, 0};
 
 	int _motorActivation[4][3] =  {
-			{1, 1, -1},
-			{-1, 1, 1},
-			{1, -1, 1},
-			{-1, -1, -1}
+			{1, 1, 1},
+			{-1, 1, -1},
+			{1, -1, -1},
+			{-1, -1, 1}
 	};
 
 

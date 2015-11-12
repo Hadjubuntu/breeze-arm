@@ -36,6 +36,9 @@ private:
 	/** Barometer */
 //	Baro _baro;
 
+	// Yaw computed from gyro integration
+	float _yawFromGyro;
+
 public:
 	AHRS();
 
@@ -58,6 +61,10 @@ public:
 	Gyro getGyro() { return _gyro; }
 
 	Quaternion getAttitude() { return _attitude; }
+
+	float getYawFromGyro() {
+		return _yawFromGyro;
+	}
 };
 
 #endif /* PROCESSING_AHRS_AHRS_H_ */

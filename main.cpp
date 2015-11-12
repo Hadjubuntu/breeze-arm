@@ -106,12 +106,14 @@ void loop()
 
 		//		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
 
+		Quaternion targetAtt = flightStabilization.getTargetAttitude();
+		targetAtt.toRollPitchYaw(rpy);
 
 		// Print tau
-		sprintf(str, "tau_x = %.2f | tau_y = %.2f | rpy_x = %.1f | rpy_y = %.1f",
+		sprintf(str, "tau_x = %.2f | tau_y = %.2f | target_x = %.1f | target_y = %.1f | target_z = %.1f | yaw = %.2f",
 				flightStabilization.getTau().getX(),
 				flightStabilization.getTau().getY(),
-				rpy[0], rpy[1]);
+				rpy[0], rpy[1], rpy[2], FastMath::toDegrees(ahrs.getYawFromGyro()));
 
 		//		sprintf(str, "roll : %.1f | pitch : %.1f | m1 : %d | m2 : %d | m3 : %d | m4 : %d",
 		//				rpy[0], rpy[1],

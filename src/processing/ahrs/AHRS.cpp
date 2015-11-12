@@ -18,7 +18,8 @@ float gyro_correct_int[3];
 AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 		_attitude(Quaternion::zero()),
 		_gyro(Gyro::create()),
-		_accelerometer(Accelerometer::create())
+		_accelerometer(Accelerometer::create()),
+		_yawFromGyro(0.0)
 //		_baro(Baro::create())
 {
 	// 400 Hz update
@@ -120,4 +121,8 @@ void AHRS::process()
 	} else {
 		_attitude *= inv_qmag;
 	}
+
+	// Integrate gyro rotation Z to have an estimation of the yaw
+	_yawFromGyro += gyros.getZ() / 400.0f;
+	_yawFromGyro = FastMath::constrainAngle(_yawFromGyro);
 }

@@ -62,7 +62,6 @@ void FlightStabilization::process()
 	if (Conf::getInstance().useBoostMotors)
 	{
 		// TODO compute delta angle from quaternion attitude and quat ez axis
-
 		_throttleOut = _throttle;
 	}
 	else {

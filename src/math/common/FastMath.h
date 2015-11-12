@@ -8,6 +8,7 @@
 #ifndef MATH_COMMON_FASTMATH_H_
 #define MATH_COMMON_FASTMATH_H_
 
+
 #define min(a,b) ((a)<(b)?(a):(b))
 #define max(a,b) ((a)>(b)?(a):(b))
 #define Bound(_x, _min, _max) { if (_x > (_max)) _x = (_max); else if (_x < (_min)) _x = (_min); }
@@ -26,6 +27,7 @@ public:
 	static float sqrt(float x);
 	static float fast_invsqrtf(float);
 	static int toCenti(float x);
+	static float constrainAngle(float);
 };
 
 #endif /* MATH_COMMON_FASTMATH_H_ */

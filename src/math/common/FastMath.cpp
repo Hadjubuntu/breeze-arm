@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 #include <cmath>
+#include <wirish_math.h>
 #include "FastMath.h"
 
 
@@ -69,4 +70,17 @@ float FastMath::fast_invsqrtf(float number)   // rel. err. < 0.07%
 int FastMath::toCenti(float x)
 {
 	return (int) (100*x);
+}
+
+float FastMath::constrainAngle(float x)
+{
+	float res = x;
+	while (res > 2 * PI) {
+		res -= 2 * PI;
+	}
+	while (res < 0.0) {
+		res += 2 * PI;
+	}
+
+	return res;
 }

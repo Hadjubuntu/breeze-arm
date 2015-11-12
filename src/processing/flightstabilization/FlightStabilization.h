@@ -57,6 +57,10 @@ public:
 	float getThrottle() {
 		return _throttleOut;
 	}
+
+	Quaternion getTargetAttitude() {
+		return _targetAttitude;
+	}
 };
 
 #endif /* PROCESSING_FLIGHTSTABILIZATION_FLIGHTSTABILIZATION_H_ */
