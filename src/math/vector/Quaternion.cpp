@@ -63,6 +63,12 @@ void Quaternion::toRollPitchYaw(float rpy[3])
 	rpy[0] = FastMath::toDegrees(atan2f(R23, R33));
 }
 
+Vect3D Quaternion::toRollPitchYawVect3D() {
+	float rpy[3];
+	toRollPitchYaw(rpy);
+
+	return Vect3D(rpy[0], rpy[1], rpy[2]);
+}
 
 float Quaternion::getNorm2() {
 	return _w *_w + _x*_x +_y*_y + _z*_z;
@@ -71,3 +77,4 @@ float Quaternion::getNorm2() {
 float Quaternion::getNorm() {
 	return FastMath::sqrt(getNorm2());
 }
+

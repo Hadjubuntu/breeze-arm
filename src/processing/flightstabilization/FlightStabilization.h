@@ -47,6 +47,9 @@ public:
 	 */
 	void process();
 
+	float boostThrottleCompensateTiltAngle(float throttle);
+	bool isSafeToUseBoost(float throttle, float combinedTilt);
+
 	/* ****************************
 	 * GETTERS
 	 *************************** */

@@ -15,7 +15,7 @@
  * http://www.nt.ntnu.no/users/skoge/prost/proceedings/ecc-2013/data/papers/0927.pdf
  */
 
-// strong value 12 | 1.0
+// good values : Pq=20; Pw=3
 FlightStabilization::FlightStabilization() :
 Processing(),
 _Pq(20.0), _Pw(3.0),
@@ -61,13 +61,31 @@ void FlightStabilization::process()
 
 	if (Conf::getInstance().useBoostMotors)
 	{
-		// TODO compute delta angle from quaternion attitude and quat ez axis
+		_throttleOut = boostThrottleCompensateTiltAngle(_throttle);
+	}
+	else
+	{
 		_throttleOut = _throttle;
 	}
-	else {
-		// Keep throttle as given
-		_throttleOut = _throttle;
+}
+
+float FlightStabilization::boostThrottleCompensateTiltAngle(float throttle)
+{
+	Vect3D rpy = _currentAttitude.toRollPitchYawVect3D();
+	float combinedTilt = abs(cos(rpy.getX()) * cos(rpy.getY()));
+	float factor = 1.0;
+
+	if (isSafeToUseBoost(throttle, combinedTilt))
+	{
+		factor = 1.0 / combinedTilt;
 	}
+
+	return factor * throttle;
+}
+
+bool FlightStabilization::isSafeToUseBoost(float throttle, float combinedTilt)
+{
+	return throttle > 50 && combinedTilt > 0.0;
 }
 
 

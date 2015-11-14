@@ -30,10 +30,15 @@ private:
 
 	Conf() ;
 
-//	std::vector<Param> _overridenParameters; TODO
+	std::vector<Param<float>> _parameters;
 
 public:
 	static Conf& getInstance();
+
+	Param<float>* get(std::string pName);
+	void set(std::string pName, float pValue);
+	int find(std::string pName);
+
 
 
 	// Default configuration parameters

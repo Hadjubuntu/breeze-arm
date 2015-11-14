@@ -16,12 +16,22 @@ private:
 	std::string _name;
 	T _value;
 public:
-	Param()
+	Param(std::string pName, T pValue) : _name(pName), _value(pValue)
 {
 
 }
-	void setParam(std::string pName, T pValue);
 
+	std::string getName() {
+		return _name;
+	}
+
+	T getValue() {
+		return _value;
+	}
+
+	void setValue(T value) {
+		_value = value;
+	}
 	virtual ~Param() {
 
 	}

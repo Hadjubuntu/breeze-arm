@@ -33,6 +33,7 @@ public:
 	 * Quaternion to roll pitch yaw
 	 */
 	void toRollPitchYaw(float *rpy);
+	Vect3D toRollPitchYawVect3D();
 
 	/** Conjugate quaternion */
 	Quaternion conjugate() {
@@ -49,6 +50,8 @@ public:
 		Vect3D e(_x, _y, _z);
 		return e;
 	}
+
+
 	/* ********************************
 	 * Norm
 	 ******************************** */

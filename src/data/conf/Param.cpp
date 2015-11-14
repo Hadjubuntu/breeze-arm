@@ -8,11 +8,7 @@
 #include "Param.h"
 
 
-template<class T>
-void setParam(std::string pName, T pValue)
-{
 
-}
 
 
 template class Param<float>;

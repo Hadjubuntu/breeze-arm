@@ -14,9 +14,59 @@
 Conf Conf::INSTANCE = Conf();
 
 Conf::Conf() {
-
+	_parameters.push_back(Param<float>("UNKNOW", 0.0f));
+	_parameters.push_back(Param<float>("maxAbsRollAngle", 0.34f));
+	_parameters.push_back(Param<float>("maxAbsPitchAngle", 0.34f));
 }
 
+
+
+Param<float>* Conf::get(std::string pName)
+{
+	Param<float>* e;
+	int idx = find(pName);
+
+	if (idx >= 0)
+	{
+		e = &_parameters[idx];
+	}
+	else {
+		// Unknow param
+		e = &_parameters[0];
+	}
+
+	return e;
+}
+
+void Conf::set(std::string pName, float pValue)
+{
+	int idx = find(pName);
+	if (idx >= 0)
+	{
+		_parameters[idx].setValue(pValue);
+	}
+	else
+	{
+		_parameters.push_back(Param<float>(pName, pValue));
+	}
+}
+
+int Conf::find(std::string pName)
+{
+	int findIndex = -1;
+	int index = 0;
+
+	while (index < _parameters.size() && findIndex == -1)
+	{
+		if (_parameters[index].getName().compare(pName) == 0)
+		{
+			findIndex = index;
+		}
+		index ++;
+	}
+
+	return findIndex;
+}
 
 Conf& Conf::getInstance()
 {
