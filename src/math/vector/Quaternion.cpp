@@ -58,9 +58,9 @@ void Quaternion::toRollPitchYaw(float rpy[3])
 	R23    = 2.0 * (_y * _z + _w * _x);
 	R33    = q0s - q1s - q2s + q3s;
 
-	rpy[1] = FastMath::toDegrees(asinf(-R13)); // pitch always between -pi/2 to pi/2
-	rpy[2] = FastMath::toDegrees(atan2f(R12, R11));
-	rpy[0] = FastMath::toDegrees(atan2f(R23, R33));
+	rpy[1] = asinf(-R13); // pitch always between -pi/2 to pi/2
+	rpy[2] = atan2f(R12, R11);
+	rpy[0] = atan2f(R23, R33);
 }
 
 Vect3D Quaternion::toRollPitchYawVect3D() {

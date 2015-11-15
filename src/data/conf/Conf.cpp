@@ -15,8 +15,8 @@ Conf Conf::INSTANCE = Conf();
 
 Conf::Conf() {
 	_parameters.push_back(Param<float>("UNKNOW", 0.0f));
-	_parameters.push_back(Param<float>("maxAbsRollAngle", 0.34f));
-	_parameters.push_back(Param<float>("maxAbsPitchAngle", 0.34f));
+//	_parameters.push_back(Param<float>("maxAbsRollAngle", 0.34f));
+//	_parameters.push_back(Param<float>("maxAbsPitchAngle", 0.34f));
 }
 
 

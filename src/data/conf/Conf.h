@@ -48,7 +48,7 @@ public:
 	const float maxAbsPitchAngle = 0.34;
 	const float maxAbsCombinedAngle = 0.5;
 	// Max command on the torque in Nm
-	const float maxCommandNm = 4.0;
+	const float maxCommandNm = 6.0;
 	// Use boost motor to compensate roll/pitch angle
 	const bool useBoostMotors = true;
 

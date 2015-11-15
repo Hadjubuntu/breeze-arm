@@ -19,6 +19,7 @@ private:
 	FlightStabilization *_flightStabilization;
 	AHRS *_ahrs;
 	float _throttleInitUs;
+	float _yawInt;
 public:
 	FlightControl(RadioControler*, FlightStabilization*, AHRS*);
 
@@ -28,6 +29,10 @@ public:
 	float radioToRad(float, float);
 
 	float rpy[2];
+
+	float getYawInt() {
+		return _yawInt;
+	}
 };
 
 #endif /* PROCESSING_FLIGHTSTABILIZATION_FLIGHTCONTROL_H_ */

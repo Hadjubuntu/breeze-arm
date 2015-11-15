@@ -6,6 +6,7 @@
  */
 
 #include "../../data/conf/Conf.h"
+#include "../../math/common/FastMath.h"
 #include "../flightstabilization/FlightStabilization.h"
 
 
@@ -18,13 +19,14 @@
 // good values : Pq=20; Pw=3
 FlightStabilization::FlightStabilization() :
 Processing(),
-_Pq(20.0), _Pw(3.0),
+_Pq(12.0), _Pw(1.2),
 _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
 _tau(Vect3D::zero())
 {
-	_freqHz = 50;
+	_freqHz = 100;
 	_throttle = 0;
+	_yawFromGyro = 0.0;
 }
 
 /**
@@ -34,17 +36,22 @@ _tau(Vect3D::zero())
  * @param pGyroRot
  * @param pThrottle given between 0 and 1
  */
-void FlightStabilization::setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, Vect3D pGyroRot, float pThrottle)
+void FlightStabilization::setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, float yawGyro, Vect3D pGyroRot, float pThrottle)
 {
 	_targetAttitude = pTargetAttitude;
 	_currentAttitude = pCurrentAttitude;
 	_gyroRot = pGyroRot;
 	_throttle = pThrottle;
+	_yawFromGyro = yawGyro;
 }
 
 
 void FlightStabilization::process()
 {
+	// DEBUG - tricks on yaw
+	Vect3D currentAttVect3D = _currentAttitude.toRollPitchYawVect3D();
+	_currentAttitude = Quaternion(currentAttVect3D.getX(), currentAttVect3D.getY(), _yawFromGyro);
+
 	// Compute error from attitude commanded to current attitude using the combined rotation
 	Quaternion qError = _targetAttitude * (_currentAttitude.conjugate());
 
@@ -55,8 +62,6 @@ void FlightStabilization::process()
 	// Note:
 	// axisError positive roll right, pitch up
 	// and gyroRot positive pitching up, rolling right (see Gyro.cpp for sign from raw data)
-	float rpy[3];
-	qError.toRollPitchYaw(rpy);
 	_tau = ((axisError * _Pq) * (-1)) + ( _gyroRot * _Pw);
 
 	if (Conf::getInstance().useBoostMotors)
@@ -79,6 +84,7 @@ float FlightStabilization::boostThrottleCompensateTiltAngle(float throttle)
 	{
 		factor = 1.0 / combinedTilt;
 	}
+	Bound(factor, 1.0, 1.5);
 
 	return factor * throttle;
 }

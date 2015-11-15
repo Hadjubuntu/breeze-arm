@@ -72,7 +72,7 @@ int FastMath::toCenti(float x)
 	return (int) (100*x);
 }
 
-float FastMath::constrainAngle(float x)
+float FastMath::constrainAngleZeroToTwoPi(float x)
 {
 	float res = x;
 	while (res > 2 * PI) {
@@ -80,6 +80,19 @@ float FastMath::constrainAngle(float x)
 	}
 	while (res < 0.0) {
 		res += 2 * PI;
+	}
+
+	return res;
+}
+
+float FastMath::constrainAngleMinusPiPlusPi(float x)
+{
+	float res = x;
+	while (res >  PI) {
+		res -= PI;
+	}
+	while (res < -PI) {
+		res += PI;
 	}
 
 	return res;

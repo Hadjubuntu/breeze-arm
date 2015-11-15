@@ -7,6 +7,7 @@
 
 #include "FlightControl.h"
 
+#include <wirish_math.h>
 #include "../../data/conf/Conf.h"
 #include "../../math/common/FastMath.h"
 
@@ -17,6 +18,7 @@ FlightControl::FlightControl(RadioControler *radioController,
 	_radioController = radioController;
 	_flightStabilization = flightStabilization;
 	_ahrs = ahrs;
+	_yawInt = 0.0;
 
 	// Runs at 50Hz
 	_freqHz = 50;
@@ -57,14 +59,19 @@ void FlightControl::process()
 	rpy[0] = roll;
 	rpy[1] = pitch;
 
+	// Integrate desired yaw
+	_yawInt += yaw * 1/_freqHz;
+	_yawInt = _yawInt * 0.98;
+	Bound(_yawInt, -PI, PI); //FIXME when max left and turns left, go other side ..
+
 	// Transform RPY to quaternion
-	Quaternion attitudeDesired = Quaternion::fromEuler(roll, pitch, yaw);
+	Quaternion attitudeDesired = Quaternion::fromEuler(roll, pitch, _yawInt);
 
 
 	// Flight stabilization
 	// ------------------
 	// Update input parameters of flight stabilization function
-	_flightStabilization->setInputs(attitudeDesired, _ahrs->getAttitude(), _ahrs->getGyro().getGyroFiltered(), throttle);
+	_flightStabilization->setInputs(attitudeDesired, _ahrs->getAttitude(), _ahrs->getYawFromGyro(), _ahrs->getGyro().getGyroFiltered(), throttle);
 }
 
 

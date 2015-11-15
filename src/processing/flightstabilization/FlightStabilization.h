@@ -21,6 +21,7 @@ private:
 	Quaternion _currentAttitude;
 	Vect3D _gyroRot;
 	float _throttle;
+	float _yawFromGyro;
 	// Outputs
 	// ------------------
 	Vect3D _tau;
@@ -40,7 +41,7 @@ public:
 
 
 	/** Set input parameters */
-	void setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, Vect3D pGyroRot, float pThrottle);
+	void setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, float yawCmd, Vect3D pGyroRot, float pThrottle);
 
 	/**
 	 * Process and update data

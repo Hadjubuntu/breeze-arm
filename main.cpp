@@ -106,19 +106,22 @@ void loop()
 
 		//		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
 
-		Quaternion targetAtt = flightStabilization.getTargetAttitude();
-		targetAtt.toRollPitchYaw(rpy);
+//		Quaternion targetAtt = flightStabilization.getTargetAttitude();
+//		targetAtt.toRollPitchYaw(rpy);
 
 		// Print tau
-		sprintf(str, "tau_x = %.2f | tau_y = %.2f | target_x = %.1f | target_y = %.1f | target_z = %.1f | yaw = %.2f",
-				flightStabilization.getTau().getX(),
-				flightStabilization.getTau().getY(),
-				rpy[0], rpy[1], rpy[2], FastMath::toDegrees(ahrs.getYawFromGyro()));
+//		sprintf(str, "tau_x = %.2f | tau_y = %.2f | target_x = %.1f | target_y = %.1f | target_z = %.1f | yaw = %.2f",
+//				flightStabilization.getTau().getX(),
+//				flightStabilization.getTau().getY(),
+//				rpy[0], rpy[1], rpy[2], FastMath::toDegrees(ahrs.getYawFromGyro()));
 
-		//		sprintf(str, "roll : %.1f | pitch : %.1f | m1 : %d | m2 : %d | m3 : %d | m4 : %d",
-		//				rpy[0], rpy[1],
-		//				actuatorControl.motors[0], actuatorControl.motors[1],
-		//				actuatorControl.motors[2], actuatorControl.motors[3]);
+		sprintf(str, "yaw cmd int = %.2f | yaw current = %.2f | tau_z = %.2f | tau_x = %.2f",
+				 FastMath::toDegrees(flightControl.getYawInt()), FastMath::toDegrees(ahrs.getYawFromGyro()),
+				 flightStabilization.getTau().getZ(), flightStabilization.getTau().getX());
+
+//				sprintf(str, "m1 : %d | m2 : %d | m3 : %d | m4 : %d",
+//						actuatorControl.motors[0], actuatorControl.motors[1],
+//						actuatorControl.motors[2], actuatorControl.motors[3]);
 
 		logger.info(str);
 	}

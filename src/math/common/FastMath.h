@@ -27,7 +27,8 @@ public:
 	static float sqrt(float x);
 	static float fast_invsqrtf(float);
 	static int toCenti(float x);
-	static float constrainAngle(float);
+	static float constrainAngleZeroToTwoPi(float);
+	static float constrainAngleMinusPiPlusPi(float);
 };
 
 #endif /* MATH_COMMON_FASTMATH_H_ */

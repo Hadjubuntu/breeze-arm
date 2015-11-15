@@ -123,6 +123,7 @@ void AHRS::process()
 	}
 
 	// Integrate gyro rotation Z to have an estimation of the yaw
-	_yawFromGyro += gyros.getZ() / 400.0f;
-	_yawFromGyro = FastMath::constrainAngle(_yawFromGyro);
+	_yawFromGyro += gyros.getZ() / _freqHz;
+	_yawFromGyro = 0.995 * _yawFromGyro;
+	_yawFromGyro = FastMath::constrainAngleMinusPiPlusPi(_yawFromGyro);
 }
