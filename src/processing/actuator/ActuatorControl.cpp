@@ -10,6 +10,7 @@
 #include "../../data/conf/Conf.h"
 #include "../../link/RadioSbus.h"
 #include "ActuatorControl.h"
+#include <array>
 
 /**
  * Timer map
@@ -99,8 +100,11 @@ void ActuatorControl::process()
 	case FIXED_WING:
 		processFixedWing(throttle);
 		break;
-	case MULTICOPTER:
-		processMulticopter(throttle);
+	case HCOPTER:
+		processMulticopter(throttle, 4);
+		break;
+	case YCOPTER:
+		processMulticopter(throttle, 3);
 		break;
 	default:
 		// Throw error unknow firmware
@@ -150,7 +154,7 @@ void ActuatorControl::processFixedWing(unsigned short int  throttle)
  *      |
  * X3 ------ X4
  */
-void ActuatorControl::processMulticopter(unsigned short int throttle)
+void ActuatorControl::processMulticopter(unsigned short int throttle, int nbMotors)
 {
 	// Retrieve torque command
 	Vect3D torqueCmd = _flightStabilization->getTau();
@@ -160,21 +164,31 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 20.0f);
 	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 70.0f);
 
-	int motorX[4] = {0, 0, 0, 0};
+	int motorX[nbMotors];
 
-	int _motorActivation[4][3] =  {
+	for (int j = 0; j < nbMotors;  j ++) {
+		motorX[j] = 0;
+	}
+
+	int _motorActivation[4][3] = {
 			{1, 1, -1},
 			{-1, 1, 1},
 			{1, -1, 1},
 			{-1, -1, -1}
 	};
 
+	if (nbMotors == 3)
+	{
+		for (int j = 0; j < 4; j ++) {
+			_motorActivation[j][2] = 0;
+		}
+	}
 
 	// Set throttle repartition only throttle superior to a minimum threshold
 	// Otherwise cut-off motors
 	if (throttle > 15)
 	{
-		for (int i = 0; i < 4; i ++)
+		for (int i = 0; i < nbMotors; i ++)
 		{
 			motorX[i] = throttle
 					+ _motorActivation[i][0] * rollDeltaSignal
@@ -188,14 +202,17 @@ void ActuatorControl::processMulticopter(unsigned short int throttle)
 		}
 	}
 
-
 	// Write pulse for motors
 	pwmWrite(D28, levelToCtrl(motorX[0]));
 	pwmWrite(D27, levelToCtrl(motorX[1]));
 	pwmWrite(D11, levelToCtrl(motorX[2]));
-	pwmWrite(D12, levelToCtrl(motorX[3]));
 
-	// DEBUG servo
-	// Signal goes from 650 to 2250 ms
-	pwmWrite(D14, US_TO_COMPARE(throttle * 1.6 + 650));
+	if (nbMotors == 4)
+	{
+		pwmWrite(D12, levelToCtrl(motorX[3]));
+	}
+	else {
+		// Signal goes from 650 to 2250 ms
+		pwmWrite(D14, US_TO_COMPARE(1450 + yawDeltaSignal));
+	}
 }

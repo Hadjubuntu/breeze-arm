@@ -26,7 +26,7 @@ public:
 
 	void processFixedWing(unsigned short int);
 
-	void processMulticopter(unsigned short int);
+	void processMulticopter(unsigned short int, int nbMotors);
 
 	int getCommandNmToSignalUs(float, float);
 };

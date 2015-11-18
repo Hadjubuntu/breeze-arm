@@ -16,7 +16,8 @@
 
 enum Firmware: int {
 	FIXED_WING = 0,
-	MULTICOPTER = 1
+	HCOPTER = 1,
+	YCOPTER = 2,
 };
 
 class Conf {
@@ -55,14 +56,8 @@ public:
 
 
 	// Firmware
-	const int firmware = Firmware::MULTICOPTER;
+	const int firmware = Firmware::YCOPTER;
 
-	bool isFixedWing() {
-		return (firmware == Firmware::FIXED_WING);
-	}
-	bool isMulticopter() {
-		return (firmware == Firmware::MULTICOPTER);
-	}
 
 
 	/**
