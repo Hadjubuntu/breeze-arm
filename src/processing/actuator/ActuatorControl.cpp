@@ -54,6 +54,22 @@ ActuatorControl::ActuatorControl(FlightStabilization *pFlightStab) : Processing(
 	_flightStabilization = pFlightStab;
 }
 
+void ActuatorControl::initMotorRepartition() {
+	switch (Conf::getInstance().firmware) {
+	case YCOPTER:
+		for (int j = 0; j < 4; j++) {
+			_motorActivation[j][2] = 0;
+		}
+		break;
+	case FIXED_WING:
+		break;
+	case HCOPTER:
+		break;
+	default:
+		break;
+	}
+}
+
 /**
  * Initialize timers
  */
@@ -83,6 +99,9 @@ void ActuatorControl::init()
 	pwmWrite(D27, levelToCtrl(0));
 	pwmWrite(D11, levelToCtrl(0));
 	pwmWrite(D12, levelToCtrl(0));
+
+	// Initialize motor repartition especially for Ycopter
+	initMotorRepartition();
 }
 
 
@@ -170,19 +189,6 @@ void ActuatorControl::processMulticopter(unsigned short int throttle, int nbMoto
 		motorX[j] = 0;
 	}
 
-	int _motorActivation[4][3] = {
-			{1, 1, -1},
-			{-1, 1, 1},
-			{1, -1, 1},
-			{-1, -1, -1}
-	};
-
-	if (nbMotors == 3)
-	{
-		for (int j = 0; j < 4; j ++) {
-			_motorActivation[j][2] = 0;
-		}
-	}
 
 	// Set throttle repartition only throttle superior to a minimum threshold
 	// Otherwise cut-off motors

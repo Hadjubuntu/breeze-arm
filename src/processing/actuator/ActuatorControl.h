@@ -14,6 +14,14 @@
 class ActuatorControl : public Processing {
 private:
 	FlightStabilization *_flightStabilization;
+	int _motorActivation[4][3] = {
+			{1, 1, -1},
+			{-1, 1, 1},
+			{1, -1, 1},
+			{-1, -1, -1}
+	};
+
+	void initMotorRepartition();
 
 public:
 	// debug
