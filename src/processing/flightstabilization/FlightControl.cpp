@@ -60,8 +60,9 @@ void FlightControl::process()
 	rpy[1] = pitch;
 
 	// Integrate desired yaw
-	_yawInt += yaw * 1/_freqHz;
-	_yawInt = _yawInt * 0.98;
+	const float Kyaw = 1.5;
+	_yawInt += Kyaw * yaw * 1/_freqHz;
+	_yawInt = _yawInt * 0.995;
 	Bound(_yawInt, -PI, PI); //FIXME when max left and turns left, go other side ..
 
 	// Transform RPY to quaternion
