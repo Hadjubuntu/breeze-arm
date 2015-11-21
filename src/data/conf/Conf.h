@@ -41,23 +41,14 @@ public:
 	int find(std::string pName);
 
 
-
 	// Default configuration parameters
 	// ------------------------------------
-	// Flight control parameters
-	const float maxAbsRollAngle = 0.34; // 0.34 for 20 degress, 0.5 for approx 30 degrees, go higher to 0.8 for 45 degrees
-	const float maxAbsPitchAngle = 0.34;
-	const float maxAbsCombinedAngle = 0.5;
-	// Max command on the torque in Nm
-	const float maxCommandNm = 6.0;
 	// Use boost motor to compensate roll/pitch angle
 	const bool useBoostMotors = true;
 
 
-
 	// Firmware
 	const int firmware = Firmware::YCOPTER;
-
 
 
 	/**

@@ -24,9 +24,11 @@ Conf Conf::INSTANCE = Conf();
  */
 Conf::Conf() {
 	_parameters.push_back(Param<float>("UNKNOW", 0.0f));
+	// 0.34 for 20 degress, 0.5 for approx 30 degrees, go higher to 0.8 for 45 degrees
 	_parameters.push_back(Param<float>("maxAbsRollAngle", 0.34f));
 	_parameters.push_back(Param<float>("maxAbsPitchAngle", 0.34f));
 	_parameters.push_back(Param<float>("maxAbsCombinedAngle", 0.5f));
+	// Max command on the torque in Nm
 	_parameters.push_back(Param<float>("maxCommandNm", 6.0f));
 }
 

@@ -52,6 +52,9 @@ ActuatorControl::ActuatorControl(FlightStabilization *pFlightStab) : Processing(
 {
 	_freqHz = 50;
 	_flightStabilization = pFlightStab;
+
+	// Retrieve conf params
+	_maxCommandNm = Conf::getInstance().get("maxCommandNm")->getValue();
 }
 
 void ActuatorControl::initMotorRepartition() {
@@ -133,7 +136,7 @@ void ActuatorControl::process()
 
 int ActuatorControl::getCommandNmToSignalUs(float commandNm, float nmToDeltaSignalUs)
 {
-	BoundAbs(commandNm, Conf::getInstance().maxCommandNm);
+	BoundAbs(commandNm, _maxCommandNm);
 	int deltaSignal = (int) (-1) * commandNm * nmToDeltaSignalUs;
 
 	BoundAbs(deltaSignal, RADIO_VAR);
