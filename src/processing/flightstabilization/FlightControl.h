@@ -20,6 +20,11 @@ private:
 	AHRS *_ahrs;
 	float _throttleInitUs;
 	float _yawInt;
+
+	// Configuration parameters
+	float _maxAbsRollAngle;
+	float _maxAbsPitchAngle;
+	float _maxAbsCombinedAngle;
 public:
 	FlightControl(RadioControler*, FlightStabilization*, AHRS*);
 

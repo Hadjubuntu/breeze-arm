@@ -22,8 +22,12 @@ FlightControl::FlightControl(RadioControler *radioController,
 
 	// Runs at 50Hz
 	_freqHz = 50;
-
 	_throttleInitUs = 370;
+
+	// Retrieve conf parameters
+	_maxAbsRollAngle = Conf::getInstance().get("maxAbsRollAngle")->getValue();
+	_maxAbsPitchAngle = Conf::getInstance().get("maxAbsPitchAngle")->getValue();
+	_maxAbsCombinedAngle = Conf::getInstance().get("maxAbsCombinedAngle")->getValue();
 }
 
 /**
@@ -50,9 +54,9 @@ void FlightControl::process()
 	// ------------------
 
 	// Compute roll, pitch, yaw desired by using the radio values
-	float roll = radioToRad(_radioController->getHandler().getChannelNormed(1), Conf::getInstance().maxAbsRollAngle);
-	float pitch = radioToRad(_radioController->getHandler().getChannelNormed(2), Conf::getInstance().maxAbsPitchAngle);
-	float yaw = radioToRad(_radioController->getHandler().getChannelNormed(4), Conf::getInstance().maxAbsCombinedAngle);
+	float roll = radioToRad(_radioController->getHandler().getChannelNormed(1), _maxAbsRollAngle);
+	float pitch = radioToRad(_radioController->getHandler().getChannelNormed(2), _maxAbsPitchAngle);
+	float yaw = radioToRad(_radioController->getHandler().getChannelNormed(4), _maxAbsCombinedAngle);
 	// Throttle from 0 to 1
 	float throttle = (_radioController->getHandler().Channel(3) - _throttleInitUs) / 1310.0;
 
