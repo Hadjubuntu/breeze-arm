@@ -52,6 +52,7 @@ public:
 	void loop();
 
 
+	Processing* getProcByName(std::string);
 
 	// Getters
 	//--------------------

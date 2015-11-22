@@ -55,3 +55,8 @@ void Brain::loop()
 	delayMicroseconds(_delayTickUs);
 }
 
+Processing* Brain::getProcByName(std::string pName)
+{
+// TODO fetch processing by its name
+}
+

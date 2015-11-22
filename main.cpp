@@ -14,7 +14,6 @@
 #include "src/math/common/FastMath.h"
 #include "src/processing/ahrs/AHRS.h"
 #include "src/processing/link/RadioControler.h"
-#include "src/core/Logger.h"
 #include "src/peripherals/IMU/Baro.h"
 #include "src/link/RfControler.h"
 #include "src/link/RfRouter.h"
@@ -32,8 +31,6 @@ FlightStabilization flightStabilization;
 /** UAV brain */
 Brain uavBrain;
 
-/** Logger */
-Logger logger;
 
 /** RadioFreq controller */
 RfControler rfControler;
@@ -57,9 +54,7 @@ void setup() {
 	/* Set up the LED to blink  */
 	pinMode(BOARD_LED_PIN, OUTPUT);
 
-	logger.info("BREEZE-UAV-ARM");
-
-	// Add dependency
+	// Add dependency (TODO delete this, brain as singleton, call for processing from brain)
 	//---------------------
 	Conf::getInstance().setRfControler(&rfControler);
 
@@ -105,30 +100,25 @@ void loop()
 		int ch2 = radioControler.getHandler().channels[2];
 
 		char str[90];
-		//				sprintf(str, "Roll = %.1f | Pitch = %.1f",
-		//						rpy[0], rpy[1]
-		//				);
 
 		//		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
 
-//		Quaternion targetAtt = flightStabilization.getTargetAttitude();
-//		targetAtt.toRollPitchYaw(rpy);
+		//		Quaternion targetAtt = flightStabilization.getTargetAttitude();
+		//		targetAtt.toRollPitchYaw(rpy);
 
 		// Print tau
-//		sprintf(str, "tau_x = %.2f | tau_y = %.2f | target_x = %.1f | target_y = %.1f | target_z = %.1f | yaw = %.2f",
-//				flightStabilization.getTau().getX(),
-//				flightStabilization.getTau().getY(),
-//				rpy[0], rpy[1], rpy[2], FastMath::toDegrees(ahrs.getYawFromGyro()));
+		//		sprintf(str, "tau_x = %.2f | tau_y = %.2f | target_x = %.1f | target_y = %.1f | target_z = %.1f | yaw = %.2f",
+		//				flightStabilization.getTau().getX(),
+		//				flightStabilization.getTau().getY(),
+		//				rpy[0], rpy[1], rpy[2], FastMath::toDegrees(ahrs.getYawFromGyro()));
 
 		sprintf(str, "yaw cmd int = %.2f | yaw current = %.2f | tau_z = %.2f | tau_x = %.2f",
-				 FastMath::toDegrees(flightControl.getYawInt()), FastMath::toDegrees(ahrs.getYawFromGyro()),
-				 flightStabilization.getTau().getZ(), flightStabilization.getTau().getX());
+				FastMath::toDegrees(flightControl.getYawInt()), FastMath::toDegrees(ahrs.getYawFromGyro()),
+				flightStabilization.getTau().getZ(), flightStabilization.getTau().getX());
 
-//				sprintf(str, "m1 : %d | m2 : %d | m3 : %d | m4 : %d",
-//						actuatorControl.motors[0], actuatorControl.motors[1],
-//						actuatorControl.motors[2], actuatorControl.motors[3]);
 
-		logger.info(str);
+		RfPacket packet(Date::now(), "LOG", str);
+		rfControler.addPacketToSend(packet);
 	}
 }
 

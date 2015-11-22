@@ -12,12 +12,16 @@
 #include <list>
 #include "../core/Processing.h"
 #include "RfPacket.h"
+#include "../core/Logger.h"
 
 
 #define RfSerial Serial3
 
 class RfControler : public Processing  {
 private:
+	/** Logger */
+	Logger logger;
+
 	/** Packet end char */
 	const char _endPacketChar = '\n';
 
@@ -29,6 +33,7 @@ private:
 
 	/** To send packets buffer */
 	std::list<RfPacket> _toSendPackets;
+	int _iterSendPacket;
 
 	void receiveNewPackets();
 	void sendPackets();

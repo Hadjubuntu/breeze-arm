@@ -12,6 +12,7 @@
 RfControler::RfControler() : Processing()
 {
 	_freqHz = 20;
+	_iterSendPacket = 0;
 }
 
 void RfControler::receiveNewPackets() {
@@ -34,11 +35,18 @@ void RfControler::receiveNewPackets() {
 }
 
 void RfControler::sendPackets() {
-	if (_toSendPackets.size() > 0)
+	if (_toSendPackets.size() > 0 && _iterSendPacket >= _freqHz / 2.0)
 	{
 		RfPacket packet = _toSendPackets.front();
 		_toSendPackets.pop_front();
 		send(packet);
+
+		_iterSendPacket = 0;
+	}
+
+	if (_toSendPackets > 50) {
+		_toSendPackets.clear();
+		// Throw error : to much packet to send
 	}
 }
 
@@ -63,7 +71,8 @@ void RfControler::send(RfPacket& packet)
 		// Concatenate data
 		sprintf(charArray, "%s|%s\n", header.c_str(), payload.c_str());
 
-		// Send data TODO
+		// Send data
+		logger.info(charArray);
 	}
 }
 
