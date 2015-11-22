@@ -107,3 +107,12 @@ void Conf::parseRf(std::string payload)
 
 	}
 }
+
+void Conf::sendConfToGcs()
+{
+	for (Param<float> param : _parameters)
+	{
+		RfPacket packet(Date::now(), "CONF", param.toString());
+		_rfControler->addPacketToSend(packet);
+	}
+}

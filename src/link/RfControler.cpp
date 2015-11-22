@@ -14,31 +14,38 @@ RfControler::RfControler() : Processing()
 	_freqHz = 20;
 }
 
-
-void RfControler::process()
-{
+void RfControler::receiveNewPackets() {
 	if (RfSerial.available() > 0) {
-		char inChar = (char) RfSerial.read();
-
+		char inChar = (char) (RfSerial.read());
 		// If incoming character is a new line, then the packet is stored
 		//----------------------------------------------------------
-		if (inChar == _endPacketChar)
-		{
+		if (inChar == _endPacketChar) {
 			// Add packet to history
 			RfPacket e(Date::now(), "no_header", _incomingPacket);
-			_packets.push_back(e);
-
+			_receivedPackets.push_back(e);
 			// Reset incoming packet
 			_incomingPacket.clear();
-
-		}
-		// Otherwise append new char to current incoming packet
-		else
+		} else        // Otherwise append new char to current incoming packet
 		{
 			// Push back character to string
 			_incomingPacket += inChar;
 		}
 	}
+}
+
+void RfControler::sendPackets() {
+	if (_toSendPackets.size() > 0)
+	{
+		RfPacket packet = _toSendPackets.front();
+		_toSendPackets.pop_front();
+		send(packet);
+	}
+}
+
+void RfControler::process()
+{
+	receiveNewPackets();
+	sendPackets();
 }
 
 void RfControler::send(RfPacket& packet)
@@ -62,12 +69,12 @@ void RfControler::send(RfPacket& packet)
 
 RfPacket RfControler::popFirstPacket()
 {
-	RfPacket packet = _packets.front();
-	_packets.pop_front();
+	RfPacket packet = _receivedPackets.front();
+	_receivedPackets.pop_front();
 	return packet;
 }
 
 bool RfControler::hasPacketPending()
 {
-	return !_packets.empty();
+	return !_receivedPackets.empty();
 }

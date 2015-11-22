@@ -22,10 +22,17 @@ private:
 	const char _endPacketChar = '\n';
 
 	/** List of packets received */
-	std::list<RfPacket> _packets;
+	std::list<RfPacket> _receivedPackets;
 
 	/** Incoming packet in construction until end character is received */
 	std::string _incomingPacket;
+
+	/** To send packets buffer */
+	std::list<RfPacket> _toSendPackets;
+
+	void receiveNewPackets();
+	void sendPackets();
+
 public:
 	RfControler();
 
@@ -43,6 +50,10 @@ public:
 	RfPacket popFirstPacket();
 
 	bool hasPacketPending();
+
+	void addPacketToSend(RfPacket packet) {
+		_toSendPackets.push_back(packet);
+	}
 };
 
 #endif /* LINK_CONTROLER_RFCONTROLER_H_ */

@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <wirish/wirish.h>
 #include <vector>
+#include "src/data/conf/Conf.h"
 #include "libraries/Wire/Wire.h"
 #include "src/core/Brain.h"
 #include "src/math/time/Date.h"
@@ -57,6 +58,10 @@ void setup() {
 	pinMode(BOARD_LED_PIN, OUTPUT);
 
 	logger.info("BREEZE-UAV-ARM");
+
+	// Add dependency
+	//---------------------
+	Conf::getInstance().setRfControler(&rfControler);
 
 	// Initialize brain
 	//---------------------

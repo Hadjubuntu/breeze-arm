@@ -32,6 +32,12 @@ public:
 	void setValue(T value) {
 		_value = value;
 	}
+
+	std::string toString()
+	{
+		std::string str = _name + ";"; // TODO FIXME find conversion float to string + _value;
+		return str;
+	}
 	virtual ~Param() {
 
 	}

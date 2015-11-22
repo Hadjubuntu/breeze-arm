@@ -49,6 +49,10 @@ public:
 	std::string getPayload() {
 		return _payload;
 	}
+
+	int length() {
+		return _header.length() + _payload.length();
+	}
 };
 
 #endif /* LINK_RFPACKET_H_ */

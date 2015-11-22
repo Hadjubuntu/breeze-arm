@@ -12,12 +12,13 @@
 #define DATA_CONF_CONF_H_
 
 #include <vector>
+#include "../../link/RfControler.h"
 #include "Param.h"
 
 enum Firmware: int {
 	FIXED_WING = 0,
-	HCOPTER = 1,
-	YCOPTER = 2,
+			HCOPTER = 1,
+			YCOPTER = 2,
 };
 
 class Conf {
@@ -32,6 +33,7 @@ private:
 	Conf() ;
 
 	std::vector<Param<float>> _parameters;
+	RfControler *_rfControler;
 
 public:
 	static Conf& getInstance();
@@ -67,6 +69,16 @@ public:
 	 * Parse rf payload message and update configuration
 	 */
 	void parseRf(std::string payload);
+
+	/**
+	 * Send configuration to ground control station
+	 */
+	void sendConfToGcs();
+
+	void setRfControler(RfControler *pControler)
+	{
+		_rfControler = pControler;
+	}
 };
 
 #endif /* DATA_CONF_CONF_H_ */
