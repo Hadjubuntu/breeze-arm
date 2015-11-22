@@ -36,8 +36,20 @@ private:
 public:
 	static Conf& getInstance();
 
+	/**
+	 * Get parameter value from its name
+	 */
 	Param<float>* get(std::string pName);
-	void set(std::string pName, float pValue);
+
+	/**
+	 * Set param name to value and returns index
+	 * if parameter was already existing in the parameters list
+	 */
+	int set(std::string pName, float pValue);
+
+	/**
+	 * Find parameter index by its name in the list
+	 */
 	int find(std::string pName);
 
 

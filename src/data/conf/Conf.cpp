@@ -51,7 +51,7 @@ Param<float>* Conf::get(std::string pName)
 	return e;
 }
 
-void Conf::set(std::string pName, float pValue)
+int Conf::set(std::string pName, float pValue)
 {
 	int idx = find(pName);
 	if (idx >= 0)
@@ -62,6 +62,8 @@ void Conf::set(std::string pName, float pValue)
 	{
 		_parameters.push_back(Param<float>(pName, pValue));
 	}
+
+	return idx;
 }
 
 int Conf::find(std::string pName)
@@ -86,7 +88,22 @@ Conf& Conf::getInstance()
 	return INSTANCE;
 }
 
+/**
+ * Retrieve parameter name and value from payload packet message
+ */
 void Conf::parseRf(std::string payload)
 {
+	// TODO split using separator
+	std::string paramName = "";
+	float paramValue = 0.0;
 
+	// If parameter exists, then set value
+	if (find(paramName) > 0)
+	{
+		set(paramName, paramValue);
+	}
+	// Otherwise send to GCS the exception
+	else {
+
+	}
 }
