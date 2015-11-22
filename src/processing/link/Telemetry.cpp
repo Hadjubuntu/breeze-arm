@@ -45,12 +45,7 @@ void Telemetry::process()
 
 	// Send packet
 	// --------------
-	// Converts string to char array
-// TODO to be continued
-	//	char charArray[RF_PACKET_MAX_LENGTH];
-//	strncpy(charArray, packetStr.c_str(), RF_PACKET_MAX_LENGTH-1);
-//
-//	telemetryLogger.info(charArray);
+	//_rfControler.addPacketToSend(packet);
 }
 
 

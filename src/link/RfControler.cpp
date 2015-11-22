@@ -20,7 +20,11 @@ void RfControler::receiveNewPackets() {
 		char inChar = (char) (RfSerial.read());
 		// If incoming character is a new line, then the packet is stored
 		//----------------------------------------------------------
-		if (inChar == _endPacketChar) {
+		if (inChar == _endPacketChar)
+		{
+			// TODO retrieve header by spliting packet
+
+
 			// Add packet to history
 			RfPacket e(Date::now(), "no_header", _incomingPacket);
 			_receivedPackets.push_back(e);

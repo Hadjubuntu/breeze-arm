@@ -24,18 +24,20 @@ void RfRouter::process()
 		// Remove first packet
 		RfPacket packet = _controler->popFirstPacket();
 
-		// Get payload
+		// Get header and payload
+		std::string packetHeader = packet.getHeader();
 		std::string packetStr = packet.getPayload();
 
-		// Route regarding its header data
-//		switch (packet.getHeader())
-//		{
-//		case 'CONF':
-//			Conf::getInstance().parseRf(packet.getPayload());
-//			break;
-//		default:
-//			// Unknow message
-//			break;
-//		}
+		if (packetHeader.compare("CONF") == 0)
+		{
+			Conf::getInstance().parseRf(packet.getPayload());
+		}
+		else if (packetHeader.compare("CONF_REQUEST") == 0)
+		{
+			Conf::getInstance().sendConfToGcs();
+		}
+		else {
+			// Unknow message
+		}
 	}
 }
