@@ -48,7 +48,7 @@ void RfControler::sendPackets() {
 		_iterSendPacket = 0;
 	}
 
-	if (_toSendPackets > 50) {
+	if (_toSendPackets.size() > 50) {
 		_toSendPackets.clear();
 		// Throw error : to much packet to send
 	}
