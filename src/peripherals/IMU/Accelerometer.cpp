@@ -42,36 +42,32 @@ void Accelerometer::init()
 	delay(100);
 
 	//	Calculate offset
-	float accumulator[] = {0.0, 0.0, 0.0};
-	int num_samples = 30;
-
-	for(int i = 0 ; i < num_samples ; i++)
-	{
-		// Update accelerometer
-		//------
-		update();
-
-		// Accumulate data
-		//-----
-		accumulator[0] += _accRaw.getX();
-		accumulator[1] += _accRaw.getY();
-		accumulator[2] += _accRaw.getZ();
-
-		Serial3.println("New sample of acc data received..");
-		delay(100);
-	}
-	for(int i = 0 ; i < 3 ; i++)
-	{
-		accumulator[i] /= num_samples;
-	}
-	accumulator[2] = 0.0; // Force 0.0 offset on z axis
+//	float accumulator[] = {0.0, 0.0, 0.0};
+//	int num_samples = 30;
+//
+//	for(int i = 0 ; i < num_samples ; i++)
+//	{
+//		// Update accelerometer
+//		//------
+//		update();
+//
+//		// Accumulate data
+//		//-----
+//		accumulator[0] += _accRaw.getX();
+//		accumulator[1] += _accRaw.getY();
+//		accumulator[2] += _accRaw.getZ();
+//
+//		Serial3.println("New sample of acc data received..");
+//		delay(100);
+//	}
+//	for(int i = 0 ; i < 3 ; i++)
+//	{
+//		accumulator[i] /= num_samples;
+//	}
+//	accumulator[2] = 0.0; // Force 0.0 offset on z axis
 
 	// DEBUG 0 offset
 //	_offset = accumulator;
-
-	char str[60];
-	sprintf(str, "Offset: {x:%f, y:%f, z:%f}", _offset.getX(), _offset.getY(), _offset.getZ());
-	Serial3.println(str);
 }
 
 void Accelerometer::update()

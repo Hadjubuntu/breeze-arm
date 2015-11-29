@@ -19,7 +19,7 @@
 // good values : Pq=20; Pw=3
 FlightStabilization::FlightStabilization() :
 Processing(),
-_Pq(12.0), _Pw(1.2),
+_Pq(17.0), _Pw(2.0),
 _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
 _tau(Vect3D::zero())
@@ -27,6 +27,8 @@ _tau(Vect3D::zero())
 	_freqHz = 100;
 	_throttle = 0;
 	_yawFromGyro = 0.0;
+	_Pq = Conf::getInstance().get("flightStabilization_Pq")->getValue();
+	_Pw = Conf::getInstance().get("flightStabilization_Pw")->getValue();
 }
 
 /**

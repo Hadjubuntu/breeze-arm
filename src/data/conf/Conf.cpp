@@ -9,7 +9,9 @@
  */
 
 #include <string>
+#include <stdlib.h>
 #include "Conf.h"
+#include "../../core/StrUtils.h"
 
 Conf Conf::INSTANCE = Conf();
 
@@ -25,11 +27,15 @@ Conf Conf::INSTANCE = Conf();
 Conf::Conf() {
 	_parameters.push_back(Param<float>("UNKNOW", 0.0f));
 	// 0.34 for 20 degress, 0.5 for approx 30 degrees, go higher to 0.8 for 45 degrees
-	_parameters.push_back(Param<float>("maxAbsRollAngle", 0.34f));
-	_parameters.push_back(Param<float>("maxAbsPitchAngle", 0.34f));
+	_parameters.push_back(Param<float>("maxAbsRollAngle", 0.45f));
+	_parameters.push_back(Param<float>("maxAbsPitchAngle", 0.45f));
 	_parameters.push_back(Param<float>("maxAbsCombinedAngle", 0.5f));
 	// Max command on the torque in Nm
-	_parameters.push_back(Param<float>("maxCommandNm", 6.0f));
+	_parameters.push_back(Param<float>("maxCommandNm", 5.0f));
+	// Flight stabilization
+	_parameters.push_back(Param<float>("flightStabilization_Pq", 17.0f));
+	_parameters.push_back(Param<float>("flightStabilization_Pw", 2.0f));
+
 }
 
 
@@ -93,18 +99,23 @@ Conf& Conf::getInstance()
  */
 void Conf::parseRf(std::string payload)
 {
-	// TODO split using separator
-	std::string paramName = "";
-	float paramValue = 0.0;
+	vector<string> paramSplitData = StrUtils::explode(payload, ';');
 
-	// If parameter exists, then set value
-	if (find(paramName) > 0)
+	if (paramSplitData.size() > 0)
 	{
-		set(paramName, paramValue);
-	}
-	// Otherwise send to GCS the exception
-	else {
+		std::string paramName = paramSplitData[0];
+		float paramValue = atof(paramSplitData[1].c_str());
 
+		// If parameter exists, then set value
+		if (find(paramName) > 0)
+		{
+			set(paramName, paramValue);
+		}
+		// Otherwise send to GCS the exception
+		else
+		{
+
+		}
 	}
 }
 

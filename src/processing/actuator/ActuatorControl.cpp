@@ -182,9 +182,9 @@ void ActuatorControl::processMulticopter(unsigned short int throttle, int nbMoto
 	Vect3D torqueCmd = _flightStabilization->getTau();
 
 	// Compute delta signal from torque command
-	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 20.0f);
-	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 20.0f);
-	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 70.0f);
+	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 15.0f);
+	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 15.0f);
+	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 40.0f);
 
 	int motorX[nbMotors];
 
@@ -222,6 +222,6 @@ void ActuatorControl::processMulticopter(unsigned short int throttle, int nbMoto
 	}
 	else {
 		// Signal goes from 650 to 2250 ms
-		pwmWrite(D14, US_TO_COMPARE(1450 + yawDeltaSignal));
+		pwmWrite(D14, US_TO_COMPARE(1300 - yawDeltaSignal));
 	}
 }

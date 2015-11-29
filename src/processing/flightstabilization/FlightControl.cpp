@@ -64,7 +64,7 @@ void FlightControl::process()
 	rpy[1] = pitch;
 
 	// Integrate desired yaw
-	const float Kyaw = 1.5;
+	const float Kyaw = 4.0;
 	_yawInt += Kyaw * yaw * 1/_freqHz;
 	_yawInt = _yawInt * 0.995;
 	Bound(_yawInt, -PI, PI); //FIXME when max left and turns left, go other side ..

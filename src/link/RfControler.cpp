@@ -8,6 +8,9 @@
 
 #include <stdio.h>
 #include "RfControler.h"
+#include "../core/StrUtils.h"
+
+
 
 RfControler::RfControler() : Processing()
 {
@@ -22,12 +25,15 @@ void RfControler::receiveNewPackets() {
 		//----------------------------------------------------------
 		if (inChar == _endPacketChar)
 		{
-			// TODO retrieve header by spliting packet
+			vector<string> datas = StrUtils::explode(_incomingPacket, '|');
 
+			if (datas.size() > 0)
+			{
+				// Add packet to history
+				RfPacket e(Date::now(), datas[0], datas[1]);
+				_receivedPackets.push_back(e);
+			}
 
-			// Add packet to history
-			RfPacket e(Date::now(), "no_header", _incomingPacket);
-			_receivedPackets.push_back(e);
 			// Reset incoming packet
 			_incomingPacket.clear();
 		} else        // Otherwise append new char to current incoming packet
@@ -38,7 +44,9 @@ void RfControler::receiveNewPackets() {
 	}
 }
 
-void RfControler::sendPackets() {
+void RfControler::sendPackets()
+{
+	_iterSendPacket ++;
 	if (_toSendPackets.size() > 0 && _iterSendPacket >= _freqHz / 2.0)
 	{
 		RfPacket packet = _toSendPackets.front();
@@ -47,6 +55,7 @@ void RfControler::sendPackets() {
 
 		_iterSendPacket = 0;
 	}
+
 
 	if (_toSendPackets.size() > 50) {
 		_toSendPackets.clear();
@@ -62,8 +71,8 @@ void RfControler::process()
 
 void RfControler::send(RfPacket& packet)
 {
-	std::string header = packet.getHeader();
-	std::string payload = packet.getPayload();
+	string header = packet.getHeader();
+	string payload = packet.getPayload();
 
 	int byteBuffer = header.length() + payload.length() + 1;
 
@@ -73,7 +82,7 @@ void RfControler::send(RfPacket& packet)
 		char charArray[byteBuffer];
 
 		// Concatenate data
-		sprintf(charArray, "%s|%s\n", header.c_str(), payload.c_str());
+		sprintf(charArray, "%s|%s", header.c_str(), payload.c_str());
 
 		// Send data
 		logger.info(charArray);
