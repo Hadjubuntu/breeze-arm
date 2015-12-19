@@ -22,9 +22,9 @@ private:
 	float _yawInt;
 
 	// Configuration parameters
-	float _maxAbsRollAngle;
-	float _maxAbsPitchAngle;
-	float _maxAbsCombinedAngle;
+	Param<float> *_maxAbsRollAngle;
+	Param<float> *_maxAbsPitchAngle;
+	Param<float> *_maxAbsCombinedAngle;
 public:
 	FlightControl(RadioControler*, FlightStabilization*, AHRS*);
 

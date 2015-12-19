@@ -24,17 +24,18 @@ Conf Conf::INSTANCE = Conf();
 	// Use boost motor to compensate roll/pitch angle
 	const bool useBoostMotors = true;
  */
-Conf::Conf() {
-	_parameters.push_back(Param<float>("UNKNOW", 0.0f));
+Conf::Conf()
+{
 	// 0.34 for 20 degress, 0.5 for approx 30 degrees, go higher to 0.8 for 45 degrees
-	_parameters.push_back(Param<float>("maxAbsRollAngle", 0.45f));
-	_parameters.push_back(Param<float>("maxAbsPitchAngle", 0.45f));
-	_parameters.push_back(Param<float>("maxAbsCombinedAngle", 0.5f));
+	_parameters.push_back(Param<float>("maxAbsRollAngle", 0.7f));
+	_parameters.push_back(Param<float>("maxAbsPitchAngle", 0.7f));
+	_parameters.push_back(Param<float>("maxAbsCombinedAngle", 0.8f));
 	// Max command on the torque in Nm
-	_parameters.push_back(Param<float>("maxCommandNm", 5.0f));
+	_parameters.push_back(Param<float>("maxCommandNm", 6.0f));
 	// Flight stabilization
-	_parameters.push_back(Param<float>("flightStabilization_Pq", 17.0f));
-	_parameters.push_back(Param<float>("flightStabilization_Pw", 2.0f));
+	_parameters.push_back(Param<float>("flightStabilization_Pq", 15.0f));
+	_parameters.push_back(Param<float>("flightStabilization_Pw", 5.0f));
+	_parameters.push_back(Param<float>("commandNmToSignalUs", 20.0f));
 
 }
 
@@ -100,6 +101,9 @@ Conf& Conf::getInstance()
 void Conf::parseRf(std::string payload)
 {
 	vector<string> paramSplitData = StrUtils::explode(payload, ';');
+
+	RfPacket packet(Date::now(), "LOG", "received_conf_param");
+	_rfControler->addPacketToSend(packet);
 
 	if (paramSplitData.size() > 0)
 	{

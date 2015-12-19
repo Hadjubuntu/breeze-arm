@@ -89,7 +89,7 @@ void loop()
 
 	// Prints infos
 	// ----
-	if (uavBrain.getTickId() % 600 == 0)
+	if (uavBrain.getTickId() % 1500 == 0)
 	{
 		toggleLED();
 
@@ -112,9 +112,9 @@ void loop()
 		//				flightStabilization.getTau().getY(),
 		//				rpy[0], rpy[1], rpy[2], FastMath::toDegrees(ahrs.getYawFromGyro()));
 
-		sprintf(str, "yaw cmd int = %.2f | yaw current = %.2f | tau_z = %.2f | tau_x = %.2f",
-				FastMath::toDegrees(flightControl.getYawInt()), FastMath::toDegrees(ahrs.getYawFromGyro()),
-				flightStabilization.getTau().getZ(), flightStabilization.getTau().getX());
+		sprintf(str, "tau_x = %.2f | tau_y = %.2f | conf = %.1f",
+				flightStabilization.getTau().getX(), flightStabilization.getTau().getY(),
+				Conf::getInstance().get("maxCommandNm")->getValue());
 
 
 		RfPacket packet(Date::now(), "LOG", str);

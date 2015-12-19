@@ -14,7 +14,8 @@
 class ActuatorControl : public Processing {
 private:
 	// conf param
-	float _maxCommandNm;
+	Param<float> *_maxCommandNm;
+	Param<float> *_commandNmToSignalUs;
 	// Others param
 	FlightStabilization *_flightStabilization;
 	int _motorActivation[4][3] = {

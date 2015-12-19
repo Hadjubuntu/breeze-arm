@@ -64,10 +64,17 @@ void Accelerometer::init()
 //	{
 //		accumulator[i] /= num_samples;
 //	}
-//	accumulator[2] = 0.0; // Force 0.0 offset on z axis
+//
+//
+//	char str[80];
+//	sprintf(str, "acc_offset: %.4f, %.4f, %.4f", accumulator[0], accumulator[1], accumulator[2]);
+//	Serial3.println(str);
+
+	// Found offset:
+	// acc_offset: 0.0147, -0.0461, -0.9104
 
 	// DEBUG 0 offset
-//	_offset = accumulator;
+	_offset = Vect3D(0.0147, -0.0461, 0.0896);
 }
 
 void Accelerometer::update()

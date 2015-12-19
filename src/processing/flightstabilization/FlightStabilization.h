@@ -15,8 +15,8 @@ class FlightStabilization : public Processing {
 private:
 	// Inputs
 	// ------------------
-	float _Pq;
-	float _Pw;
+	Param<float> *_Pq;
+	Param<float> *_Pw;
 	Quaternion _targetAttitude;
 	Quaternion _currentAttitude;
 	Vect3D _gyroRot;

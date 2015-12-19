@@ -33,11 +33,8 @@ public:
 		_value = value;
 	}
 
-	std::string toString()
-	{
-		std::string str = _name + ";"; // TODO FIXME find conversion float to string + _value;
-		return str;
-	}
+	std::string toString();
+
 	virtual ~Param() {
 
 	}

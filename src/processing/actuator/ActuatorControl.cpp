@@ -54,7 +54,8 @@ ActuatorControl::ActuatorControl(FlightStabilization *pFlightStab) : Processing(
 	_flightStabilization = pFlightStab;
 
 	// Retrieve conf params
-	_maxCommandNm = Conf::getInstance().get("maxCommandNm")->getValue();
+	_maxCommandNm = Conf::getInstance().get("maxCommandNm");
+	_commandNmToSignalUs = Conf::getInstance().get("commandNmToSignalUs");
 }
 
 void ActuatorControl::initMotorRepartition() {
@@ -182,8 +183,8 @@ void ActuatorControl::processMulticopter(unsigned short int throttle, int nbMoto
 	Vect3D torqueCmd = _flightStabilization->getTau();
 
 	// Compute delta signal from torque command
-	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), 15.0f);
-	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), 15.0f);
+	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), _commandNmToSignalUs->getValue());
+	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), _commandNmToSignalUs->getValue());
 	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 40.0f);
 
 	int motorX[nbMotors];
