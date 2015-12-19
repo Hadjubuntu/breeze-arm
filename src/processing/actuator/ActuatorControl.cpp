@@ -137,7 +137,7 @@ void ActuatorControl::process()
 
 int ActuatorControl::getCommandNmToSignalUs(float commandNm, float nmToDeltaSignalUs)
 {
-	BoundAbs(commandNm, _maxCommandNm);
+	BoundAbs(commandNm, _maxCommandNm->getValue());
 	int deltaSignal = (int) (-1) * commandNm * nmToDeltaSignalUs;
 
 	BoundAbs(deltaSignal, RADIO_VAR);
@@ -185,7 +185,7 @@ void ActuatorControl::processMulticopter(unsigned short int throttle, int nbMoto
 	// Compute delta signal from torque command
 	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), _commandNmToSignalUs->getValue());
 	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), _commandNmToSignalUs->getValue());
-	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), 40.0f);
+	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), _commandNmToSignalUs->getValue());
 
 	int motorX[nbMotors];
 

@@ -19,7 +19,6 @@
 // good values : Pq=20; Pw=3
 FlightStabilization::FlightStabilization() :
 Processing(),
-_Pq(16.0), _Pw(1.5),
 _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
 _tau(Vect3D::zero())

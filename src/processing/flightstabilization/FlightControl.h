@@ -12,6 +12,7 @@
 #include "FlightStabilization.h"
 #include "../link/RadioControler.h"
 #include "../ahrs/AHRS.h"
+#include "../../data/conf/Param.h"
 
 class FlightControl : public Processing {
 private:

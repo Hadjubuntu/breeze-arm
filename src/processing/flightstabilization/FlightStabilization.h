@@ -10,6 +10,7 @@
 
 #include "../../math/vector/Quaternion.h"
 #include "../../core/Processing.h"
+#include "../../data/conf/Param.h"
 
 class FlightStabilization : public Processing {
 private:
