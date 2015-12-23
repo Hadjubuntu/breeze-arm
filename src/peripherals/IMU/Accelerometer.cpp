@@ -74,7 +74,7 @@ void Accelerometer::init()
 	// acc_offset: 0.0147, -0.0461, -0.9104
 
 	// DEBUG 0 offset
-	_offset = Vect3D(0.0147, -0.0461, 0.0896);
+	_offset = Vect3D(-0.0147, 0.0461, -0.0896);
 }
 
 void Accelerometer::update()
@@ -85,9 +85,9 @@ void Accelerometer::update()
 	_i2c.readFrom(ADXLREG_DATAX0, A_TO_READ, buff);
 
 	int16 result[3];
-	result[1] = -((((int16) buff[1]) << 8) | buff[0]) ;
-	result[0] = -((((int16) buff[3]) << 8) | buff[2]) ;
-	result[2] = -((((int16) buff[5]) << 8) | buff[4]) ;
+	result[1] = ((((int16) buff[1]) << 8) | buff[0]) ;
+	result[0] = ((((int16) buff[3]) << 8) | buff[2]) ;
+	result[2] = ((((int16) buff[5]) << 8) | buff[4]) ;
 
 	// Create vector 3D from array of int16
 	Vect3D cAcc = Vect3D::fromInt16Array(result);

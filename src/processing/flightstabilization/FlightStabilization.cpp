@@ -60,10 +60,7 @@ void FlightStabilization::process()
 	Vect3D axisError = qError.getVect3DPart();
 
 	// Compute tau from error and gyro rate
-	// Note:
-	// axisError positive roll right, pitch up
-	// and gyroRot positive pitching up, rolling right (see Gyro.cpp for sign from raw data)
-	_tau = ((axisError * _Pq->getValue()) * (-1)) + ( _gyroRot * _Pw->getValue());
+	_tau = ((axisError * _Pq->getValue()) * (-1)) + (( _gyroRot * _Pw->getValue()) * (-1));
 
 	if (Conf::getInstance().useBoostMotors)
 	{

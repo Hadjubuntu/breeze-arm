@@ -112,9 +112,11 @@ void loop()
 		//				flightStabilization.getTau().getY(),
 		//				rpy[0], rpy[1], rpy[2], FastMath::toDegrees(ahrs.getYawFromGyro()));
 
-		sprintf(str, "tau_x = %.2f | tau_y = %.2f | conf = %.1f",
+		sprintf(str, "r = %.2f | p = %.2f | tau_x = %.2f | tau_y = %.2f | radio1 = %.1f | radio2 = %.1f",
+				rpy[0], rpy[1],
 				flightStabilization.getTau().getX(), flightStabilization.getTau().getY(),
-				Conf::getInstance().get("maxCommandNm")->getValue());
+				radioControler.getHandler().getChannelNormed(1),
+				radioControler.getHandler().getChannelNormed(2));
 
 
 		RfPacket packet(Date::now(), "LOG", str);
