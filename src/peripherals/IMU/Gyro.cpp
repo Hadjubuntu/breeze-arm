@@ -28,9 +28,9 @@ void Gyro::init()
 	//
 	_i2c.writeTo(GYRO_INT_CFG, 0x00);
 
-	delay(500);
+	delay(250);
 
-	int num_samples = 200;
+	int num_samples = 50;
 	float accumulator[] = {0.0, 0.0, 0.0};
 
 	for(int i = 0 ; i < num_samples ; i++)
@@ -41,7 +41,7 @@ void Gyro::init()
 		accumulator[1] += _gyroRaw.getY();
 		accumulator[2] += _gyroRaw.getZ();
 
-		delay(10);
+		delay(5);
 	}
 
 	for(int i = 0 ; i < 3 ; i++)
@@ -61,9 +61,9 @@ void Gyro::update()
 
 	// Convention : positive when rolling left, pitching down
 	int16 result[3];
-	result[1] = ((((int16) buff[0]) << 8) | buff[1]) ;
-	result[0] = ((((int16) buff[2]) << 8) | buff[3]) ;
-	result[2] = ((((int16) buff[4]) << 8) | buff[5]) ;
+	result[1] = -((((int16) buff[0]) << 8) | buff[1]) ;
+	result[0] = -((((int16) buff[2]) << 8) | buff[3]) ;
+	result[2] = -((((int16) buff[4]) << 8) | buff[5]) ;
 
 	// Create gyro vector from raw data
 	Vect3D cGyro = Vect3D::fromInt16Array(result);

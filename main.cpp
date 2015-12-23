@@ -107,17 +107,23 @@ void loop()
 		//		targetAtt.toRollPitchYaw(rpy);
 
 		// Print tau
-		//		sprintf(str, "tau_x = %.2f | tau_y = %.2f | target_x = %.1f | target_y = %.1f | target_z = %.1f | yaw = %.2f",
-		//				flightStabilization.getTau().getX(),
-		//				flightStabilization.getTau().getY(),
-		//				rpy[0], rpy[1], rpy[2], FastMath::toDegrees(ahrs.getYawFromGyro()));
+				sprintf(str, "tau_x = %.1f | tau_y = %.1f | rcControl1 = %.1f",
+						flightStabilization.getTau().getX(),
+						flightStabilization.getTau().getY(),
+						radioControler.getHandler().getChannelNormed(1));
 
-		sprintf(str, "r = %.2f | p = %.2f | tau_x = %.2f | tau_y = %.2f | radio1 = %.1f | radio2 = %.1f",
-				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
-				flightStabilization.getTau().getX(), flightStabilization.getTau().getY(),
-				radioControler.getHandler().getChannelNormed(1),
-				radioControler.getHandler().getChannelNormed(2));
+//		sprintf(str, "r = %.1f | p = %.1f | gyro_x = %.1f | gyro_y = %.1f | acc_x = %.1f | acc_y = %.1f",
+//				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
+//				FastMath::toDegrees(ahrs.getGyro().getGyroFiltered().getX()),
+//				FastMath::toDegrees(ahrs.getGyro().getGyroFiltered().getY()),
+//				FastMath::toDegrees(ahrs.getAcc().getAccFiltered().getX()),
+//				FastMath::toDegrees(ahrs.getAcc().getAccFiltered().getY())
+//			);
 
+		// 	radioControler.getHandler().getChannelNormed(1),
+//		radioControler.getHandler().getChannelNormed(2)
+
+// flightStabilization.getTau().getX(), flightStabilization.getTau().getY(),
 
 		RfPacket packet(Date::now(), "LOG", str);
 		rfControler.addPacketToSend(packet);

@@ -50,6 +50,8 @@ void FlightStabilization::setInputs(Quaternion pTargetAttitude, Quaternion pCurr
 void FlightStabilization::process()
 {
 	// DEBUG - tricks on yaw
+
+#if REAL_VERSION
 	Vect3D currentAttVect3D = _currentAttitude.toRollPitchYawVect3D();
 	_currentAttitude = Quaternion(currentAttVect3D.getX(), currentAttVect3D.getY(), _yawFromGyro);
 
@@ -60,7 +62,7 @@ void FlightStabilization::process()
 	Vect3D axisError = qError.getVect3DPart();
 
 	// Compute tau from error and gyro rate
-	_tau = ((axisError * _Pq->getValue()) * (-1)) + (( _gyroRot * _Pw->getValue()) * (-1));
+	_tau = ((axisError * _Pq->getValue()) * (-1)) + ( _gyroRot * _Pw->getValue());
 
 	if (Conf::getInstance().useBoostMotors)
 	{
@@ -70,6 +72,22 @@ void FlightStabilization::process()
 	{
 		_throttleOut = _throttle;
 	}
+#endif
+
+	// DEBUG simple PID
+	float rpyTarget[3];
+	_targetAttitude.toRollPitchYaw(rpyTarget);
+	float rpyCurrent[3];
+	_currentAttitude.toRollPitchYaw(rpyCurrent);
+
+	float rollRate = (rpyTarget[0] - rpyCurrent[0]) * 3.0;
+	float pitchRate = (rpyTarget[1] - rpyCurrent[1]) * 3.0;
+	float yawRate = (rpyTarget[2] - rpyCurrent[2]) * 3.0;
+
+	_tau = Vect3D(2.0*(rollRate - _gyroRot[0]), 2.0*(pitchRate - _gyroRot[1]), 2.0*(yawRate - _gyroRot[2]));
+
+	_throttleOut = _throttle;
+
 }
 
 float FlightStabilization::boostThrottleCompensateTiltAngle(float throttle)

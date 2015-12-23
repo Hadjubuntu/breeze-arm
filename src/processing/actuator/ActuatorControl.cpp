@@ -138,7 +138,7 @@ void ActuatorControl::process()
 int ActuatorControl::getCommandNmToSignalUs(float commandNm, float nmToDeltaSignalUs)
 {
 	BoundAbs(commandNm, _maxCommandNm->getValue());
-	int deltaSignal = (int) (-1) * commandNm * nmToDeltaSignalUs;
+	int deltaSignal = (int) commandNm * nmToDeltaSignalUs;
 
 	BoundAbs(deltaSignal, RADIO_VAR);
 	return deltaSignal;
