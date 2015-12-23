@@ -74,7 +74,7 @@ void Accelerometer::init()
 	// acc_offset: 0.0147, -0.0461, -0.9104
 
 	// DEBUG 0 offset
-	_offset = Vect3D(-0.0147, 0.0461, -0.0896);
+	_offset = Vect3D(0.0, 0.0, 0.0);
 }
 
 void Accelerometer::update()

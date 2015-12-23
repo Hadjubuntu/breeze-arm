@@ -113,7 +113,7 @@ void loop()
 		//				rpy[0], rpy[1], rpy[2], FastMath::toDegrees(ahrs.getYawFromGyro()));
 
 		sprintf(str, "r = %.2f | p = %.2f | tau_x = %.2f | tau_y = %.2f | radio1 = %.1f | radio2 = %.1f",
-				rpy[0], rpy[1],
+				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
 				flightStabilization.getTau().getX(), flightStabilization.getTau().getY(),
 				radioControler.getHandler().getChannelNormed(1),
 				radioControler.getHandler().getChannelNormed(2));
