@@ -18,6 +18,8 @@ private:
 	// ------------------
 	Param<float> *_Pq;
 	Param<float> *_Pw;
+	Param<float> *_Kangle;
+	Param<float> *_Krate;
 	Quaternion _targetAttitude;
 	Quaternion _currentAttitude;
 	Vect3D _gyroRot;

@@ -37,6 +37,10 @@ Conf::Conf()
 	_parameters.push_back(Param<float>("flightStabilization_Pw", 1.0f));
 	_parameters.push_back(Param<float>("commandNmToSignalUs", 12.0f));
 
+	// Flight stabilization with simple PID
+	_parameters.push_back(Param<float>("flightStabilization_Kangle", 5.0f));
+	_parameters.push_back(Param<float>("flightStabilization_Krate", 1.8f));
+
 }
 
 
@@ -105,22 +109,51 @@ void Conf::parseRf(std::string payload)
 	RfPacket packet(Date::now(), "LOG", "received_conf_param");
 	_rfControler->addPacketToSend(packet);
 
-	if (paramSplitData.size() > 0)
+//	if (paramSplitData.size() > 0)
+//	{
+//		std::string paramName = paramSplitData[0];
+//		float paramValue = atof(paramSplitData[1].c_str());
+//
+//		// If parameter exists, then set value
+//		if (find(paramName) > 0)
+//		{
+//			set(paramName, paramValue);
+//		}
+//		// Otherwise send to GCS the exception
+//		else
+//		{
+//
+//		}
+//	}
+
+	std::vector<string>::iterator itrDatas = paramSplitData.begin();
+	while (itrDatas != paramSplitData.end())
 	{
-		std::string paramName = paramSplitData[0];
-		float paramValue = atof(paramSplitData[1].c_str());
+		std::string paramName = *itrDatas;
 
-		// If parameter exists, then set value
-		if (find(paramName) > 0)
-		{
-			set(paramName, paramValue);
-		}
-		// Otherwise send to GCS the exception
-		else
-		{
+		// Go to next parameter
+		itrDatas ++;
+		if (itrDatas != paramSplitData.end()) {
 
+			std::string paramValueStr = *itrDatas;
+			float paramValue = atof(paramValueStr.c_str());
+
+			// If parameter exists, then set value
+			if (find(paramName) > 0)
+			{
+				set(paramName, paramValue);
+			}
+			// Otherwise send to GCS the exception
+			else
+			{
+				RfPacket packet(Date::now(), "LOG", "error_reading_conf");
+				_rfControler->addPacketToSend(packet);
+			}
+
+			itrDatas ++;
 		}
 	}
+
 }
 
 void Conf::sendConfToGcs()
