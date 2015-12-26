@@ -59,6 +59,7 @@ void FlightControl::process()
 	float yaw = radioToRad(_radioController->getHandler().getChannelNormed(4), _maxAbsCombinedAngle->getValue());
 	// Throttle from 0 to 1
 	float throttle = (_radioController->getHandler().Channel(3) - _throttleInitUs) / 1310.0;
+	Bound(throttle, 0.0, 1.0);
 
 	rpy[0] = roll;
 	rpy[1] = pitch;

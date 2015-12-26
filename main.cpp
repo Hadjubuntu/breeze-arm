@@ -96,8 +96,8 @@ void loop()
 		float rpy[3];
 		ahrs.getAttitude().toRollPitchYaw(rpy);
 
-		// TODO map channels to roll pitch yaw throttle and optionnal channels
-		int ch2 = radioControler.getHandler().channels[2];
+		// throttle radio channel
+		int chThrottle = radioControler.getHandler().Channel(3);
 
 		char str[90];
 
@@ -107,10 +107,10 @@ void loop()
 		//		targetAtt.toRollPitchYaw(rpy);
 
 		// Print tau
-				sprintf(str, "tau_x = %.1f | tau_y = %.1f | rcControl1 = %.1f",
+				sprintf(str, "tau_x = %.1f | tau_y = %.1f | rc throttle = %d",
 						flightStabilization.getTau().getX(),
 						flightStabilization.getTau().getY(),
-						radioControler.getHandler().getChannelNormed(1));
+						chThrottle);
 
 //		sprintf(str, "r = %.1f | p = %.1f | gyro_x = %.1f | gyro_y = %.1f | acc_x = %.1f | acc_y = %.1f",
 //				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),

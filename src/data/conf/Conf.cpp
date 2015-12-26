@@ -109,23 +109,6 @@ void Conf::parseRf(std::string payload)
 	RfPacket packet(Date::now(), "LOG", "received_conf_param");
 	_rfControler->addPacketToSend(packet);
 
-//	if (paramSplitData.size() > 0)
-//	{
-//		std::string paramName = paramSplitData[0];
-//		float paramValue = atof(paramSplitData[1].c_str());
-//
-//		// If parameter exists, then set value
-//		if (find(paramName) > 0)
-//		{
-//			set(paramName, paramValue);
-//		}
-//		// Otherwise send to GCS the exception
-//		else
-//		{
-//
-//		}
-//	}
-
 	std::vector<string>::iterator itrDatas = paramSplitData.begin();
 	while (itrDatas != paramSplitData.end())
 	{

@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define RF_PACKET_MAX_LENGTH 90
+#define RF_PACKET_MAX_LENGTH 95
 
 class RfPacket {
 private:

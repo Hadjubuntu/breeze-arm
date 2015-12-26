@@ -57,6 +57,18 @@ void Brain::loop()
 
 Processing* Brain::getProcByName(std::string pName)
 {
-// TODO fetch processing by its name
+//	Processing *output;
+//	std::vector<Processing>::iterator itrProc = _processings.begin();
+//
+//	while (itrProc != _processings.end() && output == NULL)
+//	{
+//		Processing current = *itrProc;
+//		if (current.getName())
+//		{
+//
+//		}
+//		itrProc ++;
+//	}
+	return 0;
 }
 
