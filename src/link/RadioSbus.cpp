@@ -36,6 +36,10 @@ void RadioSbus::begin(){
 	bufferIndex = 0;
 	feedState = 0;
 	lastUpdate = Date::now();
+
+	for (int i = 0; i < 18; i ++) {
+		channels[i] = 0;
+	}
 }
 
 int16_t RadioSbus::Channel(uint8_t ch) {

@@ -35,11 +35,11 @@ Conf::Conf()
 	// Flight stabilization
 	_parameters.push_back(Param<float>("flightStabilization_Pq", 15.0f));
 	_parameters.push_back(Param<float>("flightStabilization_Pw", 1.0f));
-	_parameters.push_back(Param<float>("commandNmToSignalUs", 12.0f));
+	_parameters.push_back(Param<float>("commandNmToSignalUs", 20.0f));
 
 	// Flight stabilization with simple PID
-	_parameters.push_back(Param<float>("flightStabilization_Kangle", 5.0f));
-	_parameters.push_back(Param<float>("flightStabilization_Krate", 1.8f));
+	_parameters.push_back(Param<float>("flightStabilization_Kangle", 2.9f));
+	_parameters.push_back(Param<float>("flightStabilization_Krate", 1.35f));
 
 }
 

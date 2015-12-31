@@ -38,6 +38,7 @@ void FlightControl::init()
 	// Init throttle at minimum value [us]
 	//TODO wait until value between 300 and 500 ..
 	//	_throttleInitUs = _radioController->getHandler().Channel(3);
+
 }
 
 void FlightControl::process()
@@ -65,9 +66,9 @@ void FlightControl::process()
 	rpy[1] = pitch;
 
 	// Integrate desired yaw
-	const float Kyaw = 3.0;
+	const float Kyaw = 4.0;
 	_yawInt += Kyaw * yaw * 1/_freqHz;
-	_yawInt = _yawInt * 0.995;
+	_yawInt = _yawInt * 0.96;
 	Bound(_yawInt, -PI, PI); //FIXME when max left and turns left, go other side ..
 
 	// Transform RPY to quaternion

@@ -39,6 +39,10 @@ public:
 		return _handler;
 	}
 
+	bool isComLost() {
+		return _handler.isComLost();
+	}
+
 	/**
 	 * Returns last update
 	 */
