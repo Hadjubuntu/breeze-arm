@@ -37,8 +37,22 @@ public:
 	 */
 	void clear();
 
+	int getSize() {
+		return _size;
+	}
+
+	std::vector<T> toVector() {
+		return _history;
+	}
+
+	/**
+	 * Create default 10-elements history
+	 */
 	static History<T> getDefault() {
-		History<T> e(10);
+		return create(10); // Default size : 10 elements
+	}
+	static History<T> create(int n) {
+		History<T> e(n);
 		return e;
 	}
 };

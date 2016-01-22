@@ -85,6 +85,7 @@ LIBMAPLE_MODULES += $(SRCROOT)/src/math/common
 LIBMAPLE_MODULES += $(SRCROOT)/src/math/pid
 LIBMAPLE_MODULES += $(SRCROOT)/src/math/time
 LIBMAPLE_MODULES += $(SRCROOT)/src/math/vector
+LIBMAPLE_MODULES += $(SRCROOT)/src/math/filter
 LIBMAPLE_MODULES += $(SRCROOT)/src/data/conf
 LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/I2C
 LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/sensor
@@ -93,6 +94,7 @@ LIBMAPLE_MODULES += $(SRCROOT)/src/processing/ahrs
 LIBMAPLE_MODULES += $(SRCROOT)/src/processing/actuator
 LIBMAPLE_MODULES += $(SRCROOT)/src/processing/flightstabilization
 LIBMAPLE_MODULES += $(SRCROOT)/src/processing/link
+LIBMAPLE_MODULES += $(SRCROOT)/src/processing/nav/sonar
 LIBMAPLE_MODULES += $(SRCROOT)/src/core
 LIBMAPLE_MODULES += $(SRCROOT)/src/link
 

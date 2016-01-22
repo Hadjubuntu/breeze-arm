@@ -27,19 +27,19 @@ Conf Conf::INSTANCE = Conf();
 Conf::Conf()
 {
 	// 0.34 for 20 degress, 0.5 for approx 30 degrees, go higher to 0.8 for 45 degrees
-	_parameters.push_back(Param<float>("maxAbsRollAngle", 0.65f));
-	_parameters.push_back(Param<float>("maxAbsPitchAngle", 0.65f));
+	_parameters.push_back(Param<float>("maxAbsRollAngle", 0.6f));
+	_parameters.push_back(Param<float>("maxAbsPitchAngle", 0.6f));
 	_parameters.push_back(Param<float>("maxAbsCombinedAngle", 0.8f));
 	// Max command on the torque in Nm
-	_parameters.push_back(Param<float>("maxCommandNm", 5.0f));
+	_parameters.push_back(Param<float>("maxCommandNm", 6.0f));
 	// Flight stabilization
 	_parameters.push_back(Param<float>("flightStabilization_Pq", 15.0f));
 	_parameters.push_back(Param<float>("flightStabilization_Pw", 1.0f));
 	_parameters.push_back(Param<float>("commandNmToSignalUs", 20.0f));
 
 	// Flight stabilization with simple PID
-	_parameters.push_back(Param<float>("flightStabilization_Kangle", 2.9f));
-	_parameters.push_back(Param<float>("flightStabilization_Krate", 1.35f));
+	_parameters.push_back(Param<float>("flightStabilization_Kangle", 2.8f));
+	_parameters.push_back(Param<float>("flightStabilization_Krate", 1.3f));
 
 }
 

@@ -20,7 +20,9 @@
 #include "src/processing/actuator/ActuatorControl.h"
 #include "src/processing/flightstabilization/FlightStabilization.h"
 #include "src/processing/flightstabilization/FlightControl.h"
+#include "src/processing/nav/sonar/Sonar.h"
 #include "src/processing/link/Telemetry.h"
+
 
 /** Attitude and heading reference system */
 AHRS ahrs;
@@ -50,6 +52,9 @@ ActuatorControl actuatorControl(&flightStabilization);
 /** Telemetry to keep GCS update */
 Telemetry telemetry(&ahrs);
 
+/** Sonar to measure distance */
+Sonar sonar;
+
 void setup() {
 	/* Set up the LED to blink  */
 	pinMode(BOARD_LED_PIN, OUTPUT);
@@ -72,11 +77,13 @@ void setup() {
 	uavBrain.addProcessing(&flightControl);
 	uavBrain.addProcessing(&actuatorControl);
 	uavBrain.addProcessing(&telemetry);
+	uavBrain.addProcessing(&sonar);
 
 	// Initialize all processings
 	//----------------------
 	uavBrain.initProcessings();
 }
+
 
 /**
  * Loop function called as fast as possible
@@ -106,11 +113,14 @@ void loop()
 		//		Quaternion targetAtt = flightStabilization.getTargetAttitude();
 		//		targetAtt.toRollPitchYaw(rpy);
 
+
+
 		// Print tau
-				sprintf(str, "tau_x = %.1f | tau_y = %.1f | rc throttle = %d",
+				sprintf(str, "tau_x = %.1f | tau_y = %.1f | rc throttle = %d | sonar = %.0f cm",
 						flightStabilization.getTau().getX(),
 						flightStabilization.getTau().getY(),
-						chThrottle);
+						chThrottle,
+						sonar.getOutput());
 
 //		sprintf(str, "r = %.1f | p = %.1f | gyro_x = %.1f | gyro_y = %.1f | acc_x = %.1f | acc_y = %.1f",
 //				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),

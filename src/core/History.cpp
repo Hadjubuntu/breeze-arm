@@ -30,3 +30,6 @@ void History<T>::clear()
 
 
 template class History<std::string>;
+template class History<int>;
+template class History<float>;
+
