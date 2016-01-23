@@ -10,7 +10,10 @@
 
 #include "Sonar.h"
 
-Sonar::Sonar() : _values(History<float>::getDefault())
+
+History<float> sonarValues(10);
+
+Sonar::Sonar() : Processing()
 {
 	_freqHz = 10;
 	_sonarPin = 13;
@@ -22,9 +25,9 @@ void Sonar::init()
 	_sonarPin = 13;
 
 	// Create zero vector at initialization
-	for (int i = 0; i < _values.getSize(); i ++)
+	for (int i = 0; i < 10; i ++)
 	{
-		_values.add(0.0);
+		sonarValues.add(0.0);
 	}
 }
 
@@ -34,9 +37,9 @@ void Sonar::process()
 	float currentSonarVal = (float) analogRead(_sonarPin) * 0.3175;
 
 	// Store it to history
-	_values.add(currentSonarVal);
-
-	// Apply least-square filter
-	_filteredSonarValueCm = _filter.apply(_values.toVector());
+	sonarValues.add(currentSonarVal);
+//
+//	// Apply least-square filter
+	_filteredSonarValueCm = _filter.apply(sonarValues.toVector());
 }
 

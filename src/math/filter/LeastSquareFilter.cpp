@@ -9,7 +9,6 @@
  */
 
 #include "LeastSquareFilter.h"
-#include "../common/FastMath.h"
 
 LeastSquareFilter::LeastSquareFilter()
 {
@@ -20,18 +19,18 @@ float LeastSquareFilter::apply(std::vector<float> Y)
 {
 	float val = 0.0;
 	int n = Y.size();
+	std::vector<float> X = createSimpleVector(n);
 
-	float meanX = mean(Y);
-	std::vector<float> x_minus_meanx = addScalar(Y, -meanX);
+	float meanX = mean(X);
+	std::vector<float> x_minus_meanx = addScalar(X, -meanX);
 	std::vector<float> x_minus_meanx_square = product(x_minus_meanx, x_minus_meanx);
 	float SSxx = sum(x_minus_meanx_square);
 
 	//
-	std::vector<float> X = createSimpleVector(n);
 	float sumY = sum(Y);
 	float sumX = n * (n-1) / 2.0;
 	std::vector<float> x_product_y = product(X, Y);
-	float SSxy = sum(x_product_y);
+	float SSxy = sum(x_product_y) - sumX * sumY / n;
 	//
 	float b1 = SSxy / SSxx;
 	float b0 = sumY / n - b1 * sumX / n;

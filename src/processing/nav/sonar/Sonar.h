@@ -18,7 +18,6 @@
 class Sonar : public Processing {
 private:
 	int _sonarPin;
-	History<float> _values;
 	float _filteredSonarValueCm;
 	LeastSquareFilter _filter;
 public:
