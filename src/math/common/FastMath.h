@@ -32,9 +32,7 @@ public:
 	static int toCenti(float x);
 	static float constrainAngleZeroToTwoPi(float);
 	static float constrainAngleMinusPiPlusPi(float);
-
-
-
+	static float fabs(float);
 };
 
 #endif /* MATH_COMMON_FASTMATH_H_ */

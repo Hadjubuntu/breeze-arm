@@ -45,6 +45,10 @@ public:
 		return _history;
 	}
 
+	T getLast() {
+		return _history.at(_size - 1);
+	}
+
 	/**
 	 * Create default 10-elements history
 	 */

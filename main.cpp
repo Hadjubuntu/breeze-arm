@@ -116,11 +116,10 @@ void loop()
 
 
 		// Print tau
-				sprintf(str, "tau_x = %.1f | tau_y = %.1f | rc throttle = %d | sonar = %.0f cm",
+				sprintf(str, "tau_x = %.1f | tau_y = %.1f | sonar = %.0f | sonar_raw = %.0f",
 						flightStabilization.getTau().getX(),
 						flightStabilization.getTau().getY(),
-						chThrottle,
-						sonar.getOutput());
+						sonar.getOutput(), (float) analogRead(13) * 0.3175);
 
 //		sprintf(str, "r = %.1f | p = %.1f | gyro_x = %.1f | gyro_y = %.1f | acc_x = %.1f | acc_y = %.1f",
 //				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),

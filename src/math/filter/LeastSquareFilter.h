@@ -14,11 +14,7 @@
 #include <vector>
 
 class LeastSquareFilter {
-public:
-	LeastSquareFilter();
-
-	float apply(std::vector<float> pValues);
-
+protected:
 	std::vector<float> createSimpleVector(int n);
 
 	// Vector functions
@@ -28,6 +24,11 @@ public:
 	static std::vector<float>  product(std::vector<float> A, std::vector<float> B);
 	static float sum(std::vector<float> A);
 
+
+public:
+	LeastSquareFilter();
+
+	float apply(std::vector<float> pValues, int pIdx);
 };
 
 #endif /* MATH_FILTER_LEASTSQUAREFILTER_H_ */

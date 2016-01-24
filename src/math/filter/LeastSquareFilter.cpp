@@ -15,7 +15,7 @@ LeastSquareFilter::LeastSquareFilter()
 	// Default constructor
 }
 
-float LeastSquareFilter::apply(std::vector<float> Y)
+float LeastSquareFilter::apply(std::vector<float> Y, int idx)
 {
 	float val = 0.0;
 	int n = Y.size();
@@ -36,7 +36,7 @@ float LeastSquareFilter::apply(std::vector<float> Y)
 	float b0 = sumY / n - b1 * sumX / n;
 
 	// (n+1) means prediction to next step
-	return b0 + b1 * (n + 1);
+	return b0 + b1 * (idx);
 }
 
 std::vector<float> LeastSquareFilter::createSimpleVector(int n)

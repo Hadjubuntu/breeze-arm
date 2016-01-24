@@ -98,6 +98,10 @@ float FastMath::constrainAngleMinusPiPlusPi(float x)
 	return res;
 }
 
+float FastMath::fabs(float x)
+{
+	return abs(x);
+}
 
 
 
