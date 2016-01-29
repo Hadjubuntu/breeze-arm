@@ -11,6 +11,7 @@
 #include "../../math/vector/Quaternion.h"
 #include "../../core/Processing.h"
 #include "../../data/conf/Param.h"
+#include "../../math/pid/PID.h"
 
 class FlightStabilization : public Processing {
 private:
@@ -29,6 +30,10 @@ private:
 	// ------------------
 	Vect3D _tau;
 	float _throttleOut;
+
+	// PID
+	PID _pidRoll;
+	PID _pidPitch;
 public:
 	/**
 	 * Constructor

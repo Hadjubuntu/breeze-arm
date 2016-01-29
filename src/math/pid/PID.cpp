@@ -24,7 +24,7 @@ void PID::init(float pKp, float pKd, float pKi, float pMaxI) {
 	_alphaD = 0.6;
 	_prevError = 0.0;
 	_output = 0.0;
-	_useEnhancePID = true;
+	_useEnhancePID = false;
 	_Kboost = 0.012;
 	_KboostMax = 2.0;
 	_Ke = 1.0;
@@ -66,8 +66,9 @@ void PID::update(float e, float dtSeconds)
 	if (_useEnhancePID)
 	{
 		// High when error is high :
-		_Ke = (FastMath::exp(_Kboost * _error) + FastMath::exp(-_Kboost * _error)) / 2.0;
-		Bound(_Ke, 1.0, _KboostMax);
+//		_Ke = (FastMath::exp(_Kboost * _error) + FastMath::exp(-_Kboost * _error)) / 2.0;
+//		Bound(_Ke, 1.0, _KboostMax);
+		_Ke = 1.0;
 	}
 	else {
 		_Ke = 1.0;

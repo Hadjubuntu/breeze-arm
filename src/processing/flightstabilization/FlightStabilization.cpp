@@ -30,6 +30,10 @@ _tau(Vect3D::zero())
 	_Pw = Conf::getInstance().get("flightStabilization_Pw");
 	_Kangle = Conf::getInstance().get("flightStabilization_Kangle");
 	_Krate = Conf::getInstance().get("flightStabilization_Krate");
+
+
+	_pidRoll.init(_Krate->getValue(), 0.05, 0.05, 10);
+	_pidPitch.init(_Krate->getValue(), 0.05, 0.05, 10);
 }
 
 /**
@@ -82,6 +86,7 @@ void FlightStabilization::process()
 	float rpyCurrent[3];
 	_currentAttitude.toRollPitchYaw(rpyCurrent);
 
+
 	// Define angle rate from angle error
 	float rollRate = (rpyTarget[0] - rpyCurrent[0]) * _Kangle->getValue();
 	float pitchRate = (rpyTarget[1] - rpyCurrent[1]) * _Kangle->getValue();
@@ -90,8 +95,15 @@ void FlightStabilization::process()
 	BoundAbs(rollRate, 3.14);
 	BoundAbs(pitchRate, 3.14);
 
-	_tau = Vect3D(_Krate->getValue() * (rollRate - _gyroRot[0]),
-			_Krate->getValue() * (pitchRate - _gyroRot[1]),
+
+	_pidRoll.setGainParameters(_Krate->getValue(), 0.02, 0.05);
+	_pidPitch.setGainParameters(_Krate->getValue(), 0.02, 0.05);
+
+	_pidRoll.update(rollRate - _gyroRot[0], 1/_freqHz);
+	_pidPitch.update(pitchRate - _gyroRot[1], 1/_freqHz);
+
+	_tau = Vect3D(_pidRoll.getOutput(),
+			_pidPitch.getOutput(),
 			2.0 *_Krate->getValue() * (yawRate - _gyroRot[2]));
 
 	if (Conf::getInstance().useBoostMotors)

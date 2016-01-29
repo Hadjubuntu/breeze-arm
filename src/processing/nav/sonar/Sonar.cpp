@@ -58,7 +58,5 @@ void Sonar::process()
 	//
 	//	// Apply least-square filter
 	_filteredSonarValueCm = _filter.apply(sonarValues.toVector(), nSonar + 1);
-
-
 }
 
