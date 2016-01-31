@@ -59,6 +59,9 @@ public:
 	/** Initialize accelerometer */
 	void init();
 
+	/** Proceed to calibration */
+	void calibration();
+
 	/** Read new data sensor */
 	void update();
 

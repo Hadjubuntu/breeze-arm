@@ -96,7 +96,7 @@ void loop()
 
 	// Prints infos
 	// ----
-	if (uavBrain.getTickId() % 1500 == 0)
+	if (uavBrain.getTickId() % 1000 == 0)
 	{
 		toggleLED();
 
@@ -113,13 +113,14 @@ void loop()
 		//		Quaternion targetAtt = flightStabilization.getTargetAttitude();
 		//		targetAtt.toRollPitchYaw(rpy);
 
-
-
+		Vect3D accelRaw = ahrs.getAcc().getAccRaw();
+		sprintf(str, "acc_x=%.2f | acc_y=%.2f | acc_z=%.2f | norm=%.2f",
+				accelRaw.getX(), accelRaw.getY(), accelRaw.getZ(), accelRaw.getNorm2());
 		// Print tau
-				sprintf(str, "tau_x = %.1f | tau_y = %.1f | sonar = %.0f | sonar_raw = %.0f",
-						flightStabilization.getTau().getX(),
-						flightStabilization.getTau().getY(),
-						sonar.getOutput(), (float) analogRead(13) * 0.3175);
+//				sprintf(str, "tau_x = %.1f | tau_y = %.1f | sonar = %.0f | sonar_raw = %.0f",
+//						flightStabilization.getTau().getX(),
+//						flightStabilization.getTau().getY(),
+//						sonar.getOutput(), (float) analogRead(13) * 0.3175);
 
 //		sprintf(str, "r = %.1f | p = %.1f | gyro_x = %.1f | gyro_y = %.1f | acc_x = %.1f | acc_y = %.1f",
 //				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),

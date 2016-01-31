@@ -41,40 +41,82 @@ void Accelerometer::init()
 
 	delay(100);
 
-	//	Calculate offset
-//	float accumulator[] = {0.0, 0.0, 0.0};
-//	int num_samples = 30;
-//
-//	for(int i = 0 ; i < num_samples ; i++)
-//	{
-//		// Update accelerometer
-//		//------
-//		update();
-//
-//		// Accumulate data
-//		//-----
-//		accumulator[0] += _accRaw.getX();
-//		accumulator[1] += _accRaw.getY();
-//		accumulator[2] += _accRaw.getZ();
-//
-//		Serial3.println("New sample of acc data received..");
-//		delay(100);
-//	}
-//	for(int i = 0 ; i < 3 ; i++)
-//	{
-//		accumulator[i] /= num_samples;
-//	}
-//
-//
-//	char str[80];
-//	sprintf(str, "acc_offset: %.4f, %.4f, %.4f", accumulator[0], accumulator[1], accumulator[2]);
-//	Serial3.println(str);
-
-	// Found offset:
-	// acc_offset: 0.0147, -0.0461, -0.9104
+	// Calibrate: compute accelerometer scale and offset
+	calibration();
 
 	// DEBUG 0 offset
 	_offset = Vect3D(0.0, 0.0, 0.0);
+}
+
+void Accelerometer::calibration()
+{
+	// Collect samples, throw strange sample (when moving too much)
+	int nbHealthySamples = 100;
+	int nbTrial = 0;
+	int countSample = 0;
+	float sumAccX = 0.0;
+	float sumAccY = 0.0;
+	float sumAccZ = 0.0;
+
+	while (countSample < nbHealthySamples && nbTrial < 1000)
+	{
+		// Collect data
+		update();
+
+		// Sample vector
+		float accNorm = _accRaw.getNorm2();
+
+		if (accNorm > 0.98 && accNorm < 1.2)
+		{
+			sumAccX += _accRaw.getX();
+			sumAccY += _accRaw.getY();
+			sumAccZ += _accRaw.getZ();
+
+			countSample ++;
+		}
+
+		delay(5);
+	}
+
+	if (nbTrial >= 1000 && countSample < nbHealthySamples) {
+		// No calibration could be done..
+		Serial3.println("No calibration could be done.");
+	}
+	else {
+		_offset = Vect3D(sumAccX / countSample, sumAccY / countSample,  sumAccZ / countSample - 1.0);
+	}
+
+	//	Calculate offset
+	//	float accumulator[] = {0.0, 0.0, 0.0};
+	//	int num_samples = 30;
+	//
+	//	for(int i = 0 ; i < num_samples ; i++)
+	//	{
+	//		// Update accelerometer
+	//		//------
+	//		update();
+	//
+	//		// Accumulate data
+	//		//-----
+	//		accumulator[0] += _accRaw.getX();
+	//		accumulator[1] += _accRaw.getY();
+	//		accumulator[2] += _accRaw.getZ();
+	//
+	//		Serial3.println("New sample of acc data received..");
+	//		delay(100);
+	//	}
+	//	for(int i = 0 ; i < 3 ; i++)
+	//	{
+	//		accumulator[i] /= num_samples;
+	//	}
+	//
+	//
+	//	char str[80];
+	//	sprintf(str, "acc_offset: %.4f, %.4f, %.4f", accumulator[0], accumulator[1], accumulator[2]);
+	//	Serial3.println(str);
+
+	// Found offset:
+	// acc_offset: 0.0147, -0.0461, -0.9104
 }
 
 void Accelerometer::update()
@@ -100,7 +142,7 @@ void Accelerometer::update()
 
 	_accRaw = cAcc;
 
-//	_accFiltered = cAcc;
+	//	_accFiltered = cAcc;
 	_accFiltered = _accFiltered * (1.0 - _filterNewDataCoeff) + cAcc * _filterNewDataCoeff;
 
 }
