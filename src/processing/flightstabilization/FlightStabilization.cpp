@@ -31,9 +31,9 @@ _tau(Vect3D::zero())
 	_Kangle = Conf::getInstance().get("flightStabilization_Kangle");
 	_Krate = Conf::getInstance().get("flightStabilization_Krate");
 
-
-	_pidRoll.init(_Krate->getValue(), 0.05, 0.05, 10);
-	_pidPitch.init(_Krate->getValue(), 0.05, 0.05, 10);
+	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
+	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
+	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
 }
 
 /**
@@ -96,8 +96,8 @@ void FlightStabilization::process()
 	BoundAbs(pitchRate, 3.14);
 
 
-	_pidRoll.setGainParameters(_Krate->getValue(), 0.02, 0.05);
-	_pidPitch.setGainParameters(_Krate->getValue(), 0.02, 0.05);
+	_pidRoll.setGainParameters(_Krate->getValue(), 0.01, 0.01);
+	_pidPitch.setGainParameters(_Krate->getValue(), 0.01, 0.01);
 
 	_pidRoll.update(rollRate - _gyroRot[0], 1/_freqHz);
 	_pidPitch.update(pitchRate - _gyroRot[1], 1/_freqHz);
