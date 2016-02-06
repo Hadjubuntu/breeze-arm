@@ -30,6 +30,11 @@ float VectMath::derivate(std::vector<float> X)
 		sumDeltaEstimation += delta;
 	}
 
-	return sumDeltaEstimation / n;
+	if (n > 0) {
+		return sumDeltaEstimation / n;
+	}
+	else {
+		return 0.0;
+	}
 }
 

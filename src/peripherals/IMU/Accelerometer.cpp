@@ -45,7 +45,7 @@ void Accelerometer::init()
 	calibration();
 
 	// DEBUG 0 offset
-	_offset = Vect3D(0.0, 0.0, 0.0);
+	//	_offset = Vect3D(0.0, 0.0, 0.0);
 }
 
 void Accelerometer::calibration()
@@ -57,6 +57,10 @@ void Accelerometer::calibration()
 	float sumAccX = 0.0;
 	float sumAccY = 0.0;
 	float sumAccZ = 0.0;
+	float maxAccZ = 0.0;
+
+	update();
+	Vect3D prevAccRaw = _accRaw;
 
 	while (countSample < nbHealthySamples && nbTrial < 1000)
 	{
@@ -64,14 +68,22 @@ void Accelerometer::calibration()
 		update();
 
 		// Sample vector
-		float accNorm = _accRaw.getNorm2();
+		Vect3D delta = prevAccRaw - _accRaw;
 
-		if (accNorm > 0.98 && accNorm < 1.2)
+
+
+		if (delta.getNorm2() < 0.05)
 		{
 			sumAccX += _accRaw.getX();
 			sumAccY += _accRaw.getY();
 			sumAccZ += _accRaw.getZ();
+//
+			if ((_accRaw.getZ() > 0.0 && _accRaw.getZ() > maxAccZ)
+					|| (_accRaw.getZ() < 0.0 && _accRaw.getZ() < maxAccZ)) {
+				maxAccZ = _accRaw.getZ();
+			}
 
+			prevAccRaw = _accRaw;
 			countSample ++;
 		}
 
@@ -81,9 +93,13 @@ void Accelerometer::calibration()
 	if (nbTrial >= 1000 && countSample < nbHealthySamples) {
 		// No calibration could be done..
 		Serial3.println("No calibration could be done.");
+		_offset = Vect3D(0.0, 0.0, 0.0);
 	}
 	else {
-		_offset = Vect3D(sumAccX / countSample, sumAccY / countSample,  sumAccZ / countSample - 1.0);
+		char str[80];
+		sprintf(str, "acc_off %.3f ; %.3f ; %.3f", sumAccX / countSample, sumAccY / countSample,  sumAccZ / countSample - maxAccZ);
+		Serial3.println(str);
+		_offset = Vect3D(sumAccX / countSample, sumAccY / countSample,  0.0); // sumAccZ / countSample - maxAccZ
 	}
 
 	//	Calculate offset

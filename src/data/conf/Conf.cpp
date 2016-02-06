@@ -39,7 +39,7 @@ Conf::Conf()
 
 	// Flight stabilization with simple PID
 	_parameters.push_back(Param<float>("flightStabilization_Kangle", 2.5f));
-	_parameters.push_back(Param<float>("flightStabilization_Krate", 1.25f));
+	_parameters.push_back(Param<float>("flightStabilization_Krate", 1.26f));
 
 }
 

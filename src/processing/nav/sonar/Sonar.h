@@ -18,6 +18,7 @@
 class Sonar : public Processing {
 private:
 	int _sonarPin;
+	bool _healthy;
 	float _filteredSonarValueCm;
 	LeastSquareFilter _filter;
 public:
@@ -29,6 +30,10 @@ public:
 
 	float getOutput() {
 		return _filteredSonarValueCm;
+	}
+
+	bool isHealthy() {
+		return _healthy;
 	}
 };
 

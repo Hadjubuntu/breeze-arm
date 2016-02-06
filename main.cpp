@@ -113,22 +113,18 @@ void loop()
 		//		Quaternion targetAtt = flightStabilization.getTargetAttitude();
 		//		targetAtt.toRollPitchYaw(rpy);
 
-		Vect3D accelRaw = ahrs.getAcc().getAccRaw();
-		sprintf(str, "acc_x=%.2f | acc_y=%.2f | acc_z=%.2f | norm=%.2f",
-				accelRaw.getX(), accelRaw.getY(), accelRaw.getZ(), accelRaw.getNorm2());
+//		Vect3D accelRaw = ahrs.getAcc().getAccRaw();
+//		sprintf(str, "acc_x=%.2f | acc_y=%.2f | acc_z=%.2f | norm=%.2f",
+//				accelRaw.getX(), accelRaw.getY(), accelRaw.getZ(), accelRaw.getNorm2());
 		// Print tau
 //				sprintf(str, "tau_x = %.1f | tau_y = %.1f | sonar = %.0f | sonar_raw = %.0f",
 //						flightStabilization.getTau().getX(),
 //						flightStabilization.getTau().getY(),
 //						sonar.getOutput(), (float) analogRead(13) * 0.3175);
 
-//		sprintf(str, "r = %.1f | p = %.1f | gyro_x = %.1f | gyro_y = %.1f | acc_x = %.1f | acc_y = %.1f",
-//				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
-//				FastMath::toDegrees(ahrs.getGyro().getGyroFiltered().getX()),
-//				FastMath::toDegrees(ahrs.getGyro().getGyroFiltered().getY()),
-//				FastMath::toDegrees(ahrs.getAcc().getAccFiltered().getX()),
-//				FastMath::toDegrees(ahrs.getAcc().getAccFiltered().getY())
-//			);
+		sprintf(str, "r = %.1f | p = %.1f",
+				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]));
+
 
 		// 	radioControler.getHandler().getChannelNormed(1),
 //		radioControler.getHandler().getChannelNormed(2)

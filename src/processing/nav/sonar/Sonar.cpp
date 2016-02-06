@@ -20,6 +20,7 @@ Sonar::Sonar() : Processing()
 	_freqHz = 10;
 	_sonarPin = 13;
 	_filteredSonarValueCm = 0.0;
+	_healthy = true;
 }
 
 void Sonar::init()
@@ -32,31 +33,49 @@ void Sonar::init()
 	{
 		sonarValues.add(0.0);
 	}
+
+	int strangeMeasure = 0;
+	int nbMeasure = 25;
+	for (int i = 0; i < 25; i ++) {
+		float currentSonarVal = (float) analogRead(_sonarPin) * 0.3175;
+
+		if (currentSonarVal > 150) {
+			strangeMeasure ++;
+		}
+	}
+
+	if (((float)strangeMeasure / nbMeasure) > 0.7) {
+		_healthy = false;
+		Serial3.println("Sonar is not healthy");
+	}
 }
 
 void Sonar::process()
 {
-	// Read new value
-	float currentSonarVal = (float) analogRead(_sonarPin) * 0.3175; //
+	if (_healthy)
+	{
+		// Read new value
+		float currentSonarVal = (float) analogRead(_sonarPin) * 0.3175; //
 
-	// Filter measured value by using mean delta
-	float deltaMean = VectMath::derivate(sonarValues.toVector());
-	float deltaMeasured = currentSonarVal - sonarValues.getLast();
+		// Filter measured value by using mean delta
+		float deltaMean = VectMath::derivate(sonarValues.toVector());
+		float deltaMeasured = currentSonarVal - sonarValues.getLast();
 
-	float filteredValue = currentSonarVal;
+		float filteredValue = currentSonarVal;
 
-	// Do not consider spike value due to analog wrong reads
-	if (FastMath::fabs(deltaMeasured) >= 150) {
-		filteredValue = sonarValues.getLast();
+		// Do not consider spike value due to analog wrong reads
+		if (FastMath::fabs(deltaMeasured) >= 150) {
+			filteredValue = sonarValues.getLast();
+		}
+		else if (FastMath::fabs(deltaMeasured) > FastMath::fabs(deltaMean)) {
+			filteredValue = sonarValues.getLast() + deltaMeasured / 10.0;
+		}
+
+		// Store it to history
+		sonarValues.add(filteredValue);
+		//
+		//	// Apply least-square filter
+		_filteredSonarValueCm = _filter.apply(sonarValues.toVector(), nSonar + 1);
 	}
-	else if (FastMath::fabs(deltaMeasured) > FastMath::fabs(deltaMean)) {
-		filteredValue = sonarValues.getLast() + deltaMeasured / 10.0;
-	}
-
-	// Store it to history
-	sonarValues.add(filteredValue);
-	//
-	//	// Apply least-square filter
-	_filteredSonarValueCm = _filter.apply(sonarValues.toVector(), nSonar + 1);
 }
 
