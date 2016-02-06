@@ -42,10 +42,10 @@ void Accelerometer::init()
 	delay(100);
 
 	// Calibrate: compute accelerometer scale and offset
-	calibration();
+//	calibration();
 
 	// DEBUG 0 offset
-	//	_offset = Vect3D(0.0, 0.0, 0.0);
+		_offset = Vect3D(0.0, 0.0, 0.0);
 }
 
 void Accelerometer::calibration()
@@ -97,42 +97,10 @@ void Accelerometer::calibration()
 	}
 	else {
 		char str[80];
-		sprintf(str, "acc_off %.3f ; %.3f ; %.3f", sumAccX / countSample, sumAccY / countSample,  sumAccZ / countSample - maxAccZ);
+		sprintf(str, "acc_off %.3f ; %.3f ; %.3f", sumAccX / countSample, sumAccY / countSample,  sumAccZ / countSample );
 		Serial3.println(str);
 		_offset = Vect3D(sumAccX / countSample, sumAccY / countSample,  0.0); // sumAccZ / countSample - maxAccZ
 	}
-
-	//	Calculate offset
-	//	float accumulator[] = {0.0, 0.0, 0.0};
-	//	int num_samples = 30;
-	//
-	//	for(int i = 0 ; i < num_samples ; i++)
-	//	{
-	//		// Update accelerometer
-	//		//------
-	//		update();
-	//
-	//		// Accumulate data
-	//		//-----
-	//		accumulator[0] += _accRaw.getX();
-	//		accumulator[1] += _accRaw.getY();
-	//		accumulator[2] += _accRaw.getZ();
-	//
-	//		Serial3.println("New sample of acc data received..");
-	//		delay(100);
-	//	}
-	//	for(int i = 0 ; i < 3 ; i++)
-	//	{
-	//		accumulator[i] /= num_samples;
-	//	}
-	//
-	//
-	//	char str[80];
-	//	sprintf(str, "acc_offset: %.4f, %.4f, %.4f", accumulator[0], accumulator[1], accumulator[2]);
-	//	Serial3.println(str);
-
-	// Found offset:
-	// acc_offset: 0.0147, -0.0461, -0.9104
 }
 
 void Accelerometer::update()

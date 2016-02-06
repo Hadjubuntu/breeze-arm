@@ -82,6 +82,15 @@ void setup() {
 	// Initialize all processings
 	//----------------------
 	uavBrain.initProcessings();
+
+	// Debug : do some calibration on ahrs
+	for (int i = 0; i < 100; i ++)
+	{
+		uavBrain.loop();
+		ahrs.calibrateOffset();
+
+		delay(10);
+	}
 }
 
 

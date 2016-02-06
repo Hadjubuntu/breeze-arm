@@ -17,6 +17,7 @@ float gyro_correct_int[3];
  */
 AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 		_attitude(Quaternion::zero()),
+		_attitudeOffset(Quaternion::zero()),
 		_gyro(Gyro::create()),
 		_accelerometer(Accelerometer::create()),
 		_yawFromGyro(0.0)
@@ -74,6 +75,7 @@ void AHRS::process()
 
 	// filter g rot
 	Vect3D accelError = _accelerometer.getAccFiltered().crossProduct(_grot);
+
 	float invAccelMag = FastMath::fast_invsqrtf(_accelerometer.getAccFiltered().getNorm2());
 
 	if (invAccelMag > 1e3f) {

@@ -64,6 +64,18 @@ void ActuatorControl::initMotorRepartition() {
 		for (int j = 0; j < 4; j++) {
 			_motorActivation[j][2] = 0;
 		}
+
+		_motorActivation[0][0] = 1;
+		_motorActivation[0][1] = 1;
+
+
+		_motorActivation[1][0] = -1;
+		_motorActivation[1][1] = 1;
+
+		_motorActivation[2][0] = 0;
+		_motorActivation[2][1] = -1;
+
+
 		break;
 	case FIXED_WING:
 		break;

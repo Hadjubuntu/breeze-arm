@@ -27,6 +27,9 @@ private:
 	/** Quaternion of attitude */
 	Quaternion _attitude;
 
+	/** Quaternion of attitude offset */
+	Quaternion _attitudeOffset;
+
 	/** Gyroscope */
 	Gyro _gyro;
 
@@ -54,17 +57,26 @@ public:
 
 	float* getGyroCorr();
 
+	void calibrateOffset()
+	{
+		float rpy[3];
+		_attitude.toRollPitchYaw(rpy);
+		_attitudeOffset = Quaternion(-rpy[0], -rpy[1], 0.0);
+	}
+
 	/******************************************************
 	 * GETTERS
 	 *****************************************************/
 	Accelerometer getAcc() { return _accelerometer; }
 	Gyro getGyro() { return _gyro; }
 
-	Quaternion getAttitude() { return _attitude; }
+	Quaternion getAttitude() { return _attitude * _attitudeOffset; }
 
 	float getYawFromGyro() {
 		return _yawFromGyro;
 	}
+
+
 };
 
 #endif /* PROCESSING_AHRS_AHRS_H_ */
