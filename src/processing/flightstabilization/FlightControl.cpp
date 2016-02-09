@@ -55,15 +55,12 @@ void FlightControl::process()
 	// ------------------
 
 	// Compute roll, pitch, yaw desired by using the radio values
-	float roll = radioToRad(_radioController->getHandler().getChannelNormed(1), _maxAbsRollAngle->getValue());
-	float pitch = radioToRad(_radioController->getHandler().getChannelNormed(2), _maxAbsPitchAngle->getValue());
+	_rollDesired = radioToRad(_radioController->getHandler().getChannelNormed(1), _maxAbsRollAngle->getValue());
+	_pitchDesired = radioToRad(_radioController->getHandler().getChannelNormed(2), _maxAbsPitchAngle->getValue());
 	float yaw = radioToRad(_radioController->getHandler().getChannelNormed(4), _maxAbsCombinedAngle->getValue());
 	// Throttle from 0 to 1
 	float throttle = (_radioController->getHandler().Channel(3) - _throttleInitUs) / 1310.0;
 	Bound(throttle, 0.0, 1.0);
-
-	rpy[0] = roll;
-	rpy[1] = pitch;
 
 	// Integrate desired yaw
 	const float Kyaw = 4.0;
@@ -72,7 +69,7 @@ void FlightControl::process()
 	Bound(_yawInt, -PI, PI); //FIXME when max left and turns left, go other side ..
 
 	// Transform RPY to quaternion
-	Quaternion attitudeDesired = Quaternion::fromEuler(roll, pitch, _yawInt);
+	Quaternion attitudeDesired = Quaternion::fromEuler(_rollDesired, _pitchDesired, _yawInt);
 
 
 	// Flight stabilization

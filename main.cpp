@@ -33,7 +33,6 @@ FlightStabilization flightStabilization;
 /** UAV brain */
 Brain uavBrain;
 
-
 /** RadioFreq controller */
 RfControler rfControler;
 
@@ -50,10 +49,21 @@ FlightControl flightControl(&radioControler, &flightStabilization, &ahrs);
 ActuatorControl actuatorControl(&flightStabilization);
 
 /** Telemetry to keep GCS update */
-Telemetry telemetry(&ahrs);
+Telemetry telemetry(&ahrs, &flightControl);
 
 /** Sonar to measure distance */
 Sonar sonar;
+
+void calibration()
+{
+	int nbCalibrationMeasure = 100;
+
+	for (int i = 0; i < nbCalibrationMeasure; i++) {
+		uavBrain.loop();
+		ahrs.calibrateOffset();
+		delay(10);
+	}
+}
 
 void setup() {
 	/* Set up the LED to blink  */
@@ -83,14 +93,9 @@ void setup() {
 	//----------------------
 	uavBrain.initProcessings();
 
-	// Debug : do some calibration on ahrs
-	for (int i = 0; i < 100; i ++)
-	{
-		uavBrain.loop();
-		ahrs.calibrateOffset();
-
-		delay(10);
-	}
+	// Calibration on AHRS
+	//----------------------
+	calibration();
 }
 
 

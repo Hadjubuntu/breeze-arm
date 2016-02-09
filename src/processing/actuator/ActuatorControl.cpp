@@ -234,7 +234,7 @@ void ActuatorControl::processMulticopter(unsigned short int throttle, int nbMoto
 		pwmWrite(D12, levelToCtrl(motorX[3]));
 	}
 	else {
-		// Signal goes from 650 to 2250 ms
-		pwmWrite(D14, US_TO_COMPARE(1300 - yawDeltaSignal));
+		// Signal goes from 650 to 2250 ms TODO use conf parameter here
+		pwmWrite(D14, US_TO_COMPARE(1400 - yawDeltaSignal));
 	}
 }

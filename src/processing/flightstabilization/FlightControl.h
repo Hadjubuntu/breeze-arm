@@ -26,6 +26,10 @@ private:
 	Param<float> *_maxAbsRollAngle;
 	Param<float> *_maxAbsPitchAngle;
 	Param<float> *_maxAbsCombinedAngle;
+
+	// Angle desired (rad)
+	float _rollDesired;
+	float _pitchDesired;
 public:
 	FlightControl(RadioControler*, FlightStabilization*, AHRS*);
 
@@ -38,6 +42,13 @@ public:
 
 	float getYawInt() {
 		return _yawInt;
+	}
+
+	float getRollDesired() {
+		return _rollDesired;
+	}
+	float getPitchDesired() {
+		return _pitchDesired;
 	}
 };
 
