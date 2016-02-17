@@ -28,6 +28,8 @@ AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 
 	gyro_correct_int[0] = 0.0;
 	gyro_correct_int[1] = 0.0;
+
+	_vz = 0.0;
 }
 
 
@@ -48,6 +50,8 @@ void AHRS::process()
 	const float accelKi = 0.000174;
 	const float accelKp = 0.00174;
 	const float rollPitchBiasRate = 0.999999;
+
+	const float prevAccZ = _accelerometer.getAccFiltered().getZ(); // TODO rotation in earth-frame
 
 	_accelerometer.update();
 	_gyro.update();
@@ -128,4 +132,10 @@ void AHRS::process()
 	_yawFromGyro += gyros.getZ() / _freqHz;
 	_yawFromGyro = 0.9925 * _yawFromGyro;
 	_yawFromGyro = FastMath::constrainAngleMinusPiPlusPi(_yawFromGyro);
+
+	// Integrate delta accZ to have estimation on vertical speed
+	if (_dt > 0.0) {
+		_vz += (_accelerometer.getAccFiltered().getZ() - prevAccZ) / _dt;
+		_vz = 0.999 * _vz;
+	}
 }

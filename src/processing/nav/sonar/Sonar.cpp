@@ -17,15 +17,15 @@ History<float> sonarValues(nSonar);
 
 Sonar::Sonar() : Processing()
 {
-	_freqHz = 10;
-	_sonarPin = 13;
+	_freqHz = 5;
+	_sonarPin = 12;
 	_filteredSonarValueCm = 0.0;
 	_healthy = true;
 }
 
 void Sonar::init()
 {
-	_sonarPin = 13;
+	_sonarPin = 12;
 	pinMode(_sonarPin, INPUT);
 
 	// Create zero vector at initialization

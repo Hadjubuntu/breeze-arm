@@ -42,6 +42,9 @@ private:
 	// Yaw computed from gyro integration
 	float _yawFromGyro;
 
+	// vz from accelerometer
+	float _vz;
+
 public:
 	AHRS();
 
@@ -74,6 +77,10 @@ public:
 
 	float getYawFromGyro() {
 		return _yawFromGyro;
+	}
+
+	float getVz() {
+		return _vz;
 	}
 
 

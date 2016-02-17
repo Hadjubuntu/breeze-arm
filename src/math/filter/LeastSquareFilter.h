@@ -29,6 +29,7 @@ public:
 	LeastSquareFilter();
 
 	float apply(std::vector<float> pValues, int pIdx);
+	float* computeLinearFunc(std::vector<float> Y);
 };
 
 #endif /* MATH_FILTER_LEASTSQUAREFILTER_H_ */

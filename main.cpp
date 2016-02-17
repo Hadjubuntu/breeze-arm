@@ -66,8 +66,8 @@ void calibration()
 }
 
 void setup() {
-	/* Set up the LED to blink  */
-	pinMode(BOARD_LED_PIN, OUTPUT);
+	/* Set up the IR sensor */
+	pinMode(13, INPUT);
 
 	// Add dependency (TODO delete this, brain as singleton, call for processing from brain)
 	//---------------------
@@ -87,7 +87,7 @@ void setup() {
 	uavBrain.addProcessing(&flightControl);
 	uavBrain.addProcessing(&actuatorControl);
 	uavBrain.addProcessing(&telemetry);
-	uavBrain.addProcessing(&sonar);
+//	uavBrain.addProcessing(&sonar);
 
 	// Initialize all processings
 	//----------------------
@@ -112,7 +112,7 @@ void loop()
 	// ----
 	if (uavBrain.getTickId() % 1000 == 0)
 	{
-		toggleLED();
+//		toggleLED();
 
 		float rpy[3];
 		ahrs.getAttitude().toRollPitchYaw(rpy);
@@ -136,8 +136,11 @@ void loop()
 //						flightStabilization.getTau().getY(),
 //						sonar.getOutput(), (float) analogRead(13) * 0.3175);
 
-		sprintf(str, "r = %.1f | p = %.1f",
-				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]));
+		int irValue = analogRead(13);
+		float distanceCM = (4096-irValue) * 0.03662115 ; // 1/4096*150cm
+
+		sprintf(str, "r = %.1f | p = %.1f | IR = %.1f |  analog = %d",
+				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]), distanceCM, irValue) ;
 
 
 		// 	radioControler.getHandler().getChannelNormed(1),
