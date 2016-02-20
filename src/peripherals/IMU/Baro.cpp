@@ -27,12 +27,17 @@ Baro::Baro() : _i2c(I2C::getInstance(BMP085_ADDRESS))
 
 void Baro::process()
 {
-	accumulate();
-	read();
+//	accumulate();
+//	read();
 }
 
-long Baro::get_alt_cm() {
-	return 0;
+float Baro::getAltitudeMeters() {
+	float alt = 0.0;
+//	if (Press < GroundPressure) {
+//		float scaleHeightEarth = 7000.0;
+//		alt = - scaleHeightEarth * log(Press/GroundPressure);
+//	}
+	return alt;
 }
 
 bool Baro::BMP_DATA_READY() {
@@ -90,7 +95,7 @@ void Baro::init()
 
 	GroundPressure = 0;
 	GroundTemp = 0;
-	Calibrate();
+//	Calibrate();
 }
 
 void Baro::Calibrate() {
@@ -209,7 +214,7 @@ float Baro::getTemperature() const {
 // Send command to Read Pressure
 void Baro::Command_ReadPress()
 {
-	// Mode 0x34+(OVERSAMPLING << 6) is osrs=3 when OVERSAMPLING=3 => 25.5ms conversion time
+	//	 Mode 0x34+(OVERSAMPLING << 6) is osrs=3 when OVERSAMPLING=3 => 25.5ms conversion time
 	_i2c.writeTo(0xF4, 0x34+(OVERSAMPLING << 6));
 	_last_press_read_command_time = DateUtils::micros();
 }
@@ -263,7 +268,7 @@ void Baro::ReadTemp()
 // Calculate Temperature and Pressure in real units.
 void Baro::Calculate()
 {
-	/**int32 x1, x2, x3, b3, b5, b6, p;
+	int32 x1, x2, x3, b3, b5, b6, p;
 	uint32 b4, b7;
 	int32 tmp;
 
@@ -302,5 +307,5 @@ void Baro::Calculate()
 		_temp_sum *= 0.5f;
 		_press_sum *= 0.5f;
 		_count /= 2;
-	}*/
+	}
 }

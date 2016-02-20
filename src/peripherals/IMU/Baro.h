@@ -74,7 +74,7 @@ public:
 	void 			accumulate(void);
 	float           getPressure();
 	float			get_ground_pressure();
-	long 			get_alt_cm();
+	float 			getAltitudeMeters();
 	float           getTemperature() const;
 
 	float get_altitude_difference(float, float) const;

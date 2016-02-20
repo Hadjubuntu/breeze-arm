@@ -60,12 +60,7 @@ public:
 
 	float* getGyroCorr();
 
-	void calibrateOffset()
-	{
-		float rpy[3];
-		_attitude.toRollPitchYaw(rpy);
-		_attitudeOffset = Quaternion(-rpy[0], -rpy[1], 0.0);
-	}
+	void calibrateOffset();
 
 	/******************************************************
 	 * GETTERS

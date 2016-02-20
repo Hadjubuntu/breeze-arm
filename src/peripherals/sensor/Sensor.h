@@ -8,7 +8,6 @@
 #ifndef PERIPHERALS_SENSOR_SENSOR_H_
 #define PERIPHERALS_SENSOR_SENSOR_H_
 
-#include "../../../libmaple/include/libmaple/libmaple_types.h"
 #include "../../peripherals/I2C/I2C.h"
 #include "../../math/vector/Vect3D.h"
 
