@@ -12,20 +12,19 @@
 #include "../../../math/common/VectMath.h"
 #include "../../../math/common/FastMath.h"
 
-int nSonar = 10;
+int nSonar = 5;
 History<float> sonarValues(nSonar);
 
 Sonar::Sonar() : Processing()
 {
-	_freqHz = 5;
-	_sonarPin = 12;
+	_freqHz = 10;
+	_sonarPin = 10;
 	_filteredSonarValueCm = 0.0;
 	_healthy = true;
 }
 
 void Sonar::init()
 {
-	_sonarPin = 12;
 	pinMode(_sonarPin, INPUT);
 
 	// Create zero vector at initialization
@@ -70,7 +69,6 @@ void Sonar::process()
 		else if (FastMath::fabs(deltaMeasured) > FastMath::fabs(deltaMean)) {
 			filteredValue = sonarValues.getLast() + deltaMeasured / 10.0;
 		}
-
 		// Store it to history
 		sonarValues.add(filteredValue);
 		//

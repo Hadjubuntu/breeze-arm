@@ -4,7 +4,7 @@
  *  Created on: Sep 22, 2015
  *      Author: adrien
  */
-#include <wirish/wirish.h>
+#include "../../peripherals/HAL/HAL.h"
 #include <stdio.h>
 #include "Gyro.h"
 
@@ -16,19 +16,19 @@ void Gyro::init()
 	///----------------------------
 	// Power control
 	_i2c.writeTo(GYRO_PWR_MNGT,0x00);
-	delay(5);
+	HAL::delayMs(5);
 	_i2c.writeTo(GYRO_PWR_MNGT,0x00);
-	delay(5);
+	HAL::delayMs(5);
 	// Sample at 500Hz (1kHz / (div + 1))
 	_i2c.writeTo(GYRO_SMPLRT_DIV, 0x01);
-	delay(5);
+	HAL::delayMs(5);
 	// Gyro +/- 2000 deg/s, low-pass filter at 10Hz
 	_i2c.writeTo(GYRO_DLPF_FS, 0x1d);
-	delay(5);
+	HAL::delayMs(5);
 	//
 	_i2c.writeTo(GYRO_INT_CFG, 0x00);
 
-	delay(250);
+	HAL::delayMs(250);
 
 	int num_samples = 50;
 	float accumulator[] = {0.0, 0.0, 0.0};
@@ -41,7 +41,7 @@ void Gyro::init()
 		accumulator[1] += _gyroRaw.getY();
 		accumulator[2] += _gyroRaw.getZ();
 
-		delay(5);
+		HAL::delayMs(5);
 	}
 
 	for(int i = 0 ; i < 3 ; i++)

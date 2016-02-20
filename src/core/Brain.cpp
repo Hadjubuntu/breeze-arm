@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <wirish/wirish.h>
 #include "../core/Brain.h"
+#include "../peripherals/HAL/HAL.h"
 #include "libmaple/i2c.h"
 
 
@@ -52,7 +53,7 @@ void Brain::loop()
 
 
 	_tickId ++;
-	delayMicroseconds(_delayTickUs);
+	HAL::delayUs(_delayTickUs);
 }
 
 Processing* Brain::getProcByName(std::string pName)

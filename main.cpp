@@ -6,6 +6,7 @@
  */
 #include <stdio.h>
 #include <wirish/wirish.h>
+#include <wirish/ext_interrupts.h>
 #include <vector>
 #include "src/data/conf/Conf.h"
 #include "libraries/Wire/Wire.h"
@@ -52,7 +53,7 @@ ActuatorControl actuatorControl(&flightStabilization);
 Telemetry telemetry(&ahrs, &flightControl);
 
 /** Sonar to measure distance */
-Sonar sonar;
+//Sonar sonar;
 
 void calibration()
 {
@@ -65,9 +66,11 @@ void calibration()
 	}
 }
 
+
 void setup() {
 	/* Set up the IR sensor */
 	pinMode(13, INPUT);
+	pinMode(12, INPUT);
 
 	// Add dependency (TODO delete this, brain as singleton, call for processing from brain)
 	//---------------------
@@ -98,10 +101,38 @@ void setup() {
 	calibration();
 }
 
+// Test interpolation on IR value
+float approxDist(int irValue)
+{
+	float res = 0.0;
+
+	if (irValue < 3500 && irValue >= 1450) {
+		res = ((3500 - irValue) * 50 + (irValue - 1450) * 15) / (3500 - 1450);
+	}
+	else if (irValue < 1450 && irValue >= 950) {
+		res = ((1450 - irValue) * 80 + (irValue - 950) * 50) / (1450 - 950);
+	}
+	else if (irValue < 950 && irValue >= 800) {
+		res = ((950 - irValue) * 120 + (irValue - 800) * 80) / (950 - 800);
+	}
+	else if (irValue < 800 && irValue >= 700) {
+		res = ((800 - irValue) * 150 + (irValue - 700) * 120) / (800 - 700);
+	}
+	else if (irValue < 700)
+	{
+		res = 150.0;
+	}
+
+
+	return res;
+}
+
 
 /**
  * Loop function called as fast as possible
+ * Measure : from 3khz to minimum 700Hz
  */
+
 void loop()
 {
 	// Call brain loop function to udpate the processings
@@ -112,7 +143,7 @@ void loop()
 	// ----
 	if (uavBrain.getTickId() % 1000 == 0)
 	{
-//		toggleLED();
+		//		toggleLED();
 
 		float rpy[3];
 		ahrs.getAttitude().toRollPitchYaw(rpy);
@@ -127,26 +158,27 @@ void loop()
 		//		Quaternion targetAtt = flightStabilization.getTargetAttitude();
 		//		targetAtt.toRollPitchYaw(rpy);
 
-//		Vect3D accelRaw = ahrs.getAcc().getAccRaw();
-//		sprintf(str, "acc_x=%.2f | acc_y=%.2f | acc_z=%.2f | norm=%.2f",
-//				accelRaw.getX(), accelRaw.getY(), accelRaw.getZ(), accelRaw.getNorm2());
+		//		Vect3D accelRaw = ahrs.getAcc().getAccRaw();
+		//		sprintf(str, "acc_x=%.2f | acc_y=%.2f | acc_z=%.2f | norm=%.2f",
+		//				accelRaw.getX(), accelRaw.getY(), accelRaw.getZ(), accelRaw.getNorm2());
 		// Print tau
-//				sprintf(str, "tau_x = %.1f | tau_y = %.1f | sonar = %.0f | sonar_raw = %.0f",
-//						flightStabilization.getTau().getX(),
-//						flightStabilization.getTau().getY(),
-//						sonar.getOutput(), (float) analogRead(13) * 0.3175);
+		//				sprintf(str, "tau_x = %.1f | tau_y = %.1f | sonar = %.0f | sonar_raw = %.0f",
+		//						flightStabilization.getTau().getX(),
+		//						flightStabilization.getTau().getY(),
+		//						sonar.getOutput(), (float) analogRead(13) * 0.3175);
 
 		int irValue = analogRead(13);
 		float distanceCM = (4096-irValue) * 0.03662115 ; // 1/4096*150cm
 
-		sprintf(str, "r = %.1f | p = %.1f | IR = %.1f |  analog = %d",
-				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]), distanceCM, irValue) ;
+
+		sprintf(str, "r = %.1f | p = %.1f | IR = %.1f | sonar_cm = %.2f | raw_sonar = %.2f",
+				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]), distanceCM,  0.0, analogRead(13) / 2.0 * 2.54) ;
 
 
-		// 	radioControler.getHandler().getChannelNormed(1),
-//		radioControler.getHandler().getChannelNormed(2)
+		// 
 
-// flightStabilization.getTau().getX(), flightStabilization.getTau().getY(),
+
+		// flightStabilization.getTau().getX(), flightStabilization.getTau().getY(),
 
 		RfPacket packet(Date::now(), "LOG", str);
 		rfControler.addPacketToSend(packet);

@@ -28,10 +28,12 @@ void RfRouter::process()
 		std::string packetHeader = packet.getHeader();
 		std::string packetStr = packet.getPayload();
 
+		// Update a conf parameter
 		if (packetHeader.compare("CONF") == 0)
 		{
 			Conf::getInstance().parseRf(packet.getPayload());
 		}
+		// Request configuration parameters
 		else if (packetHeader.compare("CONF_REQUEST") == 0)
 		{
 			Conf::getInstance().sendConfToGcs();

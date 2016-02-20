@@ -25,6 +25,10 @@ public:
 		return ((float) dt / S_TO_US);
 	}
 
+	static uint32 micros() {
+		return micros();
+	}
+
 
 };
 

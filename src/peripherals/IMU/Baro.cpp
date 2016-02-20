@@ -4,9 +4,8 @@
  *  Created on: Oct 11, 2015
  *      Author: adrien
  */
-#include <wirish/wirish.h>
+#include "../../peripherals/HAL/HAL.h"
 #include "Baro.h"
-
 
 
 Baro::Baro() : _i2c(I2C::getInstance(BMP085_ADDRESS))
@@ -16,6 +15,12 @@ Baro::Baro() : _i2c(I2C::getInstance(BMP085_ADDRESS))
 	_dev_address = BMP085_ADDRESS;
 	_pressure_samples = 1;
 	_retry_time = 0;
+	Temp = 0.0;
+	RawTemp = 0;
+	RawPress = 0;
+	ac1 = 0; ac2= 0; ac3 = 0; ac4 = 0; ac5 = 0;
+	ac6 = 0; b1 = 0; b2 = 0; mb = 0; _temp_sum = 0; Press = 0; mc = 0; _press_sum = 0; GroundPressure = 0; GroundTemp = 0;
+	_last_update = 0; BMP085_State = 0; md = 0;
 	_last_temp_read_command_time = 0;
 	_last_press_read_command_time = 0;
 }
@@ -31,7 +36,7 @@ long Baro::get_alt_cm() {
 }
 
 bool Baro::BMP_DATA_READY() {
-	long t_us = micros();
+	long t_us = DateUtils::micros();
 	int dtMin = 0;
 	if (BMP085_State == 0) {
 		dtMin = 5;
@@ -95,7 +100,7 @@ void Baro::Calibrate() {
 		accumulate();
 		read();
 
-		delay(20);
+		HAL::delayMs(20);
 		step ++;
 	}
 
@@ -117,7 +122,7 @@ void Baro::Calibrate() {
 			GroundTemp = 0.8*GroundTemp + 0.2*getTemperature();
 		}
 
-		delay(20);
+		HAL::delayMs(20);
 		step ++;
 	}
 }
@@ -174,7 +179,7 @@ uint8 Baro::read()
 	if (_count == 0) {
 		return 0;
 	}
-	_last_update = micros();
+	_last_update = DateUtils::micros();
 
 	Temp = 0.1f * _temp_sum / _count;
 	Press = _press_sum / _count;
@@ -206,7 +211,7 @@ void Baro::Command_ReadPress()
 {
 	// Mode 0x34+(OVERSAMPLING << 6) is osrs=3 when OVERSAMPLING=3 => 25.5ms conversion time
 	_i2c.writeTo(0xF4, 0x34+(OVERSAMPLING << 6));
-	_last_press_read_command_time = micros();
+	_last_press_read_command_time = DateUtils::micros();
 }
 
 // Read Raw Pressure values
@@ -214,12 +219,12 @@ void Baro::ReadPress()
 {
 	uint8 buf[3];
 
-	if (micros() < _retry_time) {
+	if (DateUtils::micros() < _retry_time) {
 		return;
 	}
 
 	_i2c.readFrom(0xF6, 3, buf);
-	_retry_time = micros() + 1000000;
+	_retry_time = DateUtils::micros() + 1000000;
 
 
 	RawPress = (((uint32_t)buf[0] << 16)
@@ -231,7 +236,7 @@ void Baro::ReadPress()
 void Baro::Command_ReadTemp()
 {
 	_i2c.writeTo(0xF4, 0x2E);
-	_last_temp_read_command_time = micros();
+	_last_temp_read_command_time = DateUtils::micros();
 }
 
 // Read Raw Temperature values
@@ -240,12 +245,12 @@ void Baro::ReadTemp()
 	uint8 buf[2];
 	int32 _temp_sensor;
 
-	if (micros() < _retry_time) {
+	if (DateUtils::micros() < _retry_time) {
 		return;
 	}
 
 	_i2c.readFrom(0xF6, 2, buf);
-	_retry_time = micros() + 1000;
+	_retry_time = DateUtils::micros() + 1000;
 
 
 	_temp_sensor = buf[0];
