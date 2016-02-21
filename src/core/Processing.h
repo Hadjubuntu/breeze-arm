@@ -27,6 +27,12 @@ protected:
 
 	/** Last dt (Seconds) */
 	float _dt;
+
+	/** Callback is called */
+	bool _callbackTrigger;
+	Date _callbackStartDate;
+	long _callbackDtUs;
+
 public:
 	Processing();
 
@@ -35,6 +41,8 @@ public:
 
 	/** Execute processing */
 	virtual void process() = 0;
+
+	virtual void callback() = 0;
 
 	/**
 	 * Update execution date
@@ -59,6 +67,20 @@ public:
 	 * Tells whether the processing needs to be called again or not
 	 */
 	bool isReady();
+	bool isCallbackReady();
+
+	bool isTriggeringCallback() {
+		return _callbackTrigger;
+	}
+	void closeCallback() {
+		_callbackTrigger = false;
+		_callbackDtUs = 0;
+	}
+	void planCallback(long pDtUs) {
+		_callbackDtUs = pDtUs;
+		_callbackTrigger = true;
+		_callbackStartDate = Date::now();
+	}
 };
 
 #endif /* CORE_PROCESSING_H_ */

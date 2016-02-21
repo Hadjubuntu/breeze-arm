@@ -21,6 +21,7 @@ public:
 
 	void init();
 	void process();
+	void callback() { };
 };
 
 #endif /* PROCESSING_LINK_TELEMETRY_H_ */

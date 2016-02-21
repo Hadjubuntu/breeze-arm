@@ -23,6 +23,7 @@ Baro::Baro() : _i2c(I2C::getInstance(BMP085_ADDRESS))
 	_last_update = 0; BMP085_State = 0; md = 0;
 	_last_temp_read_command_time = 0;
 	_last_press_read_command_time = 0;
+	_count = 0;
 }
 
 void Baro::process()
@@ -87,14 +88,15 @@ void Baro::init()
 
 	//Send a command to read Temp
 	Command_ReadTemp();
-
-	BMP085_State = 0;
-
-	// init raw temo
-	RawTemp = 0;
-
-	GroundPressure = 0;
-	GroundTemp = 0;
+	HAL::delayMs(5);
+//
+//	BMP085_State = 0;
+//
+//	// init raw temo
+//	RawTemp = 0;
+//
+//	GroundPressure = 0;
+//	GroundTemp = 0;
 //	Calibrate();
 }
 

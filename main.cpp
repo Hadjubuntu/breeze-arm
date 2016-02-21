@@ -56,7 +56,7 @@ Telemetry telemetry(&ahrs, &flightControl);
 
 /** Sonar to measure distance */
 //Sonar sonar;
-//Baro baro;
+Baro baro;
 
 void calibration()
 {
@@ -94,7 +94,7 @@ void setup()
 	uavBrain.addProcessing(&actuatorControl);
 	uavBrain.addProcessing(&telemetry);
 	//	uavBrain.addProcessing(&sonar);
-	//	uavBrain.addProcessing(&baro);
+	uavBrain.addProcessing(&baro);
 
 	// Initialize all processings
 	//----------------------
@@ -156,8 +156,8 @@ void loop()
 		//		float distanceCM = (4096-irValue) * 0.03662115 ; // 1/4096*150cm
 
 
-		sprintf(str, "r = %.1f | p = %.1f ", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
-				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1])) ;
+		sprintf(str, "r=%.1f|p=%.1f|baroAlt = %.2f|Temp=%.2f", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
+				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]), baro.getAltitudeMeters(), baro.getTemperature()) ;
 
 
 

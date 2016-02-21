@@ -35,6 +35,7 @@ public:
 	void init();
 
 	void process();
+	void callback() { };
 
 	void processFixedWing(unsigned short int);
 

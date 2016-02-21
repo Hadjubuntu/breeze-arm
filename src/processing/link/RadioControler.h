@@ -30,6 +30,7 @@ public:
 	 * Update radio output signals
 	 */
 	void process();
+	void callback() { };
 
 	/**
 	 * Get radio sbus handler

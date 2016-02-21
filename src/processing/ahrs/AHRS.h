@@ -57,6 +57,7 @@ public:
 	 * Process and update data
 	 */
 	void process();
+	void callback() { };
 
 	float* getGyroCorr();
 

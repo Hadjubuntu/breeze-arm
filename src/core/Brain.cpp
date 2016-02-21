@@ -40,14 +40,23 @@ void Brain::loop()
 	// For each processing
 	for (Processing *proc : _processings)
 	{
-		// Check if the processing needs to be executed
-		if (proc->isReady())
+		// Normal processing mode - check processing freq last call
+		// ----
+		if (proc->isReady() && !proc->isTriggeringCallback())
 		{
 			// Update execution date
 			proc->updateExecDate();
 
 			// Then execute the processing
 			proc->process();
+		}
+
+		// Callback triggering processing mode
+		// ---
+		if (proc->isTriggeringCallback() && proc->isCallbackReady())
+		{
+			proc->callback();
+			proc->closeCallback();
 		}
 	}
 

@@ -89,8 +89,8 @@ void Accelerometer::calibration()
 		// No calibration could be done..
 		_offset = Vect3D(0.0, 0.0, 0.0);
 	}
-	else {
-		char str[80];
+	else
+	{
 		_offset = Vect3D(sumAccX / countSample, sumAccY / countSample,  0.0); // sumAccZ / countSample - maxAccZ
 	}
 }

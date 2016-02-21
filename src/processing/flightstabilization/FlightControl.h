@@ -35,6 +35,7 @@ public:
 
 	void init();
 	void process();
+	void callback() { };
 
 	float radioToRad(float, float);
 

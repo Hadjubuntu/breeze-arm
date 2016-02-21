@@ -50,6 +50,7 @@ public:
 	 * Listen to new packets which may have been received
 	 */
 	void process();
+	void callback() { };
 
 	void send(RfPacket &);
 

@@ -55,6 +55,7 @@ public:
 	 * Process and update data
 	 */
 	void process();
+	void callback() {};
 
 	float boostThrottleCompensateTiltAngle(float throttle);
 	bool isSafeToUseBoost(float throttle, float combinedTilt);

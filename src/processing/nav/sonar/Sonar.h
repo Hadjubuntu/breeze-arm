@@ -27,6 +27,7 @@ public:
 	void init();
 
 	void process();
+	void callback() { };
 
 	float getOutput() {
 		return _filteredSonarValueCm;

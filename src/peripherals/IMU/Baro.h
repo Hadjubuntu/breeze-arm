@@ -69,6 +69,7 @@ public:
 
 	void init();
 	void process();
+	void callback() {};
 
 	uint8        read();
 	void 			accumulate(void);

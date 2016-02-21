@@ -8,7 +8,10 @@
 #include "Processing.h"
 #include "../math/time/Date.h"
 
-Processing::Processing() : _logger(Logger()), _freqHz(50), _lastExecutionDate(Date::zero()), _dt(0.0) {
+Processing::Processing() : _logger(Logger()), _freqHz(50), _lastExecutionDate(Date::zero()), _dt(0.0),
+_callbackTrigger(false), _callbackStartDate(Date::now()), _callbackDtUs(0l)
+{
+
 }
 
 
@@ -24,6 +27,18 @@ bool Processing::isReady() {
 
 	// Returns yes if processing needs to be executed
 	return durationLastExecutionSeconds >= dtExecExpected;
+}
+
+bool Processing::isCallbackReady() {
+	Date now = Date::now();
+
+	float durationFromCallbackTrigger = now.durationFrom(_callbackStartDate);
+	if (durationFromCallbackTrigger >= DateUtils::microToSeconds(_callbackDtUs)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 
