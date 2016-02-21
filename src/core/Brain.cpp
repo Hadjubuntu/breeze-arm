@@ -62,6 +62,9 @@ void Brain::loop()
 
 
 	_tickId ++;
+	if (_tickId > 1000000) {
+		_tickId = 0;
+	}
 	HAL::delayUs(_delayTickUs);
 }
 
