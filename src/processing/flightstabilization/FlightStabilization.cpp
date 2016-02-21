@@ -90,7 +90,7 @@ void FlightStabilization::process()
 	// Define angle rate from angle error
 	float rollRate = (rpyTarget[0] - rpyCurrent[0]) * _Kangle->getValue();
 	float pitchRate = (rpyTarget[1] - rpyCurrent[1]) * _Kangle->getValue();
-	float yawRate = 1.8 * (rpyTarget[2] - _yawFromGyro) * _Kangle->getValue();
+	float yawRate = 1.6 * (rpyTarget[2] - _yawFromGyro) * _Kangle->getValue();
 
 	BoundAbs(rollRate, 3.14);
 	BoundAbs(pitchRate, 3.14);
@@ -104,7 +104,7 @@ void FlightStabilization::process()
 
 	_tau = Vect3D(_pidRoll.getOutput(),
 			_pidPitch.getOutput(),
-			2.0 *_Krate->getValue() * (yawRate - _gyroRot[2]));
+			1.6 *_Krate->getValue() * (yawRate - _gyroRot[2]));
 
 	if (Conf::getInstance().useBoostMotors)
 	{

@@ -156,8 +156,11 @@ void loop()
 		//		float distanceCM = (4096-irValue) * 0.03662115 ; // 1/4096*150cm
 
 
-		sprintf(str, "r=%.1f|p=%.1f|baroAlt = %.2f|Temp=%lu", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
-				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]), baro.getAltitudeMeters(), baro.getTrueTemperature()) ;
+		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|T=%.1f deg|p=%.1f hPa|gp=%.1f hPa", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
+				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
+				baro.getAltitudeMeters()*100.0f,
+				baro.getTrueTemperature()/10.0f,
+				baro.getTruePressure()/100.0f, baro.getGroundPressure()/100.0f) ;
 
 
 

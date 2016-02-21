@@ -22,7 +22,8 @@
 // Pressure conversion time is 25.5ms (for OVERSAMPLING=3)
 
 
-// oversampling 3 gives 26ms conversion time. We then average
+// oversampling 3 gives 25.5ms sampling time
+// oversampling 1 gives 7.5 ms
 #define OVERSAMPLING 3
 
 class Baro : public Processing {
@@ -61,8 +62,8 @@ private:
 
 public:
 
-	float 			GroundPressure;
-	float 			GroundTemp;
+	long 			GroundPressure;
+	long 			GroundTemp;
 
 	Baro();
 
@@ -76,7 +77,12 @@ public:
 	long getTrueTemperature() {
 		return _trueTemperature;
 	}
-
+	long getTruePressure() {
+		return _truePressure;
+	}
+	long getGroundPressure() {
+		return GroundPressure;
+	}
 
 	static Baro create() {
 		Baro e;
