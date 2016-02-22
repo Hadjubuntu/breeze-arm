@@ -78,3 +78,38 @@ float Quaternion::getNorm() {
 	return FastMath::sqrt(getNorm2());
 }
 
+// See: http://fr.mathworks.com/help/aeroblks/quaternionrotation.html?requestedDomain=www.mathworks.com
+Vect3D Quaternion::rotate(Vect3D v)
+{
+
+    float _y_y = _y * _y;
+    float _y_z = _y * _z;
+    float _x_x = _x * _x;
+    float _x_y = _x * _y;
+    float _x_z = _x * _z;
+    float _w_x = _w * _x;
+    float _w_y = _w * _y;
+    float _w_z = _w * _z;
+    float _z_z = _z * _z;
+
+    float max, may, maz, mbx, mby, mbz, mcx, mcy, mcz;
+    max = 1.0f-2.0f*(_y_y + _z_z);
+    may =   2.0f*(_x_y - _w_z);
+    maz =   2.0f*(_x_z + _w_y);
+
+    mbx =   2.0f*(_x_y + _w_z);
+    mby = 1.0f-2.0f*(_x_x + _z_z);
+    mbz =   2.0f*(_y_z - _w_x);
+
+    mcx =   2.0f*(_x_z - _w_y);
+    mcy =   2.0f*(_y_z + _w_x);
+    mcz = 1.0f-2.0f*(_x_x + _y_y);
+
+    float resX, resY, resZ;
+    resX = max * v.getX() + mbx * v.getY() + mcx * v.getZ();
+    resY = may * v.getX() + mby * v.getY() + mcy * v.getZ();
+    resZ = maz * v.getX() + mbz * v.getY() + mcz * v.getZ();
+
+    return Vect3D(resX, resY, resZ);
+}
+

@@ -31,6 +31,7 @@ private:
 	I2C _i2c;
 	uint8 _dev_address;
 
+	bool _firstMeasure;
 	long        _uncompensatedPressure;
 	long        _uncompensatedTemperature;
 	uint8_t			_count;

@@ -23,7 +23,8 @@ Baro::Baro() : Processing(), _i2c(I2C::getInstance(BMP085_ADDRESS))
 	ac6 = 0; b1 = 0; b2 = 0; mb = 0;
 	_truePressure = 0;
 	mc = 0;
-	GroundPressure = 23843;
+	_firstMeasure = true;
+	GroundPressure = 1;
 	GroundTemp = 0;
 	_last_update = 0; md = 0;
 	_count = 0;
@@ -182,11 +183,17 @@ void Baro::calculateAltitude()
 	// Calibration value
 	if (_iter >= 20  && _iter <= 500)
 	{
-		GroundPressure = (long) (0.9*GroundPressure + 0.1 * _truePressure);
-		GroundTemp =  (long) (0.9*GroundTemp  + 0.1 * _trueTemperature);
+		float alpha = 0.8;
+		// First value set to computed value
+		if (_firstMeasure) {
+			alpha = 0.0;
+			_firstMeasure = false;
+		}
+		GroundPressure = (long) (alpha*GroundPressure + (1.0-alpha) * _truePressure);
+		GroundTemp =  (long) (alpha*GroundTemp  + (1.0-alpha) * _trueTemperature);
 	}
 
-	// Calculate
+	// Calculate altitude from difference of pressure
 	float diffPressure = ((float)_truePressure / (float)GroundPressure);
 	_altitudeMeters =  44330.0 * (1.0 - pow(diffPressure, 0.190295));
 }

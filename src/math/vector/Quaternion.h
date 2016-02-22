@@ -51,6 +51,7 @@ public:
 		return e;
 	}
 
+	Vect3D rotate(Vect3D pVector);
 
 	/* ********************************
 	 * Norm

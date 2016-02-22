@@ -143,6 +143,17 @@ void loop()
 	// ----
 	uavBrain.loop();
 
+	if (uavBrain.getTickId() % 500 == 0)
+	{
+		Vect3D acc = ahrs.getAcc().getAccFiltered();
+		Vect3D acc_Ef = ahrs.getAttitude().conjugate().rotate(acc);
+
+		char str[15];
+		sprintf(str, "%.4f", acc_Ef.getZ());
+		RfPacket packet(Date::now(), "LOG", str);
+		rfControler.addPacketToSend(packet);
+	}
+
 	// Prints infos
 	// ----
 	if (uavBrain.getTickId() % 2000 == 0)
@@ -165,7 +176,7 @@ void loop()
 
 
 		RfPacket packet(Date::now(), "LOG", str);
-		rfControler.addPacketToSend(packet);
+//	DESACTIVATED for az analysis:	rfControler.addPacketToSend(packet);
 	}
 
 	// Slow toggle led
