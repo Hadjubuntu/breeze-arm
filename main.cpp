@@ -5,6 +5,11 @@
  * @date : september 2015
  */
 #include <stdio.h>
+
+
+#include <string.h>
+#include <stdlib.h>
+
 #include <wirish/wirish.h>
 #include <wirish/ext_interrupts.h>
 #include <vector>
@@ -137,21 +142,38 @@ float approxDist(int irValue)
  * Measure : from 3khz to minimum 700Hz
  */
 
+int currentSize = 0;
+char currentPacket[85];
+void str_resetCharArray(char *p) {
+	int nbBytes = strlen(p);
+	memset(&p[0], 0, nbBytes);
+}
+
 void loop()
 {
 	// Call brain loop function to udpate the processings
 	// ----
 	uavBrain.loop();
 
-	if (uavBrain.getTickId() % 500 == 0)
+	if (uavBrain.getTickId() % 50 == 0)
 	{
 		Vect3D acc = ahrs.getAcc().getAccFiltered();
 		Vect3D acc_Ef = ahrs.getAttitude().conjugate().rotate(acc);
 
-		char str[15];
-		sprintf(str, "%.4f", acc_Ef.getZ());
-		RfPacket packet(Date::now(), "LOG", str);
-		rfControler.addPacketToSend(packet);
+
+		if (currentSize <= 70) {
+			sprintf(currentPacket, "%s|%.3f", currentPacket, acc_Ef.getZ());
+			currentSize += 8;
+		}
+		else
+		{
+			sprintf(currentPacket, "%s|ENDf", currentPacket);
+			RfPacket packet(Date::now(), "LOG", currentPacket);
+			rfControler.addPacketToSend(packet);
+
+			currentSize = 0;
+			str_resetCharArray(currentPacket);
+		}
 	}
 
 	// Prints infos
@@ -176,7 +198,7 @@ void loop()
 
 
 		RfPacket packet(Date::now(), "LOG", str);
-//	DESACTIVATED for az analysis:	rfControler.addPacketToSend(packet);
+		//	DESACTIVATED for az analysis:	rfControler.addPacketToSend(packet);
 	}
 
 	// Slow toggle led

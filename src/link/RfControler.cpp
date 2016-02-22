@@ -12,7 +12,7 @@
 
 RfControler::RfControler() : Processing()
 {
-	_freqHz = 20;
+	_freqHz = 50;
 	_iterSendPacket = 0;
 }
 
@@ -45,7 +45,7 @@ void RfControler::receiveNewPackets() {
 void RfControler::sendPackets()
 {
 	_iterSendPacket ++;
-	if (_toSendPackets.size() > 0 && _iterSendPacket >= _freqHz / 5.0)
+	if (_toSendPackets.size() > 0) /** && _iterSendPacket >= _freqHz / 5.0) */
 	{
 		RfPacket packet = _toSendPackets.front();
 		_toSendPackets.pop_front();
