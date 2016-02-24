@@ -149,6 +149,13 @@ void str_resetCharArray(char *p) {
 	memset(&p[0], 0, nbBytes);
 }
 
+int itrAccZ = 0;
+float meanAccZ = 0.0;
+float vZ = 0.0;
+Date lastComput = Date::now();
+Date lastPositiveAccPeak = Date::now();
+Date lastNegativeAccPeak = Date::now();
+
 void loop()
 {
 	// Call brain loop function to udpate the processings
@@ -160,14 +167,54 @@ void loop()
 		Vect3D acc = ahrs.getAcc().getAccFiltered();
 		Vect3D acc_Ef = ahrs.getAttitude().conjugate().rotate(acc);
 
+		if (itrAccZ < 500) {
+			if (itrAccZ == 0) {
+				meanAccZ = acc_Ef.getZ();
+				lastComput = Date::now();
+			}
+			else {
+				meanAccZ = 0.8 * meanAccZ + 0.2 * acc_Ef.getZ();
+			}
+			itrAccZ ++;
+		}
 
 		if (currentSize <= 70) {
-			sprintf(currentPacket, "%s|%.3f", currentPacket, acc_Ef.getZ());
+			float analyzedAccZ = acc_Ef.getZ() - meanAccZ;
+			if (fabs(analyzedAccZ) < 0.05) {
+				analyzedAccZ = 0.0;
+			}
+			else if (fabs(analyzedAccZ) < 0.1) {
+				analyzedAccZ = analyzedAccZ / 4.0;
+			}
+
+			float factorPeak = 1.0;
+
+			if (analyzedAccZ > 0.5) {
+				lastPositiveAccPeak = Date::now();
+			}
+			else if (analyzedAccZ < -0.5) {
+				lastNegativeAccPeak = Date::now();
+			}
+
+			if (analyzedAccZ > 0.0 && Date::now().durationFrom(lastNegativeAccPeak) < 1.5) {
+				factorPeak = 0.05;
+			}
+			else 	if (analyzedAccZ < 0.0 && Date::now().durationFrom(lastPositiveAccPeak) < 1.5) {
+				factorPeak = 0.05;
+			}
+
+			analyzedAccZ = analyzedAccZ * factorPeak;
+
+
+			vZ = 0.98*(vZ + 9.81*analyzedAccZ * Date::now().durationFrom(lastComput));
+			lastComput = Date::now();
+
+			sprintf(currentPacket, "%s|%.3f", currentPacket, vZ);
 			currentSize += 8;
 		}
 		else
 		{
-			sprintf(currentPacket, "%s|ENDf", currentPacket);
+			sprintf(currentPacket, "%s|END", currentPacket);
 			RfPacket packet(Date::now(), "LOG", currentPacket);
 			rfControler.addPacketToSend(packet);
 
