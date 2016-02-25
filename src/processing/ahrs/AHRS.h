@@ -42,8 +42,12 @@ private:
 	// Yaw computed from gyro integration
 	float _yawFromGyro;
 
-	// vz from accelerometer
-	float _vz;
+	Date _lastPositiveAccPeak;
+	Date _lastNegativeAccPeak;
+
+	int _itrAccZ;
+	float _meanAccZ;
+	float _vZ;
 
 public:
 	AHRS();
@@ -57,6 +61,7 @@ public:
 	 * Process and update data
 	 */
 	void process();
+	void computeVz();
 	void callback() { };
 
 	float* getGyroCorr();
@@ -76,7 +81,7 @@ public:
 	}
 
 	float getVz() {
-		return _vz;
+		return _vZ;
 	}
 
 

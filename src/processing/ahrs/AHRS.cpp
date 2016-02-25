@@ -20,7 +20,9 @@ AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 		_attitudeOffset(Quaternion::zero()),
 		_gyro(Gyro::create()),
 		_accelerometer(Accelerometer::create()),
-		_yawFromGyro(0.0)
+		_yawFromGyro(0.0),
+		_lastPositiveAccPeak(Date::now()),
+		_lastNegativeAccPeak(Date::now())
 //		_baro(Baro::create())
 {
 	// 400 Hz update
@@ -29,7 +31,9 @@ AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 	gyro_correct_int[0] = 0.0;
 	gyro_correct_int[1] = 0.0;
 
-	_vz = 0.0;
+	_meanAccZ = 0.0;
+	_itrAccZ = 0;
+	_vZ = 0.0;
 }
 
 void AHRS::calibrateOffset()
@@ -57,7 +61,6 @@ void AHRS::process()
 	const float accelKp = 0.00174;
 	const float rollPitchBiasRate = 0.999999;
 
-	const float prevAccZ = _accelerometer.getAccFiltered().getZ(); // TODO rotation in earth-frame
 
 	_accelerometer.update();
 	_gyro.update();
@@ -140,8 +143,70 @@ void AHRS::process()
 	_yawFromGyro = FastMath::constrainAngleMinusPiPlusPi(_yawFromGyro);
 
 	// Integrate delta accZ to have estimation on vertical speed
-	if (_dt > 0.0) {
-		_vz += (_accelerometer.getAccFiltered().getZ() - prevAccZ) / _dt;
-		_vz = 0.999 * _vz;
+	computeVz();
+}
+
+void AHRS::computeVz()
+{
+	Date now = Date::now();
+	Vect3D acc = _accelerometer.getAccFiltered();
+	Vect3D acc_Ef = _attitude.conjugate().rotate(acc);
+
+	// Compute average for 2 seconds
+	if (_itrAccZ < _freqHz * 2) {
+		if (_itrAccZ == 0) {
+			_meanAccZ = acc_Ef.getZ();
+		}
+		else {
+			_meanAccZ = 0.8 * _meanAccZ + 0.2 * acc_Ef.getZ();
+		}
+
+		_itrAccZ ++;
 	}
+
+	float Kd = 0.99;
+
+	float analyzedAccZ = acc_Ef.getZ() - _meanAccZ;
+
+	// Filter low value with no-tolerance (set value to zero)
+	if (fabs(analyzedAccZ) < 0.05) {
+		analyzedAccZ = 0.0;
+	}
+	// Filter low value with tolerance
+	else if (fabs(analyzedAccZ) < 0.1) {
+		analyzedAccZ = analyzedAccZ / 4.0;
+	}
+
+	float factorPeak = 1.0;
+
+	// Store date of peak acceleration in z body-fame value
+	if (analyzedAccZ > 0.3) {
+		_lastPositiveAccPeak = Date::now();
+	}
+	else if (analyzedAccZ < -0.3) {
+		_lastNegativeAccPeak = Date::now();
+	}
+	else {
+		// Low accZ
+		Kd = 0.98;
+	}
+
+	// Filter counter-peak except if fast change of peak sign
+	if (analyzedAccZ > 0.0
+			&& now.durationFrom(_lastNegativeAccPeak) < 1.0
+			&& now.durationFrom(_lastPositiveAccPeak) >= 2.0) {
+		factorPeak = 0.05;
+		Kd = 0.9;
+	}
+	else 	if (analyzedAccZ < 0.0
+			&& now.durationFrom(_lastPositiveAccPeak) < 1.0
+			&& now.durationFrom(_lastNegativeAccPeak) >= 2.0) {
+		factorPeak = 0.05;
+		Kd = 0.9;
+	}
+
+	analyzedAccZ = analyzedAccZ * factorPeak;
+
+	// TOdo increase kd if long term sign.. decrease when freeze
+	_vZ = Kd * (_vZ + 9.81*analyzedAccZ * _dt);
 }
