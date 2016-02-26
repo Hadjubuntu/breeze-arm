@@ -12,9 +12,16 @@
 #include "../../core/Processing.h"
 #include "../../data/conf/Param.h"
 #include "../../math/pid/PID.h"
+#include "../ahrs/AHRS.h"
+#include "../flightstabilization/FlightControl.h"
 
 class FlightStabilization : public Processing {
 private:
+	// Dependencies
+	// ---
+	AHRS *_ahrs;
+	FlightControl *_flightControl;
+
 	// Inputs
 	// ------------------
 	Param<float> *_Pq;
@@ -38,7 +45,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	FlightStabilization();
+	FlightStabilization(AHRS*, FlightControl*);
 
 	/**
 	 * TODO
@@ -47,9 +54,7 @@ public:
 
 	}
 
-
-	/** Set input parameters */
-	void setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, float yawCmd, Vect3D pGyroRot, float pThrottle);
+	void updateInputParameters();
 
 	/**
 	 * Process and update data

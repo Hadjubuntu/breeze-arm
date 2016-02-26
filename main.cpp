@@ -35,9 +35,6 @@
 /** Attitude and heading reference system */
 AHRS ahrs;
 
-/** Flight controller */
-FlightStabilization flightStabilization;
-
 /** UAV brain */
 Brain uavBrain;
 
@@ -50,8 +47,11 @@ RfRouter rfRouter(&rfControler);
 /** Radio controller */
 RadioControler radioControler;
 
-/** Route flight mode to mission / stabilization */
-FlightControl flightControl(&radioControler, &flightStabilization, &ahrs);
+/** Transform radio signal into radio flight control */
+FlightControl flightControl(&radioControler);
+
+/** Flight stabilization controller */
+FlightStabilization flightStabilization(&ahrs, &flightControl);
 
 /** Motor and servo control */
 ActuatorControl actuatorControl(&flightStabilization);
@@ -91,13 +91,14 @@ void setup()
 	// Add processings
 	//----------------------
 	uavBrain.addProcessing(&ahrs);
-	uavBrain.addProcessing(&flightStabilization);
 	uavBrain.addProcessing(&rfControler);
 	uavBrain.addProcessing(&rfRouter);
 	uavBrain.addProcessing(&radioControler);
 	uavBrain.addProcessing(&flightControl);
+	uavBrain.addProcessing(&flightStabilization);
 	uavBrain.addProcessing(&actuatorControl);
 	uavBrain.addProcessing(&telemetry);
+
 	//	uavBrain.addProcessing(&sonar);
 	uavBrain.addProcessing(&baro);
 

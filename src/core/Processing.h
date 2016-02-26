@@ -25,6 +25,7 @@ protected:
 	/** Date last execution */
 	Date _lastExecutionDate;
 
+
 	/** Last dt (Seconds) */
 	float _dt;
 
@@ -43,6 +44,7 @@ public:
 	virtual void process() = 0;
 
 	virtual void callback() = 0;
+
 
 	/**
 	 * Update execution date

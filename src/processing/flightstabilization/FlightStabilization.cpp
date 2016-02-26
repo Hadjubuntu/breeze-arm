@@ -17,7 +17,7 @@
  */
 
 // good values : Pq=20; Pw=3
-FlightStabilization::FlightStabilization() :
+FlightStabilization::FlightStabilization(AHRS *ahrs, FlightControl *flightControl) :
 Processing(),
 _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
@@ -34,24 +34,23 @@ _tau(Vect3D::zero())
 	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
 	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
 	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
+
+	_ahrs = ahrs;
+	_throttleOut = 0.0;
+	_flightControl = flightControl;
 }
 
-/**
- * Set input parameters
- * @param pTargetAttitude
- * @param pCurrentAttitude
- * @param pGyroRot
- * @param pThrottle given between 0 and 1
- */
-void FlightStabilization::setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, float yawGyro, Vect3D pGyroRot, float pThrottle)
+
+void FlightStabilization::updateInputParameters()
 {
-	_targetAttitude = pTargetAttitude;
-	_currentAttitude = pCurrentAttitude;
-	_gyroRot = pGyroRot;
-	_throttle = pThrottle;
-	_yawFromGyro = yawGyro;
-}
+	_targetAttitude = _flightControl->getAttitudeDesired();
+	_throttle = _flightControl->getThrottleOut(); // Throttle is contained between [0; 1]
 
+	_currentAttitude = _ahrs->getAttitude();
+	_yawFromGyro = _ahrs->getYawFromGyro();
+	_gyroRot = _ahrs->getGyro().getGyroFiltered();
+
+}
 
 void FlightStabilization::process()
 {
@@ -79,6 +78,8 @@ void FlightStabilization::process()
 		_throttleOut = _throttle;
 	}
 #endif
+
+	updateInputParameters();
 
 	// DEBUG simple PID
 	float rpyTarget[3];
