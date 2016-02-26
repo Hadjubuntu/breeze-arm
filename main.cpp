@@ -33,7 +33,8 @@
 
 
 /** Attitude and heading reference system */
-AHRS ahrs;
+Baro baro;
+AHRS ahrs(&baro);
 
 /** UAV brain */
 Brain uavBrain;
@@ -61,7 +62,6 @@ Telemetry telemetry(&ahrs, &flightControl);
 
 /** Sonar to measure distance */
 //Sonar sonar;
-Baro baro;
 
 void calibration()
 {
@@ -90,6 +90,7 @@ void setup()
 
 	// Add processings
 	//----------------------
+	uavBrain.addProcessing(&baro);
 	uavBrain.addProcessing(&ahrs);
 	uavBrain.addProcessing(&rfControler);
 	uavBrain.addProcessing(&rfRouter);
@@ -100,7 +101,6 @@ void setup()
 	uavBrain.addProcessing(&telemetry);
 
 	//	uavBrain.addProcessing(&sonar);
-	uavBrain.addProcessing(&baro);
 
 	// Initialize all processings
 	//----------------------
@@ -157,22 +157,22 @@ void loop()
 	// ----
 	uavBrain.loop();
 
-	if (uavBrain.getTickId() % 50 == 0)
-	{
-		if (currentSize <= 70) {
-			sprintf(currentPacket, "%s|%.3f", currentPacket, ahrs.getVz());
-			currentSize += 8;
-		}
-		else
-		{
-			sprintf(currentPacket, "%s|END", currentPacket);
-			RfPacket packet(Date::now(), "LOG", currentPacket);
-			rfControler.addPacketToSend(packet);
-
-			currentSize = 0;
-			str_resetCharArray(currentPacket);
-		}
-	}
+//	if (uavBrain.getTickId() % 50 == 0)
+//	{
+//		if (currentSize <= 70) {
+//			sprintf(currentPacket, "%s|%.2f", currentPacket, flightStabilization.getThrottle()); // flightStabilization.getThrottle()); // ahrs.getVz()
+//			currentSize += 8;
+//		}
+//		else
+//		{
+//			sprintf(currentPacket, "%s|END", currentPacket);
+//			RfPacket packet(Date::now(), "LOG", currentPacket);
+//			rfControler.addPacketToSend(packet);
+//
+//			currentSize = 0;
+//			str_resetCharArray(currentPacket);
+//		}
+//	}
 
 
 	// Prints infos
@@ -188,16 +188,17 @@ void loop()
 		//		float distanceCM = (4096-irValue) * 0.03662115 ; // 1/4096*150cm
 
 
-		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|T=%.1f deg|p=%.1f hPa|gp=%.1f hPa", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
+		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|T=%.1f deg|p=%.1f hPa|gp=%.1f hPa|t=%.2f", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
 				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
 				baro.getAltitudeMeters()*100.0f,
 				baro.getTrueTemperature()/10.0f,
-				baro.getTruePressure()/100.0f, baro.getGroundPressure()/100.0f) ;
+				baro.getTruePressure()/100.0f, baro.getGroundPressure()/100.0f,
+				flightStabilization.getThrottle()) ;
 
 
 
 		RfPacket packet(Date::now(), "LOG", str);
-		//	DESACTIVATED for az analysis:	rfControler.addPacketToSend(packet);
+		rfControler.addPacketToSend(packet);
 	}
 
 	// Slow toggle led

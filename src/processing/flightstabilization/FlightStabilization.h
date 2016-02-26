@@ -41,6 +41,7 @@ private:
 	// PID
 	PID _pidRoll;
 	PID _pidPitch;
+	PID _pidAltitude;
 public:
 	/**
 	 * Constructor

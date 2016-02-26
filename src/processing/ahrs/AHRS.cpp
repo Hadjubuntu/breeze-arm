@@ -15,7 +15,7 @@ float gyro_correct_int[3];
 /**
  * Constructor
  */
-AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
+AHRS::AHRS(Baro *baro) : Processing(), _grot(Vect3D::zero()),
 		_attitude(Quaternion::zero()),
 		_attitudeOffset(Quaternion::zero()),
 		_gyro(Gyro::create()),
@@ -34,6 +34,7 @@ AHRS::AHRS() : Processing(), _grot(Vect3D::zero()),
 	_meanAccZ = 0.0;
 	_itrAccZ = 0;
 	_vZ = 0.0;
+	_baro = baro;
 }
 
 void AHRS::calibrateOffset()

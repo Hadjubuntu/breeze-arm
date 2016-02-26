@@ -181,19 +181,28 @@ void Baro::calculateTruePressure()
 void Baro::calculateAltitude()
 {
 	// Calibration value
-	if (_iter >= 20  && _iter <= 500)
+	if (_iter < 20) {
+		_altitudeMeters = 0.0f; // throw data
+	}
+	if (_iter >= 20  && _iter <= 200)
 	{
-		float alpha = 0.8;
+		float alpha = 0.7;
 		// First value set to computed value
 		if (_firstMeasure) {
-			alpha = 0.0;
+			alpha = 0.7;
 			_firstMeasure = false;
 		}
 		GroundPressure = (long) (alpha*GroundPressure + (1.0-alpha) * _truePressure);
 		GroundTemp =  (long) (alpha*GroundTemp  + (1.0-alpha) * _trueTemperature);
-	}
 
-	// Calculate altitude from difference of pressure
-	float diffPressure = ((float)_truePressure / (float)GroundPressure);
-	_altitudeMeters =  44330.0 * (1.0 - pow(diffPressure, 0.190295));
+		_altitudeMeters = 0.0;
+	}
+	else
+	{
+		float altitudeOffset = 0.1;
+
+		// Calculate altitude from difference of pressure
+		float diffPressure = ((float)_truePressure / (float)GroundPressure);
+		_altitudeMeters =  altitudeOffset + 44330.0 * (1.0 - pow(diffPressure, 0.190295));
+	}
 }

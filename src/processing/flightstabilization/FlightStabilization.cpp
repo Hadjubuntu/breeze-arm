@@ -34,6 +34,7 @@ _tau(Vect3D::zero())
 	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
 	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
 	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
+	_pidAltitude.init(0.1, 0.0, 0.05, 6);
 
 	_ahrs = ahrs;
 	_throttleOut = 0.0;
@@ -107,15 +108,36 @@ void FlightStabilization::process()
 			_pidPitch.getOutput(),
 			1.6 *_Krate->getValue() * (yawRate - _gyroRot[2]));
 
-	if (Conf::getInstance().useBoostMotors)
-	{
-		_throttleOut = boostThrottleCompensateTiltAngle(_throttle);
-	}
-	else
-	{
-		_throttleOut = _throttle;
-	}
+	// Manual mode
+	if (!_flightControl->isAutoMode()) {
 
+		_pidAltitude.reset();
+
+		if (Conf::getInstance().useBoostMotors)
+		{
+			_throttleOut = boostThrottleCompensateTiltAngle(_throttle);
+		}
+		else
+		{
+			_throttleOut = _throttle;
+		}
+	}
+	// Auto mode
+	else {
+		if (_dt == 0.0) {
+			_dt = 1.0/_freqHz;
+		}
+		float altitudeSetpointMeters = 1.0; // Test to 50 centimeters
+		float errorAltMeters = altitudeSetpointMeters - _ahrs->getAltitudeMeters();
+		float errorVz = errorAltMeters - _ahrs->getVz();
+		Bound(errorVz, -1.0, 1.0); // -1 to 1 m/s climbrate
+
+		_pidAltitude.update(errorVz, _dt);
+
+		float estimThrottle = 0.4 + _pidAltitude.getOutput();
+		Bound(estimThrottle, 0.0, 0.85); // Limit to 85% max throttle
+		_throttleOut = estimThrottle;
+	}
 }
 
 float FlightStabilization::boostThrottleCompensateTiltAngle(float throttle)

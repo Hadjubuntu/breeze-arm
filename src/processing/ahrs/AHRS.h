@@ -37,7 +37,7 @@ private:
 	Accelerometer _accelerometer;
 
 	/** Barometer */
-//	Baro _baro;
+	Baro *_baro;
 
 	// Yaw computed from gyro integration
 	float _yawFromGyro;
@@ -50,7 +50,7 @@ private:
 	float _vZ;
 
 public:
-	AHRS();
+	AHRS(Baro *);
 
 	/**
 	 * Initialize sensors accelerometer and gyro
@@ -82,6 +82,11 @@ public:
 
 	float getVz() {
 		return _vZ;
+	}
+
+	float getAltitudeMeters()
+	{
+		return _baro->getAltitudeMeters();
 	}
 
 
