@@ -138,27 +138,6 @@ void Baro::calculateTruePressure()
 	unsigned long tmp;
 	long p;
 
-	/**b6 = b5 - 4000;
-	x1 = (b2 * (b6 * b6 >> 12)) >> 11;
-	x2 = ac2 * b6 >> 11;
-	x3 = x1 + x2;
-
-	b3 = (((ac1*4 + x3)<<OVERSAMPLING) + 2) / 4;
-	x1 = ac3 * b6 >> 13;
-	x2 = (b1 * (b6 * b6 >> 12)) >> 16;
-	x3 = ((x1 + x2) + 2) >> 2;
-
-	b4 = (ac4 * (unsigned long) (x3 + 32768)) >> 15;
-	b7 = ((unsigned long) _uncompensatedPressure - b3) * (50000 >> OVERSAMPLING);
-	tmpPressure = b7 < 0x80000000 ? (b7 * 2) / b4 : (b7 / b4) * 2;
-
-	x1 = (tmpPressure >> 8) * (tmpPressure >> 8);
-	x1 = (x1 * 3038) >> 16;
-	x2 = (-7357 * tmpPressure) >> 16;
-	long newPressure = (tmpPressure + ((x1 + x2 + 3791) >> 4));
-
-	_truePressure = (long)(0.9 * _truePressure + 0.1 * newPressure);
-	 */
 
 	b6 = b5 - 4000;
 	x1 = (b2 * (b6 * b6 >> 12)) >> 11;
@@ -184,7 +163,7 @@ void Baro::calculateAltitude()
 	if (_iter < 20) {
 		_altitudeMeters = 0.0f; // throw data
 	}
-	if (_iter >= 20  && _iter <= 200)
+	else if (_iter >= 20  && _iter <= 200)
 	{
 		float alpha = 0.7;
 		// First value set to computed value
