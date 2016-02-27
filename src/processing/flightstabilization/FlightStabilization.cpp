@@ -34,7 +34,7 @@ _tau(Vect3D::zero())
 	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
 	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
 	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
-	_pidAltitude.init(0.1, 0.0, 0.05, 6);
+	_pidAltitude.init(0.1 , 0.0, 0.05, 6);
 
 	_ahrs = ahrs;
 	_throttleOut = 0.0;
