@@ -34,7 +34,7 @@ _tau(Vect3D::zero())
 	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
 	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
 	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
-	_pidAltitude.init(0.1 , 0.0, 0.05, 6);
+	_pidAltitude.init(0.06 , 0.0, 0.04, 6);
 
 	_ahrs = ahrs;
 	_throttleOut = 0.0;
@@ -127,9 +127,9 @@ void FlightStabilization::process()
 		if (_dt == 0.0) {
 			_dt = 1.0/_freqHz;
 		}
-		float altitudeSetpointMeters = 1.0; // Test to 50 centimeters
+		float altitudeSetpointMeters = 0.6; // Test to 60 centimeters
 		float errorAltMeters = altitudeSetpointMeters - _ahrs->getAltitudeMeters();
-		float errorVz = errorAltMeters - _ahrs->getVz();
+		float errorVz = 0.8*(errorAltMeters - _ahrs->getVz());
 		Bound(errorVz, -1.0, 1.0); // -1 to 1 m/s climbrate
 
 		_pidAltitude.update(errorVz, _dt);
