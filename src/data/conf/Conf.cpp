@@ -41,6 +41,9 @@ Conf::Conf()
 	_parameters.push_back(Param<float>("flightStabilization_Kangle", 2.5f));
 	_parameters.push_back(Param<float>("flightStabilization_Krate", 1.26f));
 
+	// Flight stab altitude controller
+	_parameters.push_back(Param<float>("flightStabilization_throttleHover", 0.4f));
+
 }
 
 

@@ -42,6 +42,10 @@ private:
 	PID _pidRoll;
 	PID _pidPitch;
 	PID _pidAltitude;
+
+	float _throttleHover;
+	float _throttleTarget;
+	float _throttleSlewRate;
 public:
 	/**
 	 * Constructor

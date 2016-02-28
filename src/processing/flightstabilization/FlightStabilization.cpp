@@ -30,13 +30,16 @@ _tau(Vect3D::zero())
 	_Pw = Conf::getInstance().get("flightStabilization_Pw");
 	_Kangle = Conf::getInstance().get("flightStabilization_Kangle");
 	_Krate = Conf::getInstance().get("flightStabilization_Krate");
+	_throttleHover = Conf::getInstance().get("flightStabilization_throttleHover");
 
 	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
 	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
 	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
-	_pidAltitude.init(0.06 , 0.0, 0.04, 6);
+	_pidAltitude.init(0.6, 0.0, 0.02, 5);
 
 	_ahrs = ahrs;
+	_throttleTarget = 0.0;
+	_throttleSlewRate = 0.3; // 3% per second
 	_throttleOut = 0.0;
 	_flightControl = flightControl;
 }
@@ -127,16 +130,20 @@ void FlightStabilization::process()
 		if (_dt == 0.0) {
 			_dt = 1.0/_freqHz;
 		}
-		float altitudeSetpointMeters = 0.6; // Test to 60 centimeters
+		float altitudeSetpointMeters = 0.8; // Test to 80 centimeters
 		float errorAltMeters = altitudeSetpointMeters - _ahrs->getAltitudeMeters();
-		float errorVz = 0.8*(errorAltMeters - _ahrs->getVz());
+		float errorVz = 0.5*(errorAltMeters - _ahrs->getVz());
 		Bound(errorVz, -1.0, 1.0); // -1 to 1 m/s climbrate
 
 		_pidAltitude.update(errorVz, _dt);
 
-		float estimThrottle = 0.4 + _pidAltitude.getOutput();
-		Bound(estimThrottle, 0.0, 0.85); // Limit to 85% max throttle
-		_throttleOut = estimThrottle;
+		_throttleTarget = _throttleHover + _pidAltitude.getOutput();
+		Bound(_throttleTarget, 0.0, 0.85); // Limit to 85% max throttle
+
+		float dThrottle = _throttleTarget - _throttleOut;
+		Bound(dThrottle, -_throttleSlewRate / _freqHz, _throttleSlewRate / _freqHz);
+
+		_throttleOut = _throttleOut + dThrottle;
 	}
 }
 
