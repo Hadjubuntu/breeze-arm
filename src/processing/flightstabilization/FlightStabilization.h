@@ -43,7 +43,7 @@ private:
 	PID _pidPitch;
 	PID _pidAltitude;
 
-	float _throttleHover;
+	Param<float> *_throttleHover;
 	float _throttleTarget;
 	float _throttleSlewRate;
 public:
@@ -66,6 +66,8 @@ public:
 	 */
 	void process();
 	void callback() {};
+
+	void stabilizeAltitude();
 
 	float boostThrottleCompensateTiltAngle(float throttle);
 	bool isSafeToUseBoost(float throttle, float combinedTilt);

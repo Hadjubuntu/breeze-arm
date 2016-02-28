@@ -39,7 +39,7 @@ _tau(Vect3D::zero())
 
 	_ahrs = ahrs;
 	_throttleTarget = 0.0;
-	_throttleSlewRate = 0.3; // 3% per second
+	_throttleSlewRate = 0.3; // 30% per second
 	_throttleOut = 0.0;
 	_flightControl = flightControl;
 }
@@ -111,6 +111,15 @@ void FlightStabilization::process()
 			_pidPitch.getOutput(),
 			1.6 *_Krate->getValue() * (yawRate - _gyroRot[2]));
 
+	// Control altitude
+	// ---
+	stabilizeAltitude();
+
+}
+
+void FlightStabilization::stabilizeAltitude()
+{
+
 	// Manual mode
 	if (!_flightControl->isAutoMode()) {
 
@@ -137,7 +146,7 @@ void FlightStabilization::process()
 
 		_pidAltitude.update(errorVz, _dt);
 
-		_throttleTarget = _throttleHover + _pidAltitude.getOutput();
+		_throttleTarget = _throttleHover->getValue() + _pidAltitude.getOutput();
 		Bound(_throttleTarget, 0.0, 0.85); // Limit to 85% max throttle
 
 		float dThrottle = _throttleTarget - _throttleOut;
