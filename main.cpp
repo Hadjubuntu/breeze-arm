@@ -58,7 +58,7 @@ FlightStabilization flightStabilization(&ahrs, &flightControl);
 ActuatorControl actuatorControl(&flightStabilization);
 
 /** Telemetry to keep GCS update */
-Telemetry telemetry(&ahrs, &flightControl);
+Telemetry telemetry(&ahrs, &flightControl, &rfControler);
 
 /** Sonar to measure distance */
 //Sonar sonar;

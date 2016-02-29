@@ -11,13 +11,15 @@
 #include "../../core/Processing.h"
 #include "../ahrs/AHRS.h"
 #include "../flightstabilization/FlightControl.h"
+#include "../../link/RfControler.h"
 
 class Telemetry : public Processing {
 private:
 	AHRS *_ahrs;
 	FlightControl *_flightControl;
+	RfControler *_rfControler;
 public:
-	Telemetry(AHRS*, FlightControl*);
+	Telemetry(AHRS*, FlightControl*, RfControler*);
 
 	void init();
 	void process();
