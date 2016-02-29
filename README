@@ -1,1 +1,11 @@
 Breeze ARM
+
+Install toolchain
+sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded
+sudo apt-get update
+sudo apt-get install gcc-arm-none-eabi=4.9.3.2015q3-1wily1
+
+
+then compile project :
+make
+sudo make install to flash the board
