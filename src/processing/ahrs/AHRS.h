@@ -89,6 +89,10 @@ public:
 		return _baro->getAltitudeMeters();
 	}
 
+	Baro* getBaro() {
+		return _baro;
+	}
+
 
 };
 

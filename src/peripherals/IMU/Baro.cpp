@@ -157,6 +157,13 @@ void Baro::calculateTruePressure()
 	_truePressure = 0.8*_truePressure + 0.2*(p + ((x1 + x2 + 3791) >> 4));
 }
 
+void Baro::recalibrateAtZeroThrottle()
+{
+	float alpha = 0.05;
+	GroundPressure = (long) (alpha*GroundPressure + (1.0-alpha) * _truePressure);
+	GroundTemp =  (long) (alpha*GroundTemp  + (1.0-alpha) * _trueTemperature);
+}
+
 void Baro::calculateAltitude()
 {
 	// Calibration value
@@ -168,7 +175,7 @@ void Baro::calculateAltitude()
 		float alpha = 0.7;
 		// First value set to computed value
 		if (_firstMeasure) {
-			alpha = 0.7;
+			alpha = 0.0;
 			_firstMeasure = false;
 		}
 		GroundPressure = (long) (alpha*GroundPressure + (1.0-alpha) * _truePressure);

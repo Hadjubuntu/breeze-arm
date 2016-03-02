@@ -142,6 +142,8 @@ endif
 
 sketch: clean build-check MSG_INFO $(BUILD_PATH)/$(BOARD).bin
 
+all: sketch
+
 clean:
 	rm -rf build
 
