@@ -17,7 +17,7 @@
  */
 
 // good values : Pq=20; Pw=3
-FlightStabilization::FlightStabilization(AHRS *ahrs, FlightControl *flightControl) :
+FlightStabilization::FlightStabilization(AHRS *ahrs, FlightControl *flightControl, Sonar *sonar) :
 Processing(),
 _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
@@ -35,13 +35,14 @@ _tau(Vect3D::zero())
 	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
 	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
 	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
-	_pidAltitude.init(0.18, 0.0, 0.01, 6);
+	_pidAltitude.init(0.2, 0.0, 0.01, 6);
 
 	_ahrs = ahrs;
 	_throttleTarget = 0.0;
-	_throttleSlewRate = 0.05; // 5% per second
+	_throttleSlewRate = 0.03; // 3% per second
 	_throttleOut = 0.0;
 	_flightControl = flightControl;
+	_sonar = sonar;
 }
 
 
@@ -144,15 +145,22 @@ void FlightStabilization::stabilizeAltitude()
 		if (_dt == 0.0) {
 			_dt = 1.0/_freqHz;
 		}
-		float altitudeSetpointMeters = 1.0; // Test to 100 centimeters
-		float errorAltMeters = altitudeSetpointMeters - _ahrs->getAltitudeMeters();
-		float errorVz = 0.5*(errorAltMeters - _ahrs->getVz());
+
+		float refAltitudeMeters = _ahrs->getAltitudeMeters();
+
+		if (_sonar->isHealthy() && _sonar->getOutput() < 200) {
+			refAltitudeMeters = _sonar->getOutput() / 100.0f;
+		}
+
+		float altitudeSetpointMeters = 0.8 ; // Test to 100 centimeters
+		float errorAltMeters = altitudeSetpointMeters - refAltitudeMeters;
+		float errorVz = 0.8*(errorAltMeters - _ahrs->getVz());
 		Bound(errorVz, -1.0, 1.0); // -1 to 1 m/s climbrate
 
 		_pidAltitude.update(errorVz, _dt);
 
 		_throttleTarget = _throttleHover->getValue() + _pidAltitude.getOutput();
-		Bound(_throttleTarget, 0.0, 0.82); // Limit to 82% max throttle
+		Bound(_throttleTarget, 0.0, 0.8); // Limit to 80% max throttle
 
 		float dThrottle = _throttleTarget - _throttleOut;
 		Bound(dThrottle, -_throttleSlewRate / _freqHz, _throttleSlewRate / _freqHz);

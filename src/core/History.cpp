@@ -17,6 +17,7 @@ void History<T>::add(T element)
 	// Erase too old elements
 	if (_history.size() > _size) {
 		_history.erase(_history.begin(), _history.begin()+(_history.size()-_size));
+		_history.clear();
 	}
 }
 

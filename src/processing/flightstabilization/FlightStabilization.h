@@ -14,6 +14,7 @@
 #include "../../math/pid/PID.h"
 #include "../ahrs/AHRS.h"
 #include "../flightstabilization/FlightControl.h"
+#include "../nav/sonar/Sonar.h"
 
 class FlightStabilization : public Processing {
 private:
@@ -21,6 +22,7 @@ private:
 	// ---
 	AHRS *_ahrs;
 	FlightControl *_flightControl;
+	Sonar *_sonar;
 
 	// Inputs
 	// ------------------
@@ -50,7 +52,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	FlightStabilization(AHRS*, FlightControl*);
+	FlightStabilization(AHRS*, FlightControl*, Sonar*);
 
 	/**
 	 * TODO
