@@ -48,6 +48,7 @@ private:
 	Param<float> *_throttleHover;
 	float _throttleTarget;
 	float _throttleSlewRate;
+	float _meanAccZ;
 public:
 	/**
 	 * Constructor
@@ -87,6 +88,11 @@ public:
 
 	Quaternion getTargetAttitude() {
 		return _targetAttitude;
+	}
+
+	// Debug
+	float getErrorAltitude() {
+		return _pidAltitude.getError();
 	}
 };
 

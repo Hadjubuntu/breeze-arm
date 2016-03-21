@@ -195,10 +195,11 @@ void loop()
 //				baro.getTruePressure()/100.0f, baro.getGroundPressure()/100.0f,
 //				flightStabilization.getThrottle()) ;
 
-		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|baro_alt=%.2f", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
+		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|baro_alt=%.2f|error_alt=%.3f", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
 				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
 				baro.getAltitudeMeters()*100.0f,
-				sonar.getOutput()) ;
+				sonar.getOutput(),
+				flightStabilization.getErrorAltitude()) ;
 
 
 

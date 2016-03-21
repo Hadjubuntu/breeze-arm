@@ -34,6 +34,7 @@ AHRS::AHRS(Baro *baro) : Processing(), _grot(Vect3D::zero()),
 	_meanAccZ = 0.0;
 	_itrAccZ = 0;
 	_vZ = 0.0;
+	_analyzedAccZ = 0.0;
 	_baro = baro;
 }
 
@@ -167,24 +168,24 @@ void AHRS::computeVz()
 
 	float Kd = 0.99;
 
-	float analyzedAccZ = acc_Ef.getZ() - _meanAccZ;
+	_analyzedAccZ = acc_Ef.getZ() - _meanAccZ;
 
 	// Filter low value with no-tolerance (set value to zero)
-	if (fabs(analyzedAccZ) < 0.05) {
-		analyzedAccZ = 0.0;
+	if (fabs(_analyzedAccZ) < 0.05) {
+		_analyzedAccZ = 0.0;
 	}
 	// Filter low value with tolerance
-	else if (fabs(analyzedAccZ) < 0.1) {
-		analyzedAccZ = analyzedAccZ / 4.0;
+	else if (fabs(_analyzedAccZ) < 0.1) {
+		_analyzedAccZ = _analyzedAccZ / 4.0;
 	}
 
 	float factorPeak = 1.0;
 
 	// Store date of peak acceleration in z body-fame value
-	if (analyzedAccZ > 0.3) {
+	if (_analyzedAccZ > 0.3) {
 		_lastPositiveAccPeak = Date::now();
 	}
-	else if (analyzedAccZ < -0.3) {
+	else if (_analyzedAccZ < -0.3) {
 		_lastNegativeAccPeak = Date::now();
 	}
 	else {
@@ -193,21 +194,21 @@ void AHRS::computeVz()
 	}
 
 	// Filter counter-peak except if fast change of peak sign
-	if (analyzedAccZ > 0.0
+	if (_analyzedAccZ > 0.0
 			&& now.durationFrom(_lastNegativeAccPeak) < 1.0
 			&& now.durationFrom(_lastPositiveAccPeak) >= 2.0) {
 		factorPeak = 0.05;
 		Kd = 0.9;
 	}
-	else 	if (analyzedAccZ < 0.0
+	else 	if (_analyzedAccZ < 0.0
 			&& now.durationFrom(_lastPositiveAccPeak) < 1.0
 			&& now.durationFrom(_lastNegativeAccPeak) >= 2.0) {
 		factorPeak = 0.05;
 		Kd = 0.9;
 	}
 
-	analyzedAccZ = analyzedAccZ * factorPeak;
+	_analyzedAccZ = _analyzedAccZ * factorPeak;
 
 	// TOdo increase kd if long term sign.. decrease when freeze
-	_vZ = Kd * (_vZ + 9.81*analyzedAccZ * _dt);
+	_vZ = Kd * (_vZ + 9.81*_analyzedAccZ * _dt);
 }

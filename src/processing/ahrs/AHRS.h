@@ -48,6 +48,7 @@ private:
 	int _itrAccZ;
 	float _meanAccZ;
 	float _vZ;
+	float _analyzedAccZ;
 
 public:
 	AHRS(Baro *);
@@ -82,6 +83,10 @@ public:
 
 	float getVz() {
 		return _vZ;
+	}
+
+	float getAnalyzedAccZ() {
+		return _analyzedAccZ;
 	}
 
 	float getAltitudeMeters()
