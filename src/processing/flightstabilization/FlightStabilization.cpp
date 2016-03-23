@@ -35,11 +35,11 @@ _tau(Vect3D::zero())
 	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
 	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
 	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
-	_pidAltitude.init(0.8, 0.04, 0.1, 4);
+	_pidAltitude.init(0.55, 0.04, 0.01, 4);
 
 	_ahrs = ahrs;
 	_throttleTarget = 0.0;
-	_throttleSlewRate = 0.15; // 15% per second
+	_throttleSlewRate = 0.4; // 50% per second
 	_throttleOut = 0.0;
 	_flightControl = flightControl;
 	_sonar = sonar;
@@ -103,8 +103,8 @@ void FlightStabilization::process()
 	BoundAbs(pitchRate, 3.14);
 
 
-	_pidRoll.setGainParameters(_Krate->getValue(), 0.01, 0.01);
-	_pidPitch.setGainParameters(_Krate->getValue(), 0.01, 0.01);
+	_pidRoll.setGainParameters(_Krate->getValue(), 0.01, 0.0);
+	_pidPitch.setGainParameters(_Krate->getValue(), 0.01, 0.0);
 
 	_pidRoll.update(rollRate - _gyroRot[0], 1/_freqHz);
 	_pidPitch.update(pitchRate - _gyroRot[1], 1/_freqHz);
@@ -154,22 +154,21 @@ void FlightStabilization::stabilizeAltitude()
 			refAltitudeMeters = _sonar->getOutput() / 100.0f;
 		}
 
-		float altitudeSetpointMeters = 1.5; // Test to 150 centimeters
+		float altitudeSetpointMeters = 1.0; // Test to 150 centimeters
 		float errorAltMeters = altitudeSetpointMeters - refAltitudeMeters;
-		float accZsetpoint = 0.1 * errorAltMeters;
-		Bound(accZsetpoint, -0.2, 0.2);
+		float accZsetpoint = 0.05 * errorAltMeters;
+		Bound(accZsetpoint, -0.1, 0.1);
 
 		float errorAccZ = (accZsetpoint + (_ahrs->getAnalyzedAccZ() - _meanAccZ));
-		Bound(errorAccZ, -0.15, 0.15); // 0.2 accZ
+		Bound(errorAccZ, -0.12, 0.12); // 0.2 accZ
 
 		_pidAltitude.update(errorAccZ, _dt);
 
 		_throttleTarget = _throttleHover->getValue() + _pidAltitude.getOutput();
-		Bound(_throttleTarget, 0.0, 0.7); // Limit to 70% max throttle
+		Bound(_throttleTarget, 0.0, 0.67); // Limit to 70% max throttle
 
 		float dThrottle = _throttleTarget - _throttleOut;
-		float throttleSlewRateNegatif = _throttleSlewRate / 2.0f; // 1.5% for 15% positive slew rate
-		Bound(dThrottle, -throttleSlewRateNegatif / _freqHz, _throttleSlewRate / _freqHz);
+		Bound(dThrottle, -_throttleSlewRate / _freqHz, _throttleSlewRate / _freqHz);
 
 		_throttleOut = _throttleOut + dThrottle;
 	}

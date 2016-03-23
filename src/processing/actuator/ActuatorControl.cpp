@@ -75,7 +75,7 @@ void ActuatorControl::initMotorRepartition() {
 
 		// Rear motor
 		_motorActivation[2][0] = 0;
-		_motorActivation[2][1] = -1.2; // Boost coefficient to compensate rear servo weight
+		_motorActivation[2][1] = -1.3; // Boost coefficient to compensate rear servo weight
 
 
 		break;
