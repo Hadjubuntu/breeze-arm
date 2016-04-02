@@ -44,6 +44,9 @@ _tau(Vect3D::zero())
 	_flightControl = flightControl;
 	_sonar = sonar;
 	_meanAccZ = 1.0;
+
+	// Debug
+	currentRollErrorAngle = 0.0;
 }
 
 
@@ -117,6 +120,9 @@ void FlightStabilization::process()
 	// ---
 	stabilizeAltitude();
 
+	// Debug data
+	// ---
+	currentRollErrorAngle = rpyTarget[0] - rpyCurrent[0];
 }
 
 void FlightStabilization::stabilizeAltitude()
@@ -138,20 +144,30 @@ void FlightStabilization::stabilizeAltitude()
 
 		if (_throttleOut == 0.0)
 		{
+			// Recalibrate barometer
 			_ahrs->getBaro()->recalibrateAtZeroThrottle();
+
+			// Average mean acceleration in z-axis
 			_meanAccZ = 0.7 * _meanAccZ + 0.3 * _ahrs->getAnalyzedAccZ();
 		}
 	}
 	// Auto mode
-	else {
+	else
+	{
 		if (_dt == 0.0) {
 			_dt = 1.0/_freqHz;
 		}
 
 		float refAltitudeMeters = _ahrs->getAltitudeMeters();
 
-		if (_sonar->isHealthy() && _sonar->getOutput() < 200) {
+		if (_sonar->isHealthy() && _sonar->getOutput() < 200)
+		{
 			refAltitudeMeters = _sonar->getOutput() / 100.0f;
+		}
+		else
+		{
+			// Altitude at least equals to max sonar altitude in meters
+			refAltitudeMeters = min(2.0, refAltitudeMeters);
 		}
 
 		float altitudeSetpointMeters = 1.0; // Test to 150 centimeters

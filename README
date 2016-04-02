@@ -5,7 +5,7 @@ sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded
 sudo apt-get update
 sudo apt-get install gcc-arm-none-eabi=4.9.3.2015q3-1wily1
 
-Install also dfu-util
+Install also dfu-util (sudo apt-get install dfu-util, check v0.8 is used at least)
 
 then compile project :
 make

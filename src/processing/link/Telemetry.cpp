@@ -53,6 +53,7 @@ void Telemetry::process()
 
 	// Send packet
 	// --------------
+	// Disable yet
 	_rfControler->addPacketToSend(packet);
 }
 

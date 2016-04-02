@@ -25,10 +25,14 @@ void RfControler::receiveNewPackets() {
 		{
 			vector<string> datas = StrUtils::explode(_incomingPacket, '|');
 
-			if (datas.size() >= 2)
+			if (datas.size() >= 1)
 			{
+				string payload = "";
+				if (datas.size() > 1) {
+					payload = datas[1];
+				}
 				// Add packet to history
-				RfPacket e(Date::now(), datas[0], datas[1]);
+				RfPacket e(Date::now(), datas[0], payload);
 				_receivedPackets.push_back(e);
 			}
 

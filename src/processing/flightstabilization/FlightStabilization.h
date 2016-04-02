@@ -16,6 +16,8 @@
 #include "../flightstabilization/FlightControl.h"
 #include "../nav/sonar/Sonar.h"
 
+
+
 class FlightStabilization : public Processing {
 private:
 	// Dependencies
@@ -49,7 +51,13 @@ private:
 	float _throttleTarget;
 	float _throttleSlewRate;
 	float _meanAccZ;
+
+
 public:
+
+	// Debug
+	float currentRollErrorAngle;
+
 	/**
 	 * Constructor
 	 */
@@ -93,6 +101,14 @@ public:
 	// Debug
 	float getErrorAltitude() {
 		return _pidAltitude.getError();
+	}
+
+	PID getPidRoll() {
+		return _pidRoll;
+	}
+
+	PID getPidPitch() {
+		return _pidPitch;
 	}
 };
 

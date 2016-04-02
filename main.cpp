@@ -153,31 +153,16 @@ void str_resetCharArray(char *p) {
 
 void loop()
 {
+
 	// Call brain loop function to udpate the processings
 	// ----
 	uavBrain.loop();
 
-	//	if (uavBrain.getTickId() % 50 == 0)
-	//	{
-	//		if (currentSize <= 70) {
-	//			sprintf(currentPacket, "%s|%.2f", currentPacket, flightStabilization.getThrottle()); // flightStabilization.getThrottle()); // ahrs.getVz()
-	//			currentSize += 8;
-	//		}
-	//		else
-	//		{
-	//			sprintf(currentPacket, "%s|END", currentPacket);
-	//			RfPacket packet(Date::now(), "LOG", currentPacket);
-	//			rfControler.addPacketToSend(packet);
-	//
-	//			currentSize = 0;
-	//			str_resetCharArray(currentPacket);
-	//		}
-	//	}
 
 
 	// Prints infos
 	// ----
-	if (uavBrain.getTickId() % 2000 == 0)
+	if (uavBrain.getTickId() % 1500 == 0)
 	{
 		float rpy[3];
 		ahrs.getAttitude().toRollPitchYaw(rpy);
@@ -195,11 +180,11 @@ void loop()
 //				baro.getTruePressure()/100.0f, baro.getGroundPressure()/100.0f,
 //				flightStabilization.getThrottle()) ;
 
-		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|baro_alt=%.2f|error_alt=%.3f", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
+		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|sonar=%.2f|error_droll=%.3f", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
 				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
 				baro.getAltitudeMeters()*100.0f,
 				sonar.getOutput(),
-				flightStabilization.getErrorAltitude()) ;
+				FastMath::toDegrees(flightStabilization.currentRollErrorAngle)) ;
 
 
 

@@ -36,6 +36,7 @@ public:
 	bool isHealthy() {
 		return _healthy;
 	}
+
 };
 
 #endif /* PROCESSING_NAV_SONAR_SONAR_H_ */
