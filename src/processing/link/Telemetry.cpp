@@ -25,7 +25,7 @@ Telemetry::Telemetry(AHRS *pAhrs,
 	_rfControler = pRfControler;
 
 	// 1 Hz updater
-	_freqHz = 1;
+	freqHz = 1;
 }
 
 void Telemetry::init()

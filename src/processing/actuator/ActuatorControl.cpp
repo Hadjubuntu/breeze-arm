@@ -50,7 +50,7 @@ unsigned short levelToCtrl(unsigned short level)
  */
 ActuatorControl::ActuatorControl(FlightStabilization *pFlightStab) : Processing()
 {
-	_freqHz = 50;
+	freqHz = 50;
 	_flightStabilization = pFlightStab;
 
 	// Retrieve conf params

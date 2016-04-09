@@ -11,7 +11,7 @@
 
 Baro::Baro() : Processing(), _i2c(I2C::getInstance(BMP085_ADDRESS))
 {
-	_freqHz = 20;
+	freqHz = 20;
 
 	_dev_address = BMP085_ADDRESS;
 	_pressure_samples = 1;

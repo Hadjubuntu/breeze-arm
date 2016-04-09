@@ -12,7 +12,7 @@
 
 RfControler::RfControler() : Processing()
 {
-	_freqHz = 50;
+	freqHz = 50;
 	_iterSendPacket = 0;
 }
 

@@ -20,7 +20,7 @@ protected:
 	Logger _logger;
 
 	/** Frequency of process function calling (Hertz) */
-	int _freqHz;
+	int freqHz;
 
 	/** Date last execution */
 	Date _lastExecutionDate;

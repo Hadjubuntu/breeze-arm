@@ -16,6 +16,7 @@
 class FsAutotune : public Processing {
 protected:
 	std::list<PID> pidList;
+
 public:
 	FsAutotune();
 
@@ -25,6 +26,7 @@ public:
 	void process();
 	void callback() {};
 
+	void updateMeasure(PID);
 	void autotune(PID);
 
 	void clearPidList() {

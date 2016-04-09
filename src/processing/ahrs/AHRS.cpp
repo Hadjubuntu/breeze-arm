@@ -26,7 +26,7 @@ AHRS::AHRS(Baro *baro) : Processing(), _grot(Vect3D::zero()),
 //		_baro(Baro::create())
 {
 	// 400 Hz update
-	_freqHz = 400;
+	freqHz = 400;
 
 	gyro_correct_int[0] = 0.0;
 	gyro_correct_int[1] = 0.0;
@@ -140,7 +140,7 @@ void AHRS::process()
 	}
 
 	// Integrate gyro rotation Z to have an estimation of the yaw
-	_yawFromGyro += gyros.getZ() / _freqHz;
+	_yawFromGyro += gyros.getZ() / freqHz;
 	_yawFromGyro = 0.9925 * _yawFromGyro;
 	_yawFromGyro = FastMath::constrainAngleMinusPiPlusPi(_yawFromGyro);
 
@@ -155,7 +155,7 @@ void AHRS::computeVz()
 	Vect3D acc_Ef = _attitude.conjugate().rotate(acc);
 
 	// Compute average for 2 seconds
-	if (_itrAccZ < _freqHz * 2) {
+	if (_itrAccZ < freqHz * 2) {
 		if (_itrAccZ == 0) {
 			_meanAccZ = acc_Ef.getZ();
 		}

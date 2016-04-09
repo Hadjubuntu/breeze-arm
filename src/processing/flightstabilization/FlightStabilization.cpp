@@ -23,7 +23,7 @@ _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
 _tau(Vect3D::zero())
 {
-	_freqHz = 100;
+	freqHz = 100;
 	_throttle = 0;
 	_yawFromGyro = 0.0;
 	_Pq = Conf::getInstance().get("flightStabilization_Pq");
@@ -109,8 +109,8 @@ void FlightStabilization::process()
 	_pidRoll.setGainParameters(_Krate->getValue(), 0.01, 0.0);
 	_pidPitch.setGainParameters(_Krate->getValue(), 0.01, 0.0);
 
-	_pidRoll.update(rollRate - _gyroRot[0], 1/_freqHz);
-	_pidPitch.update(pitchRate - _gyroRot[1], 1/_freqHz);
+	_pidRoll.update(rollRate - _gyroRot[0], 1/freqHz);
+	_pidPitch.update(pitchRate - _gyroRot[1], 1/freqHz);
 
 	_tau = Vect3D(_pidRoll.getOutput(),
 			_pidPitch.getOutput(),
@@ -155,7 +155,7 @@ void FlightStabilization::stabilizeAltitude()
 	else
 	{
 		if (_dt == 0.0) {
-			_dt = 1.0/_freqHz;
+			_dt = 1.0/freqHz;
 		}
 
 		float refAltitudeMeters = _ahrs->getAltitudeMeters();
@@ -184,7 +184,7 @@ void FlightStabilization::stabilizeAltitude()
 		Bound(_throttleTarget, 0.0, 0.67); // Limit to 70% max throttle
 
 		float dThrottle = _throttleTarget - _throttleOut;
-		Bound(dThrottle, -_throttleSlewRate / _freqHz, _throttleSlewRate / _freqHz);
+		Bound(dThrottle, -_throttleSlewRate / freqHz, _throttleSlewRate / freqHz);
 
 		_throttleOut = _throttleOut + dThrottle;
 	}
