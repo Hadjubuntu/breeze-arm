@@ -15,10 +15,19 @@ protected:
 	Date storeDate;
 	FsAutotuneCollect *collecter;
 	float storedScore;
+	float previousScore;
 public:
 	FsAutotuneStoreMeasure(FsAutotuneCollect *collecter);
 
+	void init()
+	{
+
+	}
+	/**
+	 * Store data each x seconds
+	 */
 	void process();
+	void callback();
 
 	virtual ~FsAutotuneStoreMeasure();
 };

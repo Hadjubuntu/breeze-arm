@@ -10,12 +10,12 @@
 
 
 #include "../../core/Processing.h"
-#include "../../math/pid/PID.h"
+#include "FsAutotuneStoreMeasure.h"
 #include <list>
 
 class FsAutotune : public Processing {
 protected:
-	std::list<PID> pidList;
+	std::list<FsAutotuneStoreMeasure> storeMeasureList;
 
 public:
 	FsAutotune();
@@ -29,8 +29,8 @@ public:
 	void updateMeasure(PID);
 	void autotune(PID);
 
-	void clearPidList() {
-		pidList.clear();
+	void clear() {
+		storeMeasureList.clear();
 	}
 
 	virtual ~FsAutotune();

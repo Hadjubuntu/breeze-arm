@@ -14,7 +14,7 @@ FsAutotune::FsAutotune() :  Processing()
 
 void FsAutotune::process()
 {
-	for (PID pid : pidList)
+	for (FsAutotuneStoreMeasure storeMeasure : storeMeasureList)
 	{
 		// Store measure
 		updateMeasure(pid);

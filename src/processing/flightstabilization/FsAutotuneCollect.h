@@ -10,11 +10,18 @@
 
 class FsAutotuneCollect : public Processing {
 protected:
-	PID pid;
+	PID *pid;
 	float score;
 public:
-	FsAutotuneCollect();
+	FsAutotuneCollect(PID*);
 
+	void init()
+	{
+
+	}
+	/**
+	 * Compute an average score on pid output
+	 */
 	void process();
 
 	float getScore() {

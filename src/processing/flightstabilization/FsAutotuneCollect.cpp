@@ -7,19 +7,24 @@
 
 #include "FsAutotuneCollect.h"
 
-FsAutotuneCollect::FsAutotuneCollect() : Processing()
+FsAutotuneCollect::FsAutotuneCollect(PID *pPid) : Processing()
 {
 	freqHz = 50;
 	score = 0.0;
-
+	pid = pPid;
 }
 
 void FsAutotuneCollect::process()
 {
-// pid collect score
+	// Evaluate score
+	float currentScore = pid->getError();
+
+	// Average score
+	score = 0.7 * score + 0.3 * currentScore;
 }
 
-FsAutotuneCollect::~FsAutotuneCollect() {
-	// TODO Auto-generated destructor stub
+FsAutotuneCollect::~FsAutotuneCollect()
+{
+	// Default destructor
 }
 
