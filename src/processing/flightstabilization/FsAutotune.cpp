@@ -12,15 +12,32 @@ FsAutotune::FsAutotune() :  Processing()
 	freqHz = 50;
 }
 
+void FsAutotune::addAutotune(PID *pPid)
+{
+	FsAutotuneStoreMeasure storeMeasure(pPid);
+	storeMeasureList.push_back(&storeMeasure);
+}
+
 void FsAutotune::process()
 {
-	for (FsAutotuneStoreMeasure storeMeasure : storeMeasureList)
+	for (FsAutotuneStoreMeasure *storeMeasure : storeMeasureList)
 	{
-		// Store measure
-		updateMeasure(pid);
+		// FIXME : How to process children processing ? with different FreqHz
+		if (storeMeasure->isReady())
+		{
+			// Update execution date
+			storeMeasure->updateExecDate();
+
+			// Then execute the processing
+			storeMeasure->process();
+		}
+
+		// Execute collector at parent freq hz
+		storeMeasure->executeCollector();
+
 
 		// Proceed autotune
-		autotune(pid);
+		//		autotune(pid);
 	}
 }
 

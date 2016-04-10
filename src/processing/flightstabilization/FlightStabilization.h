@@ -43,8 +43,8 @@ private:
 	float _throttleOut;
 
 	// PID
-	PID _pidRoll;
-	PID _pidPitch;
+	PID pidRoll;
+	PID pidPitch;
 	PID _pidAltitude;
 
 	Param<float> *_throttleHover;
@@ -104,11 +104,11 @@ public:
 	}
 
 	PID getPidRoll() {
-		return _pidRoll;
+		return pidRoll;
 	}
 
 	PID getPidPitch() {
-		return _pidPitch;
+		return pidPitch;
 	}
 };
 

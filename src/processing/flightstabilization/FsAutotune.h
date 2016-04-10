@@ -10,21 +10,30 @@
 
 
 #include "../../core/Processing.h"
+#include "../../math/pid/PID.h"
 #include "FsAutotuneStoreMeasure.h"
-#include <list>
+#include <vector>
 
 class FsAutotune : public Processing {
 protected:
-	std::list<FsAutotuneStoreMeasure> storeMeasureList;
+	std::vector<FsAutotuneStoreMeasure*> storeMeasureList;
 
 public:
 	FsAutotune();
+
+	void init()
+	{
+
+	}
 
 	/**
 	 * Process and update data
 	 */
 	void process();
 	void callback() {};
+
+	// Add a new PID to autotune
+	void addAutotune(PID *pPid);
 
 	void updateMeasure(PID);
 	void autotune(PID);

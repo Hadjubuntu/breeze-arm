@@ -33,8 +33,8 @@ _tau(Vect3D::zero())
 	_throttleHover = Conf::getInstance().get("flightStabilization_throttleHover");
 
 	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
-	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
-	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
+	pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
+	pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
 	_pidAltitude.init(0.55, 0.04, 0.01, 4);
 
 	_ahrs = ahrs;
@@ -106,14 +106,14 @@ void FlightStabilization::process()
 	BoundAbs(pitchRate, 3.14);
 
 
-	_pidRoll.setGainParameters(_Krate->getValue(), 0.01, 0.0);
-	_pidPitch.setGainParameters(_Krate->getValue(), 0.01, 0.0);
+	pidRoll.setGainParameters(_Krate->getValue(), 0.01, 0.0);
+	pidPitch.setGainParameters(_Krate->getValue(), 0.01, 0.0);
 
-	_pidRoll.update(rollRate - _gyroRot[0], 1/freqHz);
-	_pidPitch.update(pitchRate - _gyroRot[1], 1/freqHz);
+	pidRoll.update(rollRate - _gyroRot[0], 1/freqHz);
+	pidPitch.update(pitchRate - _gyroRot[1], 1/freqHz);
 
-	_tau = Vect3D(_pidRoll.getOutput(),
-			_pidPitch.getOutput(),
+	_tau = Vect3D(pidRoll.getOutput(),
+			pidPitch.getOutput(),
 			1.3 *_Krate->getValue() * (yawRate - _gyroRot[2]));
 
 	// Control altitude

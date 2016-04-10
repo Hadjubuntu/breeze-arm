@@ -9,15 +9,18 @@
 #define PROCESSING_FLIGHTSTABILIZATION_FSAUTOTUNESTOREMEASURE_H_
 
 #include "FsAutotuneCollect.h"
+#include "../../core/Processing.h"
+#include "../../math/pid/PID.h"
+
 
 class FsAutotuneStoreMeasure : public Processing {
 protected:
 	Date storeDate;
-	FsAutotuneCollect *collecter;
+	FsAutotuneCollect *collector;
 	float storedScore;
 	float previousScore;
 public:
-	FsAutotuneStoreMeasure(FsAutotuneCollect *collecter);
+	FsAutotuneStoreMeasure(PID *pPid);
 
 	void init()
 	{
@@ -27,7 +30,14 @@ public:
 	 * Store data each x seconds
 	 */
 	void process();
-	void callback();
+	void callback() {}
+
+	void executeCollector()
+	{
+		collector->process();
+	}
+
+
 
 	virtual ~FsAutotuneStoreMeasure();
 };

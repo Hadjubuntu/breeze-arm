@@ -25,6 +25,7 @@
 #include "src/link/RfRouter.h"
 #include "src/processing/actuator/ActuatorControl.h"
 #include "src/processing/flightstabilization/FlightStabilization.h"
+#include "src/processing/flightstabilization/FsAutotune.h"
 #include "src/processing/flightstabilization/FlightControl.h"
 #include "src/processing/nav/sonar/Sonar.h"
 #include "src/processing/link/Telemetry.h"
@@ -63,6 +64,7 @@ ActuatorControl actuatorControl(&flightStabilization);
 /** Telemetry to keep GCS update */
 Telemetry telemetry(&ahrs, &flightControl, &rfControler);
 
+FsAutotune fsAutotune;
 
 void calibration()
 {
@@ -109,6 +111,11 @@ void setup()
 	// Calibration on AHRS
 	//----------------------
 	calibration();
+
+	// Autotune startup
+	//----------------------
+	PID pidRoll = flightStabilization.getPidRoll();
+	fsAutotune.addAutotune(&pidRoll);
 }
 
 // Test interpolation on IR value

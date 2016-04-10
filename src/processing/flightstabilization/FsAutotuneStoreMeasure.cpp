@@ -7,13 +7,13 @@
 
 #include "FsAutotuneStoreMeasure.h"
 
-FsAutotuneStoreMeasure::FsAutotuneStoreMeasure(FsAutotuneCollect *pCollecter)
+FsAutotuneStoreMeasure::FsAutotuneStoreMeasure(PID *pPid) : storeDate(Date::now())
 {
 	freqHz = 1;
-	storeDate = Date::now();
-	collecter = pCollecter;
 	storedScore = 0.0;
 	previousScore = 0.0;
+	FsAutotuneCollect collectorObj(pPid);
+	collector = &collectorObj;
 }
 
 void FsAutotuneStoreMeasure::process()
@@ -25,7 +25,7 @@ void FsAutotuneStoreMeasure::process()
 		previousScore = storedScore;
 
 		// Update new score
-		storedScore = collecter->getScore();
+		storedScore = collector->getScore();
 
 		// Update store date
 		storeDate = cDate;
