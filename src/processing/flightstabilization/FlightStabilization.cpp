@@ -154,8 +154,8 @@ void FlightStabilization::stabilizeAltitude()
 	// Auto mode
 	else
 	{
-		if (_dt == 0.0) {
-			_dt = 1.0/freqHz;
+		if (dt == 0.0) {
+			dt = 1.0/freqHz;
 		}
 
 		float refAltitudeMeters = _ahrs->getAltitudeMeters();
@@ -178,7 +178,7 @@ void FlightStabilization::stabilizeAltitude()
 		float errorAccZ = (accZsetpoint + (_ahrs->getAnalyzedAccZ() - _meanAccZ));
 		Bound(errorAccZ, -0.12, 0.12); // 0.2 accZ
 
-		_pidAltitude.update(errorAccZ, _dt);
+		_pidAltitude.update(errorAccZ, dt);
 
 		_throttleTarget = _throttleHover->getValue() + _pidAltitude.getOutput();
 		Bound(_throttleTarget, 0.0, 0.67); // Limit to 70% max throttle

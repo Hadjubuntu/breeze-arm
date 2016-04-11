@@ -12,14 +12,15 @@
 #include "../../core/Processing.h"
 #include "../../math/pid/PID.h"
 #include "FsAutotuneStoreMeasure.h"
+#include "FlightStabilization.h"
 #include <vector>
 
 class FsAutotune : public Processing {
 protected:
-	std::vector<FsAutotuneStoreMeasure*> storeMeasureList;
-
+	// Add a new PID to autotune
+	void addAutotune(PID *pPid);
 public:
-	FsAutotune();
+	FsAutotune(FlightStabilization *flightStabilization);
 
 	void init()
 	{
@@ -32,14 +33,20 @@ public:
 	void process();
 	void callback() {};
 
-	// Add a new PID to autotune
-	void addAutotune(PID *pPid);
 
 	void updateMeasure(PID);
 	void autotune(PID);
 
-	void clear() {
-		storeMeasureList.clear();
+
+	float getFirstMeasureScore() {
+		float scoreOutput = 999.0;
+
+		if (getProcChildren().size() > 0) {
+			FsAutotuneStoreMeasure *storeMeasure = ((FsAutotuneStoreMeasure*) (getProcChildren().at(0)));
+			scoreOutput = storeMeasure->getStoredScore();
+		}
+
+		return scoreOutput;
 	}
 
 	virtual ~FsAutotune();

@@ -38,6 +38,10 @@ public:
 	}
 
 
+	float getStoredScore() {
+		return storedScore;
+	}
+
 
 	virtual ~FsAutotuneStoreMeasure();
 };

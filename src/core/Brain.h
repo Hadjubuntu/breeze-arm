@@ -32,6 +32,9 @@ private:
 
 	// History of link command
 	History<int> _commands;
+
+	void processingExecution(Processing* proc);
+
 public:
 	/**
 	 * Constructor brain

@@ -7,38 +7,26 @@
 
 #include "FsAutotune.h"
 
-FsAutotune::FsAutotune() :  Processing()
+FsAutotune::FsAutotune(FlightStabilization *flightStabilization) :  Processing()
 {
 	freqHz = 50;
+
+	PID pidRoll = flightStabilization->getPidRoll();
+	addAutotune(&pidRoll);
+
+	PID pidPitch = flightStabilization->getPidPitch();
+	addAutotune(&pidPitch);
 }
 
 void FsAutotune::addAutotune(PID *pPid)
 {
 	FsAutotuneStoreMeasure storeMeasure(pPid);
-	storeMeasureList.push_back(&storeMeasure);
+	addProcChild(&storeMeasure);
 }
 
 void FsAutotune::process()
 {
-	for (FsAutotuneStoreMeasure *storeMeasure : storeMeasureList)
-	{
-		// FIXME : How to process children processing ? with different FreqHz
-		if (storeMeasure->isReady())
-		{
-			// Update execution date
-			storeMeasure->updateExecDate();
 
-			// Then execute the processing
-			storeMeasure->process();
-		}
-
-		// Execute collector at parent freq hz
-		storeMeasure->executeCollector();
-
-
-		// Proceed autotune
-		//		autotune(pid);
-	}
 }
 
 void FsAutotune::updateMeasure(PID pid)

@@ -110,16 +110,16 @@ void AHRS::process()
 
 
 	// Correct rates based on error, integral component dealt with in updateSensors
-	if (_dt > 0.0) {
-		const float kpInvdT = accelKp / _dt;
+	if (dt > 0.0) {
+		const float kpInvdT = accelKp / dt;
 		gyros += (accelError * kpInvdT);
 	}
 
 	float qdot[4];
-	qdot[0] = (-_attitude[1] * gyros[0] - _attitude[2] * gyros[1] - _attitude[3] * gyros[2]) * _dt *  0.5f;
-	qdot[1] = (_attitude[0] * gyros[0] - _attitude[3] * gyros[1] + _attitude[2] * gyros[2]) * _dt  * 0.5f;
-	qdot[2] = (_attitude[3] * gyros[0] + _attitude[0] * gyros[1] - _attitude[1] * gyros[2]) * _dt * 0.5f;
-	qdot[3] = (-_attitude[2] * gyros[0] + _attitude[1] * gyros[1] + _attitude[0] * gyros[2]) * _dt * 0.5f;
+	qdot[0] = (-_attitude[1] * gyros[0] - _attitude[2] * gyros[1] - _attitude[3] * gyros[2]) * dt *  0.5f;
+	qdot[1] = (_attitude[0] * gyros[0] - _attitude[3] * gyros[1] + _attitude[2] * gyros[2]) * dt  * 0.5f;
+	qdot[2] = (_attitude[3] * gyros[0] + _attitude[0] * gyros[1] - _attitude[1] * gyros[2]) * dt * 0.5f;
+	qdot[3] = (-_attitude[2] * gyros[0] + _attitude[1] * gyros[1] + _attitude[0] * gyros[2]) * dt * 0.5f;
 
 	// Take a time step
 	_attitude += qdot;
@@ -134,7 +134,7 @@ void AHRS::process()
 	// THIS SHOULD NEVER ACTUALLY HAPPEN
 	if ((fabsf(inv_qmag) > 1e3f) || isnan(inv_qmag)) {
 		_attitude = Quaternion::zero();
-		_logger.error("inv_qmag > 1e3f");
+		logger.error("inv_qmag > 1e3f");
 	} else {
 		_attitude *= inv_qmag;
 	}
@@ -210,5 +210,5 @@ void AHRS::computeVz()
 	_analyzedAccZ = _analyzedAccZ * factorPeak;
 
 	// TOdo increase kd if long term sign.. decrease when freeze
-	_vZ = Kd * (_vZ + 9.81*_analyzedAccZ * _dt);
+	_vZ = Kd * (_vZ + 9.81*_analyzedAccZ * dt);
 }
