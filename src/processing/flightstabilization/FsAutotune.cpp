@@ -13,9 +13,9 @@ FsAutotune::FsAutotune(FlightStabilization *flightStabilization) :  Processing()
 
 	PID pidRoll = flightStabilization->getPidRoll();
 	addAutotune(&pidRoll);
-
-	PID pidPitch = flightStabilization->getPidPitch();
-	addAutotune(&pidPitch);
+//
+//	PID pidPitch = flightStabilization->getPidPitch();
+//	addAutotune(&pidPitch);
 }
 
 void FsAutotune::addAutotune(PID *pPid)

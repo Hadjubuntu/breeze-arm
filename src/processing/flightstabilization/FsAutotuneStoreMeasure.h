@@ -15,8 +15,6 @@
 
 class FsAutotuneStoreMeasure : public Processing {
 protected:
-	Date storeDate;
-	FsAutotuneCollect *collector;
 	float storedScore;
 	float previousScore;
 public:
@@ -32,10 +30,6 @@ public:
 	void process();
 	void callback() {}
 
-	void executeCollector()
-	{
-		collector->process();
-	}
 
 
 	float getStoredScore() {

@@ -43,6 +43,7 @@ public:
 
 		if (getProcChildren().size() > 0) {
 			FsAutotuneStoreMeasure *storeMeasure = ((FsAutotuneStoreMeasure*) (getProcChildren().at(0)));
+
 			scoreOutput = storeMeasure->getStoredScore();
 		}
 
