@@ -20,6 +20,9 @@ public:
 		// TODO
 	}
 	void process();
+	void callback() {
+
+	};
 };
 
 #endif /* LINK_RFROUTER_H_ */

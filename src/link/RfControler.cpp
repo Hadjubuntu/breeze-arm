@@ -10,11 +10,9 @@
 #include "RfControler.h"
 #include "../core/StrUtils.h"
 
-
-
 RfControler::RfControler() : Processing()
 {
-	_freqHz = 20;
+	freqHz = 50;
 	_iterSendPacket = 0;
 }
 
@@ -27,10 +25,14 @@ void RfControler::receiveNewPackets() {
 		{
 			vector<string> datas = StrUtils::explode(_incomingPacket, '|');
 
-			if (datas.size() > 0)
+			if (datas.size() >= 1)
 			{
+				string payload = "";
+				if (datas.size() > 1) {
+					payload = datas[1];
+				}
 				// Add packet to history
-				RfPacket e(Date::now(), datas[0], datas[1]);
+				RfPacket e(Date::now(), datas[0], payload);
 				_receivedPackets.push_back(e);
 			}
 
@@ -47,7 +49,7 @@ void RfControler::receiveNewPackets() {
 void RfControler::sendPackets()
 {
 	_iterSendPacket ++;
-	if (_toSendPackets.size() > 0 && _iterSendPacket >= _freqHz / 5.0)
+	if (_toSendPackets.size() > 0) /** && _iterSendPacket >= _freqHz / 5.0) */
 	{
 		RfPacket packet = _toSendPackets.front();
 		_toSendPackets.pop_front();
@@ -55,18 +57,26 @@ void RfControler::sendPackets()
 
 		_iterSendPacket = 0;
 	}
-
-
-	if (_toSendPackets.size() > 50) {
-		_toSendPackets.clear();
-		// Throw error : to much packet to send
-	}
 }
 
 void RfControler::process()
 {
 	receiveNewPackets();
 	sendPackets();
+
+	checkMaxPacketInStack();
+}
+
+void RfControler::checkMaxPacketInStack()
+{
+	// Prevent from having too much packet in stack data
+	if (_toSendPackets.size() > 15) {
+		_toSendPackets.clear();
+		// Throw error : too much packet to send
+	}
+	if (_receivedPackets.size() > 15) {
+		_receivedPackets.clear();
+	}
 }
 
 void RfControler::send(RfPacket& packet)
@@ -74,7 +84,9 @@ void RfControler::send(RfPacket& packet)
 	string header = packet.getHeader();
 	string payload = packet.getPayload();
 
-	int byteBuffer = header.length() + payload.length() + 1;
+	string packetStr = header + "|" + payload;
+
+	int byteBuffer = packetStr.length() + 5;
 
 	if (byteBuffer <= RF_PACKET_MAX_LENGTH)
 	{
@@ -82,7 +94,7 @@ void RfControler::send(RfPacket& packet)
 		char charArray[byteBuffer];
 
 		// Concatenate data
-		sprintf(charArray, "%s|%s", header.c_str(), payload.c_str());
+		sprintf(charArray, "%s|%d", packetStr.c_str(), packet.getId());
 
 		// Send data
 		logger.info(charArray);

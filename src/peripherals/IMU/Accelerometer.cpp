@@ -4,8 +4,8 @@
  *  Created on: Sep 22, 2015
  *      Author: adrien
  */
-#include <wirish/wirish.h>
 #include <stdio.h>
+#include "../../hal/HAL.h"
 #include "Accelerometer.h"
 
 /**
@@ -14,38 +14,33 @@
  */
 void Accelerometer::init()
 {
-	Serial3.println("Read from accelerometer");
 	uint8 buff[1];
 	_i2c.readFrom(0x00, 1, buff);
 
 	// now we check msg_data for our 0xE5 magic number
 	uint8 dev_id = buff[0];
 
-	Serial3.println("Writing to accelerometer");
 
 	if (dev_id != XL345_DEVID)
 	{
-		Serial3.println("Error, incorrect xl345 devid!");
-		Serial3.println("Halting program, hit reset...");
-		waitForButtonPress(0);
+		// TODO exit
 	}
 
 	//invoke ADXL345
-	_i2c.writeTo(ADXLREG_POWER_CTL,0x00);	delay(5);	//
-	_i2c.writeTo(ADXLREG_POWER_CTL, 0xff);	delay(5);	//
-	_i2c.writeTo(ADXLREG_POWER_CTL, 0x08); delay(5);	//
-	_i2c.writeTo(ADXLREG_DATA_FORMAT, 0x08); delay(5);	//
-	_i2c.writeTo(ADXLREG_BW_RATE, 0x09); delay(5);		//25Hz
+	_i2c.writeTo(ADXLREG_POWER_CTL,0x00);	HAL::delayMs(5);	//
+	_i2c.writeTo(ADXLREG_POWER_CTL, 0xff);	HAL::delayMs(5);	//
+	_i2c.writeTo(ADXLREG_POWER_CTL, 0x08); HAL::delayMs(5);	//
+	_i2c.writeTo(ADXLREG_DATA_FORMAT, 0x08); HAL::delayMs(5);	//
+	_i2c.writeTo(ADXLREG_BW_RATE, 0x09); HAL::delayMs(5);		//25Hz
 
-	Serial3.println("Conf acc ok..");
 
-	delay(100);
+	HAL::delayMs(100);
 
 	// Calibrate: compute accelerometer scale and offset
-//	calibration();
+	//	calibration();
 
 	// DEBUG 0 offset
-		_offset = Vect3D(0.0, 0.0, 0.0);
+	_offset = Vect3D(0.0, 0.0, 0.0);
 }
 
 void Accelerometer::calibration()
@@ -77,7 +72,7 @@ void Accelerometer::calibration()
 			sumAccX += _accRaw.getX();
 			sumAccY += _accRaw.getY();
 			sumAccZ += _accRaw.getZ();
-//
+			//
 			if ((_accRaw.getZ() > 0.0 && _accRaw.getZ() > maxAccZ)
 					|| (_accRaw.getZ() < 0.0 && _accRaw.getZ() < maxAccZ)) {
 				maxAccZ = _accRaw.getZ();
@@ -87,18 +82,15 @@ void Accelerometer::calibration()
 			countSample ++;
 		}
 
-		delay(5);
+		HAL::delayMs(5);
 	}
 
 	if (nbTrial >= 1000 && countSample < nbHealthySamples) {
 		// No calibration could be done..
-		Serial3.println("No calibration could be done.");
 		_offset = Vect3D(0.0, 0.0, 0.0);
 	}
-	else {
-		char str[80];
-		sprintf(str, "acc_off %.3f ; %.3f ; %.3f", sumAccX / countSample, sumAccY / countSample,  sumAccZ / countSample );
-		Serial3.println(str);
+	else
+	{
 		_offset = Vect3D(sumAccX / countSample, sumAccY / countSample,  0.0); // sumAccZ / countSample - maxAccZ
 	}
 }

@@ -7,27 +7,31 @@
 
 #include "FlightControl.h"
 
-#include <wirish_math.h>
+#include "../../hal/HalMath.h"
 #include "../../data/conf/Conf.h"
 #include "../../math/common/FastMath.h"
 
-FlightControl::FlightControl(RadioControler *radioController,
-		FlightStabilization *flightStabilization,
-		AHRS *ahrs) : Processing()
+FlightControl::FlightControl(RadioControler *radioController) : Processing(), _initDate(Date::zero()), _attitudeDesired(Quaternion::zero())
 {
 	_radioController = radioController;
-	_flightStabilization = flightStabilization;
-	_ahrs = ahrs;
+
 	_yawInt = 0.0;
 
 	// Runs at 50Hz
-	_freqHz = 50;
+	freqHz = 50;
 	_throttleInitUs = 370;
 
 	// Retrieve conf parameters
 	_maxAbsRollAngle = Conf::getInstance().get("maxAbsRollAngle");
 	_maxAbsPitchAngle = Conf::getInstance().get("maxAbsPitchAngle");
 	_maxAbsCombinedAngle = Conf::getInstance().get("maxAbsCombinedAngle");
+
+	_rollDesired = 0.0;
+	_pitchDesired = 0.0;
+	_yawInt = 0.0;
+
+	_auto = 0;
+	_throttleOut = 0.0;
 }
 
 /**
@@ -39,6 +43,7 @@ void FlightControl::init()
 	//TODO wait until value between 300 and 500 ..
 	//	_throttleInitUs = _radioController->getHandler().Channel(3);
 
+	_initDate = Date::now();
 }
 
 void FlightControl::process()
@@ -48,6 +53,18 @@ void FlightControl::process()
 
 	// AUTO mode
 	// ------------------
+	float currentAutoMode = _radioController->getHandler().getChannelNormed(7);
+
+	// Do not allow auto mode before 30 seconds from power-up
+	if (Date::now().durationFrom(_initDate) > 30.0) {
+		if (currentAutoMode > 0.5) {
+			_auto = 1;
+		}
+		else {
+			_auto = 0;
+		}
+	}
+
 
 	// Update mission navigation
 
@@ -55,30 +72,23 @@ void FlightControl::process()
 	// ------------------
 
 	// Compute roll, pitch, yaw desired by using the radio values
-	float roll = radioToRad(_radioController->getHandler().getChannelNormed(1), _maxAbsRollAngle->getValue());
-	float pitch = radioToRad(_radioController->getHandler().getChannelNormed(2), _maxAbsPitchAngle->getValue());
+	_rollDesired = radioToRad(_radioController->getHandler().getChannelNormed(1), _maxAbsRollAngle->getValue());
+	_pitchDesired = radioToRad(_radioController->getHandler().getChannelNormed(2), _maxAbsPitchAngle->getValue());
 	float yaw = radioToRad(_radioController->getHandler().getChannelNormed(4), _maxAbsCombinedAngle->getValue());
 	// Throttle from 0 to 1
 	float throttle = (_radioController->getHandler().Channel(3) - _throttleInitUs) / 1310.0;
 	Bound(throttle, 0.0, 1.0);
 
-	rpy[0] = roll;
-	rpy[1] = pitch;
-
 	// Integrate desired yaw
 	const float Kyaw = 4.0;
-	_yawInt += Kyaw * yaw * 1/_freqHz;
+	_yawInt += Kyaw * yaw * 1/freqHz;
 	_yawInt = _yawInt * 0.96;
 	Bound(_yawInt, -PI, PI); //FIXME when max left and turns left, go other side ..
 
 	// Transform RPY to quaternion
-	Quaternion attitudeDesired = Quaternion::fromEuler(roll, pitch, _yawInt);
+	_attitudeDesired = Quaternion::fromEuler(_rollDesired, _pitchDesired, _yawInt);
 
-
-	// Flight stabilization
-	// ------------------
-	// Update input parameters of flight stabilization function
-	_flightStabilization->setInputs(attitudeDesired, _ahrs->getAttitude(), _ahrs->getYawFromGyro(), _ahrs->getGyro().getGyroFiltered(), throttle);
+	_throttleOut = throttle;
 }
 
 

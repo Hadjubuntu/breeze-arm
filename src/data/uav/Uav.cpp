@@ -5,7 +5,7 @@
  *      Author: adrien
  */
 
-#include "../../data/uav/Uav.h"
+#include "Uav.h"
 
 Uav::Uav() {
 	// TODO Auto-generated constructor stub

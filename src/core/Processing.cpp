@@ -6,9 +6,11 @@
  */
 
 #include "Processing.h"
-#include "../math/time/Date.h"
 
-Processing::Processing() : _logger(Logger()), _freqHz(50), _lastExecutionDate(Date::zero()), _dt(0.0) {
+Processing::Processing() : logger(Logger()), freqHz(50), lastExecutionDate(Date::zero()), dt(0.0),
+callbackTrigger(false), callbackStartDate(Date::now()), callbackDtUs(0l)
+{
+
 }
 
 
@@ -17,13 +19,25 @@ bool Processing::isReady() {
 	Date now = Date::now();
 
 	// Compute duration from last execution
-	float durationLastExecutionSeconds = now.durationFrom(_lastExecutionDate);
+	float durationLastExecutionSeconds = now.durationFrom(lastExecutionDate);
 
 	// Compute delta time between two execution of the processing
-	float dtExecExpected = 1.0/_freqHz;
+	float dtExecExpected = 1.0/freqHz;
 
 	// Returns yes if processing needs to be executed
 	return durationLastExecutionSeconds >= dtExecExpected;
+}
+
+bool Processing::isCallbackReady() {
+	Date now = Date::now();
+
+	float durationFromCallbackTrigger = now.durationFrom(callbackStartDate);
+	if (durationFromCallbackTrigger >= DateUtils::microToSeconds(callbackDtUs)) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 

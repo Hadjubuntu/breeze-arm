@@ -5,7 +5,13 @@
  * @date : september 2015
  */
 #include <stdio.h>
+
+
+#include <string.h>
+#include <stdlib.h>
+
 #include <wirish/wirish.h>
+#include <wirish/ext_interrupts.h>
 #include <vector>
 #include "src/data/conf/Conf.h"
 #include "libraries/Wire/Wire.h"
@@ -19,20 +25,20 @@
 #include "src/link/RfRouter.h"
 #include "src/processing/actuator/ActuatorControl.h"
 #include "src/processing/flightstabilization/FlightStabilization.h"
+#include "src/processing/flightstabilization/FsAutotune.h"
 #include "src/processing/flightstabilization/FlightControl.h"
 #include "src/processing/nav/sonar/Sonar.h"
 #include "src/processing/link/Telemetry.h"
+#include "src/peripherals/IMU/Baro.h"
+#include "src/hal/HAL.h"
 
 
 /** Attitude and heading reference system */
-AHRS ahrs;
-
-/** Flight controller */
-FlightStabilization flightStabilization;
+Baro baro;
+AHRS ahrs(&baro);
 
 /** UAV brain */
 Brain uavBrain;
-
 
 /** RadioFreq controller */
 RfControler rfControler;
@@ -43,22 +49,40 @@ RfRouter rfRouter(&rfControler);
 /** Radio controller */
 RadioControler radioControler;
 
-/** Route flight mode to mission / stabilization */
-FlightControl flightControl(&radioControler, &flightStabilization, &ahrs);
+/** Transform radio signal into radio flight control */
+FlightControl flightControl(&radioControler);
+
+/** Sonar to measure distance */
+Sonar sonar;
+
+/** Flight stabilization controller */
+FlightStabilization flightStabilization(&ahrs, &flightControl, &sonar);
 
 /** Motor and servo control */
 ActuatorControl actuatorControl(&flightStabilization);
 
 /** Telemetry to keep GCS update */
-Telemetry telemetry(&ahrs);
+Telemetry telemetry(&ahrs, &flightControl, &rfControler);
 
-/** Sonar to measure distance */
-Sonar sonar;
+FsAutotune fsAutotune(&flightStabilization);
 
-void setup() {
-	/* Set up the LED to blink  */
-	pinMode(BOARD_LED_PIN, OUTPUT);
+void calibration()
+{
+	int nbCalibrationMeasure = 100;
 
+	for (int i = 0; i < nbCalibrationMeasure; i++)
+	{
+		uavBrain.loop();
+		ahrs.calibrateOffset();
+
+		HAL::delayMs(10);
+	}
+}
+
+
+void setup()
+{
+	pinMode(13, OUTPUT);
 	// Add dependency (TODO delete this, brain as singleton, call for processing from brain)
 	//---------------------
 	Conf::getInstance().setRfControler(&rfControler);
@@ -69,79 +93,113 @@ void setup() {
 
 	// Add processings
 	//----------------------
+	uavBrain.addProcessing(&baro);
 	uavBrain.addProcessing(&ahrs);
-	uavBrain.addProcessing(&flightStabilization);
 	uavBrain.addProcessing(&rfControler);
 	uavBrain.addProcessing(&rfRouter);
 	uavBrain.addProcessing(&radioControler);
 	uavBrain.addProcessing(&flightControl);
+	uavBrain.addProcessing(&sonar);
+	uavBrain.addProcessing(&flightStabilization);
 	uavBrain.addProcessing(&actuatorControl);
 	uavBrain.addProcessing(&telemetry);
-	uavBrain.addProcessing(&sonar);
 
 	// Initialize all processings
 	//----------------------
 	uavBrain.initProcessings();
 
-	// Debug : do some calibration on ahrs
-	for (int i = 0; i < 100; i ++)
-	{
-		uavBrain.loop();
-		ahrs.calibrateOffset();
+	// Calibration on AHRS
+	//----------------------
+	calibration();
+}
 
-		delay(10);
+// Test interpolation on IR value
+float approxDist(int irValue)
+{
+	float res = 0.0;
+
+	if (irValue < 3500 && irValue >= 1450) {
+		res = ((3500 - irValue) * 50 + (irValue - 1450) * 15) / (3500 - 1450);
 	}
+	else if (irValue < 1450 && irValue >= 950) {
+		res = ((1450 - irValue) * 80 + (irValue - 950) * 50) / (1450 - 950);
+	}
+	else if (irValue < 950 && irValue >= 800) {
+		res = ((950 - irValue) * 120 + (irValue - 800) * 80) / (950 - 800);
+	}
+	else if (irValue < 800 && irValue >= 700) {
+		res = ((800 - irValue) * 150 + (irValue - 700) * 120) / (800 - 700);
+	}
+	else if (irValue < 700)
+	{
+		res = 150.0;
+	}
+
+
+	return res;
 }
 
 
 /**
  * Loop function called as fast as possible
+ * Measure : from 3khz to minimum 700Hz
  */
+
+int currentSize = 0;
+char currentPacket[85];
+void str_resetCharArray(char *p) {
+	int nbBytes = strlen(p);
+	memset(&p[0], 0, nbBytes);
+}
+
+
 void loop()
 {
+
 	// Call brain loop function to udpate the processings
 	// ----
 	uavBrain.loop();
 
+
+
 	// Prints infos
 	// ----
-	if (uavBrain.getTickId() % 1000 == 0)
+	if (uavBrain.getTickId() % 1500 == 0)
 	{
-		toggleLED();
-
 		float rpy[3];
 		ahrs.getAttitude().toRollPitchYaw(rpy);
 
-		// throttle radio channel
-		int chThrottle = radioControler.getHandler().Channel(3);
-
 		char str[90];
 
-		//		sprintf(str, "throttle: %.2f", flightStabilization.getThrottle());
-
-		//		Quaternion targetAtt = flightStabilization.getTargetAttitude();
-		//		targetAtt.toRollPitchYaw(rpy);
-
-//		Vect3D accelRaw = ahrs.getAcc().getAccRaw();
-//		sprintf(str, "acc_x=%.2f | acc_y=%.2f | acc_z=%.2f | norm=%.2f",
-//				accelRaw.getX(), accelRaw.getY(), accelRaw.getZ(), accelRaw.getNorm2());
-		// Print tau
-//				sprintf(str, "tau_x = %.1f | tau_y = %.1f | sonar = %.0f | sonar_raw = %.0f",
-//						flightStabilization.getTau().getX(),
-//						flightStabilization.getTau().getY(),
-//						sonar.getOutput(), (float) analogRead(13) * 0.3175);
-
-		sprintf(str, "r = %.1f | p = %.1f",
-				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]));
+		//		int irValue = analogRead(13);
+		//		float distanceCM = (4096-irValue) * 0.03662115 ; // 1/4096*150cm
 
 
-		// 	radioControler.getHandler().getChannelNormed(1),
-//		radioControler.getHandler().getChannelNormed(2)
+//		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|T=%.1f deg|p=%.1f hPa|gp=%.1f hPa|t=%.2f", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
+//				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
+//				baro.getAltitudeMeters()*100.0f,
+//				baro.getTrueTemperature()/10.0f,
+//				baro.getTruePressure()/100.0f, baro.getGroundPressure()/100.0f,
+//				flightStabilization.getThrottle()) ;
 
-// flightStabilization.getTau().getX(), flightStabilization.getTau().getY(),
+		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|sonar=%.2f|error_droll=%.2f|autotune=%.2f", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
+				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
+				baro.getAltitudeMeters()*100.0f,
+				sonar.getOutput(),
+				FastMath::toDegrees(flightStabilization.currentRollErrorAngle),
+				fsAutotune.getFirstMeasureScore()) ;
+
+
 
 		RfPacket packet(Date::now(), "LOG", str);
 		rfControler.addPacketToSend(packet);
+	}
+
+	// Slow toggle led
+	if (uavBrain.getTickId() % 8000 == 0)
+	{
+		//		Serial3.println("LOG|test|ok");
+		toggleLED();
 	}
 }
 

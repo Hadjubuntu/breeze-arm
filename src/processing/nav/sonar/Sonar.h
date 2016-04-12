@@ -27,6 +27,7 @@ public:
 	void init();
 
 	void process();
+	void callback() { };
 
 	float getOutput() {
 		return _filteredSonarValueCm;
@@ -35,6 +36,7 @@ public:
 	bool isHealthy() {
 		return _healthy;
 	}
+
 };
 
 #endif /* PROCESSING_NAV_SONAR_SONAR_H_ */

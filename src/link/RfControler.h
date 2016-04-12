@@ -10,8 +10,8 @@
 
 
 #include <list>
-#include "../core/Processing.h"
 #include "RfPacket.h"
+#include "../core/Processing.h"
 #include "../core/Logger.h"
 
 
@@ -37,6 +37,7 @@ private:
 
 	void receiveNewPackets();
 	void sendPackets();
+	void checkMaxPacketInStack();
 
 public:
 	RfControler();
@@ -49,6 +50,7 @@ public:
 	 * Listen to new packets which may have been received
 	 */
 	void process();
+	void callback() { };
 
 	void send(RfPacket &);
 
@@ -58,6 +60,8 @@ public:
 
 	void addPacketToSend(RfPacket packet) {
 		_toSendPackets.push_back(packet);
+
+		checkMaxPacketInStack();
 	}
 };
 

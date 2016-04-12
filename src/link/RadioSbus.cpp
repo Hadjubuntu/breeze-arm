@@ -5,15 +5,17 @@
  *      Author: adrien
  */
 
-#include <wirish/wirish.h>
 #include <cstring>
+#include "../hal/HAL.h"
 #include "RadioSbus.h"
 
 #define port Serial1
 
-
-RadioSbus::RadioSbus() : lastUpdate(Date::now()) {
-	// TODO Auto-generated constructor stub
+/**
+ * Default constructor
+ */
+RadioSbus::RadioSbus() : lastUpdate(Date::now())
+{
 
 }
 

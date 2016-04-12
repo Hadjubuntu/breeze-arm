@@ -12,9 +12,20 @@
 #include "../../core/Processing.h"
 #include "../../data/conf/Param.h"
 #include "../../math/pid/PID.h"
+#include "../ahrs/AHRS.h"
+#include "../flightstabilization/FlightControl.h"
+#include "../nav/sonar/Sonar.h"
+
+
 
 class FlightStabilization : public Processing {
 private:
+	// Dependencies
+	// ---
+	AHRS *_ahrs;
+	FlightControl *_flightControl;
+	Sonar *_sonar;
+
 	// Inputs
 	// ------------------
 	Param<float> *_Pq;
@@ -32,13 +43,25 @@ private:
 	float _throttleOut;
 
 	// PID
-	PID _pidRoll;
-	PID _pidPitch;
+	PID pidRoll;
+	PID pidPitch;
+	PID _pidAltitude;
+
+	Param<float> *_throttleHover;
+	float _throttleTarget;
+	float _throttleSlewRate;
+	float _meanAccZ;
+
+
 public:
+
+	// Debug
+	float currentRollErrorAngle;
+
 	/**
 	 * Constructor
 	 */
-	FlightStabilization();
+	FlightStabilization(AHRS*, FlightControl*, Sonar*);
 
 	/**
 	 * TODO
@@ -47,14 +70,15 @@ public:
 
 	}
 
-
-	/** Set input parameters */
-	void setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, float yawCmd, Vect3D pGyroRot, float pThrottle);
+	void updateInputParameters();
 
 	/**
 	 * Process and update data
 	 */
 	void process();
+	void callback() {};
+
+	void stabilizeAltitude();
 
 	float boostThrottleCompensateTiltAngle(float throttle);
 	bool isSafeToUseBoost(float throttle, float combinedTilt);
@@ -72,6 +96,19 @@ public:
 
 	Quaternion getTargetAttitude() {
 		return _targetAttitude;
+	}
+
+	// Debug
+	float getErrorAltitude() {
+		return _pidAltitude.getError();
+	}
+
+	PID getPidRoll() {
+		return pidRoll;
+	}
+
+	PID getPidPitch() {
+		return pidPitch;
 	}
 };
 

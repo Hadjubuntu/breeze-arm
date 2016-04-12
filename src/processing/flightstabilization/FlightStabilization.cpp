@@ -17,41 +17,49 @@
  */
 
 // good values : Pq=20; Pw=3
-FlightStabilization::FlightStabilization() :
+FlightStabilization::FlightStabilization(AHRS *ahrs, FlightControl *flightControl, Sonar *sonar) :
 Processing(),
 _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
 _tau(Vect3D::zero())
 {
-	_freqHz = 100;
+	freqHz = 100;
 	_throttle = 0;
 	_yawFromGyro = 0.0;
 	_Pq = Conf::getInstance().get("flightStabilization_Pq");
 	_Pw = Conf::getInstance().get("flightStabilization_Pw");
 	_Kangle = Conf::getInstance().get("flightStabilization_Kangle");
 	_Krate = Conf::getInstance().get("flightStabilization_Krate");
+	_throttleHover = Conf::getInstance().get("flightStabilization_throttleHover");
 
 	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
-	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
-	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
+	pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
+	pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
+	_pidAltitude.init(0.55, 0.04, 0.01, 4);
+
+	_ahrs = ahrs;
+	_throttleTarget = 0.0;
+	_throttleSlewRate = 0.4; // 50% per second
+	_throttleOut = 0.0;
+	_flightControl = flightControl;
+	_sonar = sonar;
+	_meanAccZ = 1.0;
+
+	// Debug
+	currentRollErrorAngle = 0.0;
 }
 
-/**
- * Set input parameters
- * @param pTargetAttitude
- * @param pCurrentAttitude
- * @param pGyroRot
- * @param pThrottle given between 0 and 1
- */
-void FlightStabilization::setInputs(Quaternion pTargetAttitude, Quaternion pCurrentAttitude, float yawGyro, Vect3D pGyroRot, float pThrottle)
+
+void FlightStabilization::updateInputParameters()
 {
-	_targetAttitude = pTargetAttitude;
-	_currentAttitude = pCurrentAttitude;
-	_gyroRot = pGyroRot;
-	_throttle = pThrottle;
-	_yawFromGyro = yawGyro;
-}
+	_targetAttitude = _flightControl->getAttitudeDesired();
+	_throttle = _flightControl->getThrottleOut(); // Throttle is contained between [0; 1]
 
+	_currentAttitude = _ahrs->getAttitude();
+	_yawFromGyro = _ahrs->getYawFromGyro();
+	_gyroRot = _ahrs->getGyro().getGyroFiltered();
+
+}
 
 void FlightStabilization::process()
 {
@@ -80,6 +88,8 @@ void FlightStabilization::process()
 	}
 #endif
 
+	updateInputParameters();
+
 	// DEBUG simple PID
 	float rpyTarget[3];
 	_targetAttitude.toRollPitchYaw(rpyTarget);
@@ -90,31 +100,94 @@ void FlightStabilization::process()
 	// Define angle rate from angle error
 	float rollRate = (rpyTarget[0] - rpyCurrent[0]) * _Kangle->getValue();
 	float pitchRate = (rpyTarget[1] - rpyCurrent[1]) * _Kangle->getValue();
-	float yawRate = 1.8 * (rpyTarget[2] - _yawFromGyro) * _Kangle->getValue();
+	float yawRate = 1.4 * (rpyTarget[2] - _yawFromGyro) * _Kangle->getValue();
 
 	BoundAbs(rollRate, 3.14);
 	BoundAbs(pitchRate, 3.14);
 
 
-	_pidRoll.setGainParameters(_Krate->getValue(), 0.01, 0.01);
-	_pidPitch.setGainParameters(_Krate->getValue(), 0.01, 0.01);
+	pidRoll.setGainParameters(_Krate->getValue(), 0.01, 0.0);
+	pidPitch.setGainParameters(_Krate->getValue(), 0.01, 0.0);
 
-	_pidRoll.update(rollRate - _gyroRot[0], 1/_freqHz);
-	_pidPitch.update(pitchRate - _gyroRot[1], 1/_freqHz);
+	pidRoll.update(rollRate - _gyroRot[0], 1/freqHz);
+	pidPitch.update(pitchRate - _gyroRot[1], 1/freqHz);
 
-	_tau = Vect3D(_pidRoll.getOutput(),
-			_pidPitch.getOutput(),
-			2.0 *_Krate->getValue() * (yawRate - _gyroRot[2]));
+	_tau = Vect3D(pidRoll.getOutput(),
+			pidPitch.getOutput(),
+			1.3 *_Krate->getValue() * (yawRate - _gyroRot[2]));
 
-	if (Conf::getInstance().useBoostMotors)
-	{
-		_throttleOut = boostThrottleCompensateTiltAngle(_throttle);
+	// Control altitude
+	// ---
+	stabilizeAltitude();
+
+	// Debug data
+	// ---
+	currentRollErrorAngle = rpyTarget[0] - rpyCurrent[0];
+}
+
+void FlightStabilization::stabilizeAltitude()
+{
+
+	// Manual mode
+	if (!_flightControl->isAutoMode()) {
+
+		_pidAltitude.reset();
+
+		if (Conf::getInstance().useBoostMotors)
+		{
+			_throttleOut = boostThrottleCompensateTiltAngle(_throttle);
+		}
+		else
+		{
+			_throttleOut = _throttle;
+		}
+
+		if (_throttleOut == 0.0)
+		{
+			// Recalibrate barometer
+			_ahrs->getBaro()->recalibrateAtZeroThrottle();
+
+			// Average mean acceleration in z-axis
+			_meanAccZ = 0.7 * _meanAccZ + 0.3 * _ahrs->getAnalyzedAccZ();
+		}
 	}
+	// Auto mode
 	else
 	{
-		_throttleOut = _throttle;
-	}
+		if (dt == 0.0) {
+			dt = 1.0/freqHz;
+		}
 
+		float refAltitudeMeters = _ahrs->getAltitudeMeters();
+
+		if (_sonar->isHealthy() && _sonar->getOutput() < 200)
+		{
+			refAltitudeMeters = _sonar->getOutput() / 100.0f;
+		}
+		else
+		{
+			// Altitude at least equals to max sonar altitude in meters
+			refAltitudeMeters = min(2.0, refAltitudeMeters);
+		}
+
+		float altitudeSetpointMeters = 1.0; // Test to 150 centimeters
+		float errorAltMeters = altitudeSetpointMeters - refAltitudeMeters;
+		float accZsetpoint = 0.05 * errorAltMeters;
+		Bound(accZsetpoint, -0.1, 0.1);
+
+		float errorAccZ = (accZsetpoint + (_ahrs->getAnalyzedAccZ() - _meanAccZ));
+		Bound(errorAccZ, -0.12, 0.12); // 0.2 accZ
+
+		_pidAltitude.update(errorAccZ, dt);
+
+		_throttleTarget = _throttleHover->getValue() + _pidAltitude.getOutput();
+		Bound(_throttleTarget, 0.0, 0.67); // Limit to 70% max throttle
+
+		float dThrottle = _throttleTarget - _throttleOut;
+		Bound(dThrottle, -_throttleSlewRate / freqHz, _throttleSlewRate / freqHz);
+
+		_throttleOut = _throttleOut + dThrottle;
+	}
 }
 
 float FlightStabilization::boostThrottleCompensateTiltAngle(float throttle)

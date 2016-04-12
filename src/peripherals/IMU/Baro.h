@@ -14,6 +14,7 @@
 #define BMP085_ADDRESS 0x77  //(0xEE >> 1)
 #define BMP085_EOC 30        // End of conversion pin PC7 on APM1
 
+// See datasheet : https://www.sparkfun.com/datasheets/Components/General/BST-BMP085-DS000-05.pdf
 
 // No EOC connection from Baro
 // Use times instead.
@@ -21,7 +22,8 @@
 // Pressure conversion time is 25.5ms (for OVERSAMPLING=3)
 
 
-// oversampling 3 gives 26ms conversion time. We then average
+// oversampling 3 gives 25.5ms sampling time
+// oversampling 1 gives 7.5 ms
 #define OVERSAMPLING 3
 
 class Baro : public Processing {
@@ -29,22 +31,20 @@ private:
 	I2C _i2c;
 	uint8 _dev_address;
 
-	int32        RawPress;
-	int32        RawTemp;
-	float		    _temp_sum;
-	float			_press_sum;
+	bool _firstMeasure;
+	long        _uncompensatedPressure;
+	long        _uncompensatedTemperature;
 	uint8_t			_count;
-	float           Temp;
-	float           Press;
-	// Flymaple has no EOC pin, so use times instead
-	uint32       _last_press_read_command_time;
-	uint32       _last_temp_read_command_time;
+	long _trueTemperature;
+	long _truePressure;
+	float _altitudeMeters;
+	int _iter;
 
+	long b5;
 
 	uint32                           _last_update; // in us
 	uint8                            _pressure_samples;
 	// State machine
-	uint8                        BMP085_State;
 	// Internal calibration registers
 	int16                        ac1, ac2, ac3, b1, b2, mb, mc, md;
 	uint16                       ac4, ac5, ac6;
@@ -52,37 +52,45 @@ private:
 
 	uint32                       _retry_time;
 
-	void                            Command_ReadPress();
-	void                            Command_ReadTemp();
-	void                            ReadPress();
-	void                            ReadTemp();
-	void                            Calculate();
-	void							Calibrate();
-	bool BMP_DATA_READY();
+	int _state;
+
+
+	void readUncompensatedTempValue();
+	void readUncompensatedPressureValue();
+	void calculateTrueTemperature();
+	void calculateTruePressure();
+	void calculateAltitude();
 
 public:
 
-	float 			GroundPressure;
-	float 			GroundTemp;
+	long 			GroundPressure;
+	long 			GroundTemp;
 
 	Baro();
 
 	void init();
 	void process();
+	void callback();
 
-	uint8        read();
-	void 			accumulate(void);
-	float           getPressure();
-	float			get_ground_pressure();
-	long 			get_alt_cm();
-	float           getTemperature() const;
-
-	float get_altitude_difference(float, float) const;
+	float getAltitudeMeters() {
+		return _altitudeMeters;
+	}
+	long getTrueTemperature() {
+		return _trueTemperature;
+	}
+	long getTruePressure() {
+		return _truePressure;
+	}
+	long getGroundPressure() {
+		return GroundPressure;
+	}
 
 	static Baro create() {
 		Baro e;
 		return e;
 	}
+
+	void recalibrateAtZeroThrottle();
 
 };
 

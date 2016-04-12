@@ -87,6 +87,7 @@ LIBMAPLE_MODULES += $(SRCROOT)/src/math/time
 LIBMAPLE_MODULES += $(SRCROOT)/src/math/vector
 LIBMAPLE_MODULES += $(SRCROOT)/src/math/filter
 LIBMAPLE_MODULES += $(SRCROOT)/src/data/conf
+LIBMAPLE_MODULES += $(SRCROOT)/src/hal
 LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/I2C
 LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/sensor
 LIBMAPLE_MODULES += $(SRCROOT)/src/peripherals/IMU
@@ -140,6 +141,8 @@ ifneq ($(PREV_BUILD_TYPE), $(MEMORY_TARGET))
 endif
 
 sketch: clean build-check MSG_INFO $(BUILD_PATH)/$(BOARD).bin
+
+all: sketch
 
 clean:
 	rm -rf build

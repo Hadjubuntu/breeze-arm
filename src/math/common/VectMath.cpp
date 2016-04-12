@@ -19,22 +19,8 @@ VectMath::VectMath() {
 float VectMath::derivate(std::vector<float> X)
 {
 	LeastSquareFilter filter;
-	int n = X.size();
+	float *funcParam = filter.computeLinearFunc(X);
 
-	float sumDeltaEstimation = 0.0;
-
-	for (int i = 0; i < n; i ++)
-	{
-		float estimation = filter.apply(X, i);
-		float delta = X.at(i) - estimation;
-		sumDeltaEstimation += delta;
-	}
-
-	if (n > 0) {
-		return sumDeltaEstimation / n;
-	}
-	else {
-		return 0.0;
-	}
+	return funcParam[1];
 }
 

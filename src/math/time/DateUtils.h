@@ -24,6 +24,13 @@ public:
 	static float microToSeconds(long dt) {
 		return ((float) dt / S_TO_US);
 	}
+	static long secondsToMicros(float pSeconds) {
+		return (long) (pSeconds * S_TO_US);
+	}
+
+	static uint32 micros() {
+		return micros();
+	}
 
 
 };

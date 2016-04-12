@@ -37,13 +37,21 @@ private:
 	Accelerometer _accelerometer;
 
 	/** Barometer */
-//	Baro _baro;
+	Baro *_baro;
 
 	// Yaw computed from gyro integration
 	float _yawFromGyro;
 
+	Date _lastPositiveAccPeak;
+	Date _lastNegativeAccPeak;
+
+	int _itrAccZ;
+	float _meanAccZ;
+	float _vZ;
+	float _analyzedAccZ;
+
 public:
-	AHRS();
+	AHRS(Baro *);
 
 	/**
 	 * Initialize sensors accelerometer and gyro
@@ -54,15 +62,12 @@ public:
 	 * Process and update data
 	 */
 	void process();
+	void computeVz();
+	void callback() { };
 
 	float* getGyroCorr();
 
-	void calibrateOffset()
-	{
-		float rpy[3];
-		_attitude.toRollPitchYaw(rpy);
-		_attitudeOffset = Quaternion(-rpy[0], -rpy[1], 0.0);
-	}
+	void calibrateOffset();
 
 	/******************************************************
 	 * GETTERS
@@ -74,6 +79,23 @@ public:
 
 	float getYawFromGyro() {
 		return _yawFromGyro;
+	}
+
+	float getVz() {
+		return _vZ;
+	}
+
+	float getAnalyzedAccZ() {
+		return _analyzedAccZ;
+	}
+
+	float getAltitudeMeters()
+	{
+		return _baro->getAltitudeMeters();
+	}
+
+	Baro* getBaro() {
+		return _baro;
 	}
 
 

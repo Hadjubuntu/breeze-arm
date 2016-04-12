@@ -18,7 +18,7 @@ private:
 	Param<float> *_commandNmToSignalUs;
 	// Others param
 	FlightStabilization *_flightStabilization;
-	int _motorActivation[4][3] = {
+	float _motorActivation[4][3] = {
 			{1, 1, -1},
 			{-1, 1, 1},
 			{1, -1, 1},
@@ -35,6 +35,7 @@ public:
 	void init();
 
 	void process();
+	void callback() { };
 
 	void processFixedWing(unsigned short int);
 

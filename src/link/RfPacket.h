@@ -17,10 +17,12 @@ using namespace std;
 
 class RfPacket {
 private:
+	int _id;
 	Date _date;
 	int _groupId; // 0 means no group id, otherwise unique id for the packets group
 	std::string _header;
 	std::string _payload;
+
 public:
 	/**
 	 * Default constructor
@@ -52,6 +54,10 @@ public:
 
 	int length() {
 		return _header.length() + _payload.length();
+	}
+
+	int getId() {
+		return _id;
 	}
 };
 

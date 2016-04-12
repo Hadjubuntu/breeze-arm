@@ -5,7 +5,7 @@
  *      Author: adrien
  */
 
-#include <wirish.h>
+#include "../../hal/HAL.h"
 #include "../../math/common/FastMath.h"
 #include "../../data/conf/Conf.h"
 #include "../../link/RadioSbus.h"
@@ -50,7 +50,7 @@ unsigned short levelToCtrl(unsigned short level)
  */
 ActuatorControl::ActuatorControl(FlightStabilization *pFlightStab) : Processing()
 {
-	_freqHz = 50;
+	freqHz = 50;
 	_flightStabilization = pFlightStab;
 
 	// Retrieve conf params
@@ -65,15 +65,17 @@ void ActuatorControl::initMotorRepartition() {
 			_motorActivation[j][2] = 0;
 		}
 
-		_motorActivation[0][0] = 1;
-		_motorActivation[0][1] = 1;
+		// Left motor
+		_motorActivation[0][0] = 1.0;
+		_motorActivation[0][1] = 1.0;
 
+		// Right motor
+		_motorActivation[1][0] = -1.0;
+		_motorActivation[1][1] = 1.0;
 
-		_motorActivation[1][0] = -1;
-		_motorActivation[1][1] = 1;
-
+		// Rear motor
 		_motorActivation[2][0] = 0;
-		_motorActivation[2][1] = -1;
+		_motorActivation[2][1] = -1.3; // Boost coefficient to compensate rear servo weight
 
 
 		break;
@@ -212,10 +214,10 @@ void ActuatorControl::processMulticopter(unsigned short int throttle, int nbMoto
 	{
 		for (int i = 0; i < nbMotors; i ++)
 		{
-			motorX[i] = throttle
+			motorX[i] = (int)(throttle
 					+ _motorActivation[i][0] * rollDeltaSignal
 					+ _motorActivation[i][1] * pitchDeltaSignal
-					+ _motorActivation[i][2] * yawDeltaSignal;
+					+ _motorActivation[i][2] * yawDeltaSignal);
 
 			Bound(motorX[i], 0, 900);
 
@@ -234,7 +236,7 @@ void ActuatorControl::processMulticopter(unsigned short int throttle, int nbMoto
 		pwmWrite(D12, levelToCtrl(motorX[3]));
 	}
 	else {
-		// Signal goes from 650 to 2250 ms
-		pwmWrite(D14, US_TO_COMPARE(1300 - yawDeltaSignal));
+		// Signal goes from 650 to 2250 ms TODO use conf parameter here
+		pwmWrite(D14, US_TO_COMPARE(1400 - yawDeltaSignal));
 	}
 }

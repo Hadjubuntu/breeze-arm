@@ -11,28 +11,27 @@
 #include "Sonar.h"
 #include "../../../math/common/VectMath.h"
 #include "../../../math/common/FastMath.h"
-
-int nSonar = 10;
-History<float> sonarValues(nSonar);
+//
+//int nSonar = 5;
+//History<float> sonarValues(nSonar);
 
 Sonar::Sonar() : Processing()
 {
-	_freqHz = 10;
-	_sonarPin = 13;
+	freqHz = 10;
+	_sonarPin = 10;
 	_filteredSonarValueCm = 0.0;
 	_healthy = true;
 }
 
 void Sonar::init()
 {
-	_sonarPin = 13;
 	pinMode(_sonarPin, INPUT);
 
 	// Create zero vector at initialization
-	for (int i = 0; i < nSonar; i ++)
-	{
-		sonarValues.add(0.0);
-	}
+	//	for (int i = 0; i < nSonar; i ++)
+	//	{
+	//		sonarValues.add(0.0);
+	//	}
 
 	int strangeMeasure = 0;
 	int nbMeasure = 25;
@@ -57,25 +56,36 @@ void Sonar::process()
 		// Read new value
 		float currentSonarVal = (float) analogRead(_sonarPin) * 0.3175; //
 
-		// Filter measured value by using mean delta
-		float deltaMean = VectMath::derivate(sonarValues.toVector());
-		float deltaMeasured = currentSonarVal - sonarValues.getLast();
-
-		float filteredValue = currentSonarVal;
-
-		// Do not consider spike value due to analog wrong reads
-		if (FastMath::fabs(deltaMeasured) >= 150) {
-			filteredValue = sonarValues.getLast();
+		if (_filteredSonarValueCm == 0.0)
+		{
+			_filteredSonarValueCm = currentSonarVal;
 		}
-		else if (FastMath::fabs(deltaMeasured) > FastMath::fabs(deltaMean)) {
-			filteredValue = sonarValues.getLast() + deltaMeasured / 10.0;
+		else {
+			float delta = abs(currentSonarVal - _filteredSonarValueCm);
+			float sign = currentSonarVal > _filteredSonarValueCm ? 1.0 : -1.0;
+
+			float k = 1.0/(delta/8.0+1.0);
+			_filteredSonarValueCm = _filteredSonarValueCm + k * sign * delta;
 		}
 
-		// Store it to history
-		sonarValues.add(filteredValue);
+		//		// Filter measured value by using mean delta
+		//		float deltaMean = VectMath::derivate(sonarValues.toVector());
+		//		float deltaMeasured = currentSonarVal - sonarValues.getLast();
 		//
-		//	// Apply least-square filter
-		_filteredSonarValueCm = _filter.apply(sonarValues.toVector(), nSonar + 1);
+		//		float filteredValue = currentSonarVal;
+		//
+		//		// Do not consider spike value due to analog wrong reads
+		//		if (FastMath::fabs(deltaMeasured) >= 150) {
+		//			filteredValue = sonarValues.getLast();
+		//		}
+		//		else if (FastMath::fabs(deltaMeasured) > FastMath::fabs(deltaMean)) {
+		//			filteredValue = sonarValues.getLast() + deltaMeasured / 10.0;
+		//		}
+		//		// Store it to history
+		//		sonarValues.add(filteredValue);
+		//		//
+		//		//	// Apply least-square filter
+		//		_filteredSonarValueCm = _filter.apply(sonarValues.toVector(), nSonar + 1);
 	}
 }
 

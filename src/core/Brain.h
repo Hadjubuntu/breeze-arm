@@ -9,8 +9,8 @@
 #define CORE_BRAIN_H_
 
 #include "History.h"
-#include "../math/time/Date.h"
 #include "Processing.h"
+#include "../math/time/Date.h"
 #include "../processing/ahrs/AHRS.h"
 
 /**
@@ -19,7 +19,7 @@
 class Brain {
 private:
 	// delay between tick in microseconds
-	const static int _delayTickUs = 100;
+	const static int _delayTickUs = 5;
 
 	// Tick id counter
 	long _tickId;
@@ -32,6 +32,9 @@ private:
 
 	// History of link command
 	History<int> _commands;
+
+	void processingExecution(Processing* proc);
+
 public:
 	/**
 	 * Constructor brain
