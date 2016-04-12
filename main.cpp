@@ -30,7 +30,7 @@
 #include "src/processing/nav/sonar/Sonar.h"
 #include "src/processing/link/Telemetry.h"
 #include "src/peripherals/IMU/Baro.h"
-#include "src/peripherals/HAL/HAL.h"
+#include "src/hal/HAL.h"
 
 
 /** Attitude and heading reference system */

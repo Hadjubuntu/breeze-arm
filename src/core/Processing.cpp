@@ -6,7 +6,6 @@
  */
 
 #include "Processing.h"
-#include "../math/time/Date.h"
 
 Processing::Processing() : logger(Logger()), freqHz(50), lastExecutionDate(Date::zero()), dt(0.0),
 callbackTrigger(false), callbackStartDate(Date::now()), callbackDtUs(0l)

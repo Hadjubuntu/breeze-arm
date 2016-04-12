@@ -6,7 +6,7 @@
  *      Author: adrien
  */
 #include <stdio.h>
-#include "../../peripherals/HAL/HAL.h"
+#include "../../hal/HAL.h"
 #include "Baro.h"
 
 Baro::Baro() : Processing(), _i2c(I2C::getInstance(BMP085_ADDRESS))

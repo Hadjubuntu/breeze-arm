@@ -8,7 +8,7 @@
 #ifndef MATH_TIME_DATE_H_
 #define MATH_TIME_DATE_H_
 
-#include <wirish/wirish.h>
+#include "../../hal/HAL.h"
 #include "DateUtils.h"
 
 class Date {
@@ -55,11 +55,7 @@ public:
 		return e;
 	}
 
-	static Date now()
-	{
-		Date e(micros());
-		return e;
-	}
+	static Date now();
 
 
 

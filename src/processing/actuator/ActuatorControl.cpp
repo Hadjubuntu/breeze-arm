@@ -5,7 +5,7 @@
  *      Author: adrien
  */
 
-#include <wirish.h>
+#include "../../hal/HAL.h"
 #include "../../math/common/FastMath.h"
 #include "../../data/conf/Conf.h"
 #include "../../link/RadioSbus.h"

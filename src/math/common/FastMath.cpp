@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 #include <cmath>
-#include <wirish_math.h>
+#include "../../hal/HalMath.h"
 #include "FastMath.h"
 
 

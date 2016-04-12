@@ -6,9 +6,9 @@
  */
 
 #include <string>
-#include <wirish/wirish.h>
 #include "Logger.h"
 
+#include "../hal/HAL.h"
 
 
 Logger::Logger()  : _mode(DEBUG) {

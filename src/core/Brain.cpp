@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <wirish/wirish.h>
 #include "../core/Brain.h"
-#include "../peripherals/HAL/HAL.h"
-#include "libmaple/i2c.h"
+#include "../hal/i2c.h"
+#include "../hal/HAL.h"
 
 
 // SEE

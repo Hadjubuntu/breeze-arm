@@ -4,7 +4,7 @@
  *  Created on: Sep 22, 2015
  *      Author: adrien
  */
-#include "../../peripherals/HAL/HAL.h"
+#include "../../hal/HAL.h"
 #include <stdio.h>
 #include "Gyro.h"
 

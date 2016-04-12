@@ -5,7 +5,7 @@
  *      Author: adrien
  */
 
-#include "../../data/nav/GeoPosition.h"
+#include "GeoPosition.h"
 
 /**
  * Default constructor

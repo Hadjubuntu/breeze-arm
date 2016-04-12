@@ -7,7 +7,7 @@
 
 #include "FlightControl.h"
 
-#include <wirish_math.h>
+#include "../../hal/HalMath.h"
 #include "../../data/conf/Conf.h"
 #include "../../math/common/FastMath.h"
 
