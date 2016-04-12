@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <wirish/wirish.h>
 #include "../core/Brain.h"
-#include "../peripherals/HAL/HAL.h"
-#include "libmaple/i2c.h"
+#include "../hal/i2c.h"
+#include "../hal/HAL.h"
 
 
 // SEE
@@ -40,24 +40,7 @@ void Brain::loop()
 	// For each processing
 	for (Processing *proc : _processings)
 	{
-		// Normal processing mode - check processing freq last call
-		// ----
-		if (proc->isReady() && !proc->isTriggeringCallback())
-		{
-			// Update execution date
-			proc->updateExecDate();
-
-			// Then execute the processing
-			proc->process();
-		}
-
-		// Callback triggering processing mode
-		// ---
-		if (proc->isTriggeringCallback() && proc->isCallbackReady())
-		{
-			proc->callback();
-			proc->closeCallback();
-		}
+		processingExecution(proc);
 	}
 
 
@@ -67,6 +50,31 @@ void Brain::loop()
 	}
 	HAL::delayUs(_delayTickUs);
 }
+
+
+void Brain::processingExecution(Processing* proc) {
+	// Normal processing mode - check processing freq last call
+	// ----
+	if (proc->isReady() && !proc->isTriggeringCallback()) {
+		// Update execution date
+		proc->updateExecDate();
+		// Then execute the processing
+		proc->process();
+	}
+	// Callback triggering processing mode
+	// ---
+	if (proc->isTriggeringCallback() && proc->isCallbackReady()) {
+		proc->callback();
+		proc->closeCallback();
+	}
+
+	// Call iteratively processing execution function for children processings
+	for (Processing *subProc : proc->getProcChildren())
+	{
+		processingExecution(subProc);
+	}
+}
+
 
 Processing* Brain::getProcByName(std::string pName)
 {

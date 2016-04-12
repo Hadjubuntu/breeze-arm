@@ -26,7 +26,7 @@ AHRS::AHRS(Baro *baro) : Processing(), _grot(Vect3D::zero()),
 //		_baro(Baro::create())
 {
 	// 400 Hz update
-	_freqHz = 400;
+	freqHz = 400;
 
 	gyro_correct_int[0] = 0.0;
 	gyro_correct_int[1] = 0.0;
@@ -110,16 +110,16 @@ void AHRS::process()
 
 
 	// Correct rates based on error, integral component dealt with in updateSensors
-	if (_dt > 0.0) {
-		const float kpInvdT = accelKp / _dt;
+	if (dt > 0.0) {
+		const float kpInvdT = accelKp / dt;
 		gyros += (accelError * kpInvdT);
 	}
 
 	float qdot[4];
-	qdot[0] = (-_attitude[1] * gyros[0] - _attitude[2] * gyros[1] - _attitude[3] * gyros[2]) * _dt *  0.5f;
-	qdot[1] = (_attitude[0] * gyros[0] - _attitude[3] * gyros[1] + _attitude[2] * gyros[2]) * _dt  * 0.5f;
-	qdot[2] = (_attitude[3] * gyros[0] + _attitude[0] * gyros[1] - _attitude[1] * gyros[2]) * _dt * 0.5f;
-	qdot[3] = (-_attitude[2] * gyros[0] + _attitude[1] * gyros[1] + _attitude[0] * gyros[2]) * _dt * 0.5f;
+	qdot[0] = (-_attitude[1] * gyros[0] - _attitude[2] * gyros[1] - _attitude[3] * gyros[2]) * dt *  0.5f;
+	qdot[1] = (_attitude[0] * gyros[0] - _attitude[3] * gyros[1] + _attitude[2] * gyros[2]) * dt  * 0.5f;
+	qdot[2] = (_attitude[3] * gyros[0] + _attitude[0] * gyros[1] - _attitude[1] * gyros[2]) * dt * 0.5f;
+	qdot[3] = (-_attitude[2] * gyros[0] + _attitude[1] * gyros[1] + _attitude[0] * gyros[2]) * dt * 0.5f;
 
 	// Take a time step
 	_attitude += qdot;
@@ -134,13 +134,13 @@ void AHRS::process()
 	// THIS SHOULD NEVER ACTUALLY HAPPEN
 	if ((fabsf(inv_qmag) > 1e3f) || isnan(inv_qmag)) {
 		_attitude = Quaternion::zero();
-		_logger.error("inv_qmag > 1e3f");
+		logger.error("inv_qmag > 1e3f");
 	} else {
 		_attitude *= inv_qmag;
 	}
 
 	// Integrate gyro rotation Z to have an estimation of the yaw
-	_yawFromGyro += gyros.getZ() / _freqHz;
+	_yawFromGyro += gyros.getZ() / freqHz;
 	_yawFromGyro = 0.9925 * _yawFromGyro;
 	_yawFromGyro = FastMath::constrainAngleMinusPiPlusPi(_yawFromGyro);
 
@@ -155,7 +155,7 @@ void AHRS::computeVz()
 	Vect3D acc_Ef = _attitude.conjugate().rotate(acc);
 
 	// Compute average for 2 seconds
-	if (_itrAccZ < _freqHz * 2) {
+	if (_itrAccZ < freqHz * 2) {
 		if (_itrAccZ == 0) {
 			_meanAccZ = acc_Ef.getZ();
 		}
@@ -210,5 +210,5 @@ void AHRS::computeVz()
 	_analyzedAccZ = _analyzedAccZ * factorPeak;
 
 	// TOdo increase kd if long term sign.. decrease when freeze
-	_vZ = Kd * (_vZ + 9.81*_analyzedAccZ * _dt);
+	_vZ = Kd * (_vZ + 9.81*_analyzedAccZ * dt);
 }

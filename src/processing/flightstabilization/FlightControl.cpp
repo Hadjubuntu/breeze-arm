@@ -7,7 +7,7 @@
 
 #include "FlightControl.h"
 
-#include <wirish_math.h>
+#include "../../hal/HalMath.h"
 #include "../../data/conf/Conf.h"
 #include "../../math/common/FastMath.h"
 
@@ -18,7 +18,7 @@ FlightControl::FlightControl(RadioControler *radioController) : Processing(), _i
 	_yawInt = 0.0;
 
 	// Runs at 50Hz
-	_freqHz = 50;
+	freqHz = 50;
 	_throttleInitUs = 370;
 
 	// Retrieve conf parameters
@@ -81,7 +81,7 @@ void FlightControl::process()
 
 	// Integrate desired yaw
 	const float Kyaw = 4.0;
-	_yawInt += Kyaw * yaw * 1/_freqHz;
+	_yawInt += Kyaw * yaw * 1/freqHz;
 	_yawInt = _yawInt * 0.96;
 	Bound(_yawInt, -PI, PI); //FIXME when max left and turns left, go other side ..
 

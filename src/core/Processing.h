@@ -8,8 +8,10 @@
 #ifndef CORE_PROCESSING_H_
 #define CORE_PROCESSING_H_
 
+#include <vector>
 #include "../core/Logger.h"
 #include "../math/time/Date.h"
+
 
 /**
  * Abstract class of a processing
@@ -17,22 +19,25 @@
 class Processing {
 protected:
 	/** Internal logger */
-	Logger _logger;
+	Logger logger;
 
 	/** Frequency of process function calling (Hertz) */
-	int _freqHz;
+	int freqHz;
 
 	/** Date last execution */
-	Date _lastExecutionDate;
+	Date lastExecutionDate;
 
 
 	/** Last dt (Seconds) */
-	float _dt;
+	float dt;
 
 	/** Callback is called */
-	bool _callbackTrigger;
-	Date _callbackStartDate;
-	long _callbackDtUs;
+	bool callbackTrigger;
+	Date callbackStartDate;
+	long callbackDtUs;
+
+	/** Sub-processings */
+	std::vector<Processing*> procChildren;
 
 public:
 	Processing();
@@ -56,10 +61,10 @@ public:
 		Date now = Date::now();
 
 		// Store dt
-		_dt = now.durationFrom(_lastExecutionDate);
+		dt = now.durationFrom(lastExecutionDate);
 
 		// Update last execution date
-		_lastExecutionDate = now;
+		lastExecutionDate = now;
 	}
 
 	/** Wait for dt seconds */
@@ -72,16 +77,25 @@ public:
 	bool isCallbackReady();
 
 	bool isTriggeringCallback() {
-		return _callbackTrigger;
+		return callbackTrigger;
 	}
 	void closeCallback() {
-		_callbackTrigger = false;
-		_callbackDtUs = 0;
+		callbackTrigger = false;
+		callbackDtUs = 0;
 	}
 	void planCallback(long pDtUs) {
-		_callbackDtUs = pDtUs;
-		_callbackTrigger = true;
-		_callbackStartDate = Date::now();
+		callbackDtUs = pDtUs;
+		callbackTrigger = true;
+		callbackStartDate = Date::now();
+	}
+
+	std::vector<Processing*> getProcChildren() {
+		return procChildren;
+	}
+
+	/** Add a processing child */
+	void addProcChild(Processing *child) {
+		procChildren.push_back(child);
 	}
 };
 

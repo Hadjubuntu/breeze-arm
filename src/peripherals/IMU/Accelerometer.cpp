@@ -5,7 +5,7 @@
  *      Author: adrien
  */
 #include <stdio.h>
-#include "../../peripherals/HAL/HAL.h"
+#include "../../hal/HAL.h"
 #include "Accelerometer.h"
 
 /**

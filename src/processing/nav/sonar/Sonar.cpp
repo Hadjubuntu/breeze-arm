@@ -17,7 +17,7 @@
 
 Sonar::Sonar() : Processing()
 {
-	_freqHz = 10;
+	freqHz = 10;
 	_sonarPin = 10;
 	_filteredSonarValueCm = 0.0;
 	_healthy = true;

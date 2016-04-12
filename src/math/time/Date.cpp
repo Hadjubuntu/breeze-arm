@@ -26,3 +26,10 @@ float Date::durationFrom(Date& date)
 {
 	return DateUtils::microToSeconds(_timeElapsedSinceStartUs - date.getTimeElapsedSinceStartUs());
 }
+
+
+Date Date::now()
+{
+	Date e(micros());
+	return e;
+}

@@ -23,7 +23,7 @@ _targetAttitude(Quaternion::zero()), _currentAttitude(Quaternion::zero()),
 _gyroRot(Vect3D::zero()),
 _tau(Vect3D::zero())
 {
-	_freqHz = 100;
+	freqHz = 100;
 	_throttle = 0;
 	_yawFromGyro = 0.0;
 	_Pq = Conf::getInstance().get("flightStabilization_Pq");
@@ -33,8 +33,8 @@ _tau(Vect3D::zero())
 	_throttleHover = Conf::getInstance().get("flightStabilization_throttleHover");
 
 	// Note that we use radian angles. It means 5 * 0.01 for integral means 2.86° correction for integral terms
-	_pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
-	_pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
+	pidRoll.init(_Krate->getValue(), 0.01, 0.01, 5);
+	pidPitch.init(_Krate->getValue(), 0.01, 0.01, 5);
 	_pidAltitude.init(0.55, 0.04, 0.01, 4);
 
 	_ahrs = ahrs;
@@ -106,14 +106,14 @@ void FlightStabilization::process()
 	BoundAbs(pitchRate, 3.14);
 
 
-	_pidRoll.setGainParameters(_Krate->getValue(), 0.01, 0.0);
-	_pidPitch.setGainParameters(_Krate->getValue(), 0.01, 0.0);
+	pidRoll.setGainParameters(_Krate->getValue(), 0.01, 0.0);
+	pidPitch.setGainParameters(_Krate->getValue(), 0.01, 0.0);
 
-	_pidRoll.update(rollRate - _gyroRot[0], 1/_freqHz);
-	_pidPitch.update(pitchRate - _gyroRot[1], 1/_freqHz);
+	pidRoll.update(rollRate - _gyroRot[0], 1/freqHz);
+	pidPitch.update(pitchRate - _gyroRot[1], 1/freqHz);
 
-	_tau = Vect3D(_pidRoll.getOutput(),
-			_pidPitch.getOutput(),
+	_tau = Vect3D(pidRoll.getOutput(),
+			pidPitch.getOutput(),
 			1.3 *_Krate->getValue() * (yawRate - _gyroRot[2]));
 
 	// Control altitude
@@ -154,8 +154,8 @@ void FlightStabilization::stabilizeAltitude()
 	// Auto mode
 	else
 	{
-		if (_dt == 0.0) {
-			_dt = 1.0/_freqHz;
+		if (dt == 0.0) {
+			dt = 1.0/freqHz;
 		}
 
 		float refAltitudeMeters = _ahrs->getAltitudeMeters();
@@ -178,13 +178,13 @@ void FlightStabilization::stabilizeAltitude()
 		float errorAccZ = (accZsetpoint + (_ahrs->getAnalyzedAccZ() - _meanAccZ));
 		Bound(errorAccZ, -0.12, 0.12); // 0.2 accZ
 
-		_pidAltitude.update(errorAccZ, _dt);
+		_pidAltitude.update(errorAccZ, dt);
 
 		_throttleTarget = _throttleHover->getValue() + _pidAltitude.getOutput();
 		Bound(_throttleTarget, 0.0, 0.67); // Limit to 70% max throttle
 
 		float dThrottle = _throttleTarget - _throttleOut;
-		Bound(dThrottle, -_throttleSlewRate / _freqHz, _throttleSlewRate / _freqHz);
+		Bound(dThrottle, -_throttleSlewRate / freqHz, _throttleSlewRate / freqHz);
 
 		_throttleOut = _throttleOut + dThrottle;
 	}

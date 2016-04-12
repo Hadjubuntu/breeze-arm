@@ -8,7 +8,7 @@
 #ifndef MATH_VECTOR_VECT3D_H_
 #define MATH_VECTOR_VECT3D_H_
 
-#include "../../../libmaple/include/libmaple/libmaple_types.h"
+#include "../../hal/HalTypes.h"
 
 class Vect3D {
 private:

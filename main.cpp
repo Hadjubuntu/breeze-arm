@@ -25,11 +25,12 @@
 #include "src/link/RfRouter.h"
 #include "src/processing/actuator/ActuatorControl.h"
 #include "src/processing/flightstabilization/FlightStabilization.h"
+#include "src/processing/flightstabilization/FsAutotune.h"
 #include "src/processing/flightstabilization/FlightControl.h"
 #include "src/processing/nav/sonar/Sonar.h"
 #include "src/processing/link/Telemetry.h"
 #include "src/peripherals/IMU/Baro.h"
-#include "src/peripherals/HAL/HAL.h"
+#include "src/hal/HAL.h"
 
 
 /** Attitude and heading reference system */
@@ -63,6 +64,7 @@ ActuatorControl actuatorControl(&flightStabilization);
 /** Telemetry to keep GCS update */
 Telemetry telemetry(&ahrs, &flightControl, &rfControler);
 
+FsAutotune fsAutotune(&flightStabilization);
 
 void calibration()
 {
@@ -180,11 +182,12 @@ void loop()
 //				baro.getTruePressure()/100.0f, baro.getGroundPressure()/100.0f,
 //				flightStabilization.getThrottle()) ;
 
-		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|sonar=%.2f|error_droll=%.3f", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
+		sprintf(str, "r=%.1f|p=%.1f|alt=%.1f cm|sonar=%.2f|error_droll=%.2f|autotune=%.2f", // |baroAlt = %.2f|Temp=%.2f , baro.getAltitudeMeters(), baro.getTemperature()
 				FastMath::toDegrees(rpy[0]), FastMath::toDegrees(rpy[1]),
 				baro.getAltitudeMeters()*100.0f,
 				sonar.getOutput(),
-				FastMath::toDegrees(flightStabilization.currentRollErrorAngle)) ;
+				FastMath::toDegrees(flightStabilization.currentRollErrorAngle),
+				fsAutotune.getFirstMeasureScore()) ;
 
 
 

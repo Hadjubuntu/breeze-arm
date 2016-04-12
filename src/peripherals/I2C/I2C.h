@@ -8,7 +8,8 @@
 #ifndef PERIPHERALS_I2C_I2C_H_
 #define PERIPHERALS_I2C_I2C_H_
 
-#include "../../../libmaple/include/libmaple/libmaple_types.h"
+#include "../../hal/HalTypes.h"
+
 class I2C {
 private:
 	uint8 _deviceAddr;

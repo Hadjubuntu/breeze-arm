@@ -12,7 +12,7 @@
 RfRouter::RfRouter(RfControler *pControler)
 {
 	// Rf router check for new message at 20Hz and route packet regarding their header
-	_freqHz = 20;
+	freqHz = 20;
 	_controler = pControler;
 }
 

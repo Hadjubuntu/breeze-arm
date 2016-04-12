@@ -9,8 +9,8 @@
 #define CORE_BRAIN_H_
 
 #include "History.h"
-#include "../math/time/Date.h"
 #include "Processing.h"
+#include "../math/time/Date.h"
 #include "../processing/ahrs/AHRS.h"
 
 /**
@@ -32,6 +32,9 @@ private:
 
 	// History of link command
 	History<int> _commands;
+
+	void processingExecution(Processing* proc);
+
 public:
 	/**
 	 * Constructor brain
