@@ -151,6 +151,8 @@ mrproper: clean
 	rm -rf doxygen
 
 help:
+	@echo "path"
+	@echo $(LIB_MAPLE_HOME)
 	@echo ""
 	@echo "Basic usage (BOARD defaults to maple):"
 	@echo "    $$ cp your-main.cpp main.cpp"

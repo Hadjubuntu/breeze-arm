@@ -83,6 +83,27 @@ void ActuatorControl::initMotorRepartition() {
 		break;
 	case HCOPTER:
 		break;
+	case XCOPTER:
+				// Left motor
+				_motorActivation[0][0] = 1.0;
+				_motorActivation[0][1] = 1.0;
+				_motorActivation[0][2] = -1.0;
+
+				// Right motor
+				_motorActivation[1][0] = -1.0;
+				_motorActivation[1][1] = 1.0;
+				_motorActivation[1][2] = 1.0;
+
+				// Rear motor left
+				_motorActivation[2][0] = 1.0;
+				_motorActivation[2][1] = -1.0;
+				_motorActivation[2][2] = 1.0;
+
+				// Rear motor right
+				_motorActivation[3][0] = -1.0;
+				_motorActivation[3][1] = -1.0;
+				_motorActivation[3][2] = -1.0;
+		break;
 	default:
 		break;
 	}
@@ -143,6 +164,9 @@ void ActuatorControl::process()
 	case YCOPTER:
 		processMulticopter(throttle, 3);
 		break;
+	case XCOPTER:
+		processMulticopter(throttle, 4);
+		break;
 	default:
 		// Throw error unknow firmware
 		break;
@@ -199,7 +223,12 @@ void ActuatorControl::processMulticopter(unsigned short int throttle, int nbMoto
 	// Compute delta signal from torque command
 	int rollDeltaSignal = getCommandNmToSignalUs(torqueCmd.getX(), _commandNmToSignalUs->getValue());
 	int pitchDeltaSignal = getCommandNmToSignalUs(torqueCmd.getY(), _commandNmToSignalUs->getValue());
-	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), _commandNmToSignalUs->getValue() * 5.0);
+
+	double yfactor = 1.0;
+	if (Conf::getInstance().firmware == Firmware::YCOPTER) {
+		yfactor = 5.0;
+	}
+	int yawDeltaSignal = getCommandNmToSignalUs(torqueCmd.getZ(), _commandNmToSignalUs->getValue() * yfactor);
 
 	int motorX[nbMotors];
 

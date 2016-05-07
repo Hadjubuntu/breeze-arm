@@ -19,6 +19,7 @@ enum Firmware: int {
 	FIXED_WING = 0,
 			HCOPTER = 1,
 			YCOPTER = 2,
+			XCOPTER = 3,
 };
 
 class Conf {
@@ -62,7 +63,7 @@ public:
 
 
 	// Firmware
-	const int firmware = Firmware::YCOPTER;
+	const int firmware = Firmware::XCOPTER;
 
 
 	/**
